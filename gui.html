@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script type="module" src="gui.js" defer></script>
+    <link rel="stylesheet" href="gui.css" defer>
+</head>
+<body>
+    <table id="inputs">
+        <tr>
+            <td>SFMC Searcher</td>
+        </tr>
+        <tr>
+            <td>Version:</td>
+            <td id="ver"></td>
+        </tr>
+        <tr>
+            <td>Current BU:</td>
+            <td id="currBU"></td>
+        </tr>
+        <tr>
+            <td>BU:</td>
+            <td><select id="BUdata"></select></td>
+        </tr>
+        <tr>
+            <td>Items:</td>
+            <td><select id="itemsNames"></select></td>
+        </tr>
+        <tr>
+            <td>Field:</td>
+            <td><select id="fields"></select></td>
+        </tr>
+        <tr>
+            <td>Pattern:</td>
+            <td><input type="text" id="pattern"></td>
+        </tr>
+        <tr>
+            <td>Query:</td>
+            <td><textarea id="query"></textarea></td>
+        </tr>
+        <tr>
+            <td>Regular expression:</td>
+            <td><input type="checkbox" id="isRegex"></td>
+        </tr>
+        <tr>
+            <td>Case insensitive:</td>
+            <td><input type="checkbox" id="caseIns" checked></td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <td><button id="load">Load</button></td>
+            <td><label for="import">Import</label><input type="file" id="import"/></td>
+            <td><button id="clear">Clear</button></td>
+            <td><button id="export">Export</button></td>
+            <td><button id="view">View</button></td>
+            <td><button id="search">Search</button></td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <td><table id="results"></table></td>
+        </tr>
+    </table>
+</body>
+</html>

@@ -1,0 +1,132 @@
+:root {
+  --back-light-color: #ffffff;
+  --back-dark-color: #0b5cab;
+  --back-darker-color: #032d60;
+  --text-light-color: #ffffff;
+  --text-dark-color: #000000;
+  --border-color: #747474;
+  --hover-color: #f2f2f2;
+  --font: helvetica, sans-serif;
+  --size: 13px;
+  --width: 300px;
+}
+
+* {
+  font-family: var(--font);
+  font-size: var(--size);
+}
+
+body {
+  background-color: var(--back-light-color);
+}
+
+select {
+  background-color: var(--back-light-color);
+  color: var(--text-dark-color);
+  border: 1px solid var(--border-color);
+  width: calc(var(--width) + 5px);
+}
+
+option {
+  background-color: var(--back-light-color);
+  color: var(--text-dark-color);
+}
+
+input[type="text"] {
+  background-color: var(--back-light-color);
+  color: var(--text-dark-color);
+  border: 1px solid var(--border-color);
+  width: var(--width);
+}
+
+input[type="checkbox"] {
+  background-color: var(--back-light-color);
+  border: 1px solid var(--border-color);
+  width: 16px;
+  height: 16px;
+  margin: 0px 0px 0px 0px;
+  appearance: none;
+}
+
+input[type="checkbox"]:checked::after {
+  content: "";
+  display: block;
+  width: 5px;
+  height: 10px;
+  border: solid var(--text-dark-color);
+  border-width: 0 2px 2px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+  position: relative;
+  left: 4px;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+textarea {
+  background-color: var(--back-light-color);
+  color: var(--text-dark-color);
+  border: 1px solid var(--border-color);
+  width: var(--width);
+  height: 54px;
+}
+
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+#inputs td {
+  background-color: var(--back-light-color);
+  color: var(--text-dark-color);
+  padding-top: 6px;
+  padding-bottom: 6px;
+  width: 170px;
+}
+
+#results th {
+  background-color: var(--back-dark-color);
+  color: var(--text-light-color);
+  border: 1px solid var(--border-color);
+  padding: 12px;
+  text-align: left;
+  position: sticky;
+  top: 0;
+}
+
+#results td {
+  color: var(--text-dark-color);
+  border: 1px solid var(--border-color);
+  padding: 12px;
+  text-align: left;
+}
+
+#results tr:nth-child(even) {
+  background-color: var(--hover-color);
+}
+
+#results tr:nth-child(odd) {
+  background-color: var(--back-light-color);
+}
+
+button, label {
+  background-color: var(--back-dark-color);
+  color: var(--text-light-color);
+  border: 1px solid var(--border-color);
+  padding: 2px 55px;
+  text-align: center;
+  display: inline-block;
+}
+
+button:hover, label:hover, #results th:hover {
+  background-color: var(--back-darker-color);
+  transition: 0.3s;
+}
+
+select:hover, textarea:hover, input:hover {
+  background-color: var(--hover-color);
+  transition: 0.3s;
+}
