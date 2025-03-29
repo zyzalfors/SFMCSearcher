@@ -1,0 +1,34 @@
+:root {
+  --back-light-color: #ffffff;
+  --back-dark-color: #0b5cab;
+  --back-darker-color: #032d60;
+  --text-light-color: #ffffff;
+  --border-color: #747474;
+  --size: 13px;
+  --font: helvetica, sans-serif;
+}
+
+* {
+  font-family: var(--font);
+  font-size: var(--size);
+}
+
+body {
+  background-color: var(--back-light-color);
+  max-width: 300px;
+  max-height: 300px;
+}
+
+button {
+  background-color: var(--back-dark-color);
+  color: var(--text-light-color);
+  border: 1px solid var(--border-color);
+  padding: 2px 55px;
+  text-align: center;
+  display: inline-block;
+}
+
+button:hover {
+  background-color: var(--back-darker-color);
+  transition: 0.3s;
+}
