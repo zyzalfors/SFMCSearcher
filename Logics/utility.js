@@ -122,26 +122,11 @@ export class Utility {
     else if(actionName === "view") Utility.Output(data);
   }
 
-  static async GetAllFolders(stack, categoryFilter, categoryId, folders) {
-    const folderData = (await Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/contactsmeta/fuelapi/legacy/v1/beta/folder/" + categoryId + "/children?$where=allowedtypes%20in%20" + categoryFilter)).entry;
-    for(const entry of folderData) {
-      folders.push(entry);
-      await Utility.GetAllFolders(stack, categoryFilter, entry.id, folders);
-    }
-  }
-
-  static async GetFolders(stack, categoryTypes) {
-    const categoryFilter = "(%27" + categoryTypes.join("%27,%27") + "%27)";
-    const folders = [];
-    await Utility.GetAllFolders(stack, categoryFilter, 0, folders);
-    return folders;
-  }
-
   static GetFullPath(categoryId, folders, item) {
     const parts = [];
     let id = categoryId;
     while(id > 0) {
-      const folder = folders.find(entry => entry.id == id);
+      const folder = folders.find(entry => entry.id == id || entry.categoryId == id);
       if(folder) {
         parts.push(folder.name);
         id = folder.parentId;
