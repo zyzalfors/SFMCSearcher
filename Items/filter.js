@@ -27,7 +27,7 @@ export class Filter {
   }
 
   static async Load(stack, BUid, BUname) {
-    const folders = await Utility.Utility.GetFolders(stack, ["filteractivity"]);
+    const folders = await Filter.GetFolders(stack);
     const pageSize = 500;
     let page = 1, pageItems = [0];
     while(pageItems.length > 0) {
@@ -44,6 +44,10 @@ export class Filter {
       if(pageItems.length < pageData.pageSize) break;
       page++;
     }
+  }
+
+  static async GetFolders(stack) {
+    return (await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/folders/?$filter=categorytype%20eq%20filteractivity")).items;
   }
 
   static Check(item, field, regex) {

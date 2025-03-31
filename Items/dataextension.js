@@ -32,8 +32,7 @@ export class DataExtension {
   }
 
   static async Load(stack, BUid, BUname) {
-    const categoryTypes = ["dataextension", "salesforcedataextension", "synchronizeddataextension", "shared_data", "shared_dataextension", "shared_salesforcedataextension"];
-    const folders = await Utility.Utility.GetFolders(stack, categoryTypes);
+    const folders = await DataExtension.GetFolders(stack);
     const pageSize = 500;
     for(const folder of folders) {
       let page = 1, pageItems = [0];
@@ -50,6 +49,22 @@ export class DataExtension {
         page++;
       }
     }
+  }
+
+  static async GetAllFolders(stack, categoryFilter, categoryId, folders) {
+    const folderData = (await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/contactsmeta/fuelapi/legacy/v1/beta/folder/" + categoryId + "/children?$where=allowedtypes%20in%20" + categoryFilter)).entry;
+    for(const entry of folderData) {
+      folders.push(entry);
+      await DataExtension.GetAllFolders(stack, categoryFilter, entry.id, folders);
+    }
+  }
+
+  static async GetFolders(stack) {
+    const categoryTypes = ["dataextension", "salesforcedataextension", "synchronizeddataextension", "shared_data", "shared_dataextension", "shared_salesforcedataextension"];
+    const categoryFilter = "(%27" + categoryTypes.join("%27,%27") + "%27)";
+    const folders = [];
+    await DataExtension.GetAllFolders(stack, categoryFilter, 0, folders);
+    return folders;
   }
 
   /*static async GetFields(stack, DEid) {

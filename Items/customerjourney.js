@@ -2,8 +2,8 @@ import * as Utility from "../Logics/utility.js";
 
 export class CustomerJourney {
 
-  static tableFields = ["BUId", "BUName", "CreatedDate", "EventDefinitionId", "EventDefinitionKey", "FilterCriteria", "Id", "Link", "ModifiedDate", "Name", "Schedule", "ScheduleMode", "SourceDE", "SourceDEId", "Status", "Version"];
-  static searchFields = ["ActivityId", "ActivityName", "AssetId", "AssetKey", "AssetName", "CreatedDate", "EventDefinitionId", "EventDefinitionKey", "FilterCriteria", "Id", "ModifiedDate", "Name", "Schedule", "ScheduleMode", "SourceDE", "SourceDEId", "Status", "TriggeredSendId", "UsedDE"];
+  static tableFields = ["BUId", "BUName", "CreatedDate", "EventDefinitionId", "EventDefinitionKey", "FilterCriteria", "Id", "Link", "ModifiedDate", "Name", "Path", "Schedule", "ScheduleMode", "SourceDE", "SourceDEId", "Status", "Version"];
+  static searchFields = ["ActivityId", "ActivityName", "AssetId", "AssetKey", "AssetName", "CreatedDate", "EventDefinitionId", "EventDefinitionKey", "FilterCriteria", "Id", "ModifiedDate", "Name", "Path", "Schedule", "ScheduleMode", "SourceDE", "SourceDEId", "Status", "TriggeredSendId", "UsedDE"];
   static itemsName = "CustomerJourneys";
   static type = "customerjourney";
 
@@ -22,6 +22,7 @@ export class CustomerJourney {
                 Link: "https://mc.s" + stack + ".exacttarget.com/cloud/#app/Journey%20Builder/%23" + item.id + "/" + item.version,
                 ModifiedDate: item.modifiedDate,
                 Name: item.name,
+                Path: item._path,
                 Schedule: item._metaData?.scheduleFlowMode,
                 ScheduleMode: item._metaData?.runOnceScheduleMode,
                 SourceDE: item._dataExtensionName,
@@ -35,21 +36,23 @@ export class CustomerJourney {
   }
 
   static async Load(stack, BUid, BUname) {
+    const folders = await CustomerJourney.GetFolders(stack);
     const pageSize = 50;
     let page = 1, pageItems = [0];
     while(pageItems.length > 0) {
       const data = [];
-      const pageData = await Utility.Utility.FetchJSON("https://mc.s" + stack + ".exacttarget.com/cloud/fuelapi/interaction/v1/interactions/?mostRecentVersionOnly=false&mostRecentVersionOrRunningOnly=true&extras=trigger&extras=activities&$page=" + page + "&$pagesize=" + pageSize);
+      const pageData = await Utility.Utility.FetchJSON("https://jbinteractions.s" + stack + ".marketingcloudapps.com/fuelapi/interaction/v1/interactions/?mostRecentVersionOnly=false&mostRecentVersionOrRunningOnly=true&extras=trigger&extras=activities&$page=" + page + "&$pagesize=" + pageSize);
       pageItems = pageData.items;
       for(const pageItem of pageItems) {
         const eventDefinitionId = pageItem.triggers[0]?.metaData?.eventDefinitionId;
-        const eventDefinition = eventDefinitionId ? await Utility.Utility.FetchJSON("https://mc.s" + stack + ".exacttarget.com/cloud/fuelapi/interaction/v1/eventDefinitions/" + eventDefinitionId) : null;
+        const eventDefinition = eventDefinitionId ? await Utility.Utility.FetchJSON("https://jbinteractions.s" + stack + ".marketingcloudapps.com/fuelapi/interaction/v1/eventDefinitions/" + eventDefinitionId) : null;
         pageItem._dataExtensionId = eventDefinition?.dataExtensionId;
         pageItem._dataExtensionName = eventDefinition?.dataExtensionName;
         pageItem._eventDefinitionId = eventDefinitionId;
         pageItem._eventDefinitionKey = eventDefinition?.eventDefinitionKey;
         pageItem._metaData = eventDefinition?.metaData;
         pageItem._configurationArguments = eventDefinition?.configurationArguments;
+        pageItem._path = Utility.Utility.GetFullPath(pageItem.categoryId, folders);
         for(const act of pageItem.activities) {
           let assetTypeIds, prop, assetId;
           if(act.type === "EMAILV2") {
@@ -79,6 +82,19 @@ export class CustomerJourney {
       if(pageItems.length < pageData.pageSize) break;
       page++;
     }
+  }
+
+  static async GetFolders(stack) {
+    const pageSize = 500, folders = [];
+    let page = 1, pageItems = [0];
+    while(pageItems.length > 0) {
+      const pageData = await Utility.Utility.FetchJSON("https://jbinteractions.s" + stack + ".marketingcloudapps.com/fuelapi/platform-internal/v1/categories/?$filter=categorytype%20eq%20journey&$page=" + page + "&$pagesize=" + pageSize);
+      pageItems = pageData.items;
+      folders.push(...pageItems);
+      if(pageItems.length < pageData.pageSize) break;
+      page++;
+    }
+    return folders;
   }
 
   static Check(item, field, regex) {

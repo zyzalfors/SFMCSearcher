@@ -34,14 +34,14 @@ export class Automation {
   }
 
   static async Load(stack, BUid, BUname) {
-    const folders = await Utility.Utility.GetFolders(stack, ["automations"]);
+    const folders = await Automation.GetFolders(stack);
     let page = 1, pageItems = [0];
     while(pageItems.length > 0) {
       const data = [];
-      const pageData = await Utility.Utility.FetchJSON("https://mc.s" + stack + ".exacttarget.com/cloud/fuelapi/legacy/v1/beta/automations/automation/definition/?$skip=" + (page - 1));
+      const pageData = await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/fuelapi/legacy/v1/beta/automations/automation/definition/?$skip=" + (page - 1));
       pageItems = pageData.entry;
       for(const pageItem of pageItems) {
-        const item = await Utility.Utility.FetchJSON("https://mc.s" + stack + ".exacttarget.com/cloud/fuelapi/automation/v1/automations/" + pageItem.id);
+        const item = await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/automations/" + pageItem.id);
         const alerts = (await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/fuelapi/legacy/v1/beta/automations/notifications/" + pageItem.id)).workers;
         item._alertEmails = Array.isArray(alerts) ? alerts.reduce((emails, entry) => emails + "," + entry.definition, "").replace(",", "") : "";
         item._createdByName = pageItem.createdBy?.name;
@@ -56,6 +56,10 @@ export class Automation {
       if(pageItems.length < pageData.itemsPerPage) break;
       page++;
     }
+  }
+
+  static async GetFolders(stack) {
+    return (await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/folders/?$filter=categorytype%20eq%20automations")).items;
   }
 
   static Check(item, field, regex) {
