@@ -149,4 +149,8 @@ export class Utility {
     return xml ? xml.replace(/</g, "&lt;").replace(/>/g, "&gt;") : "";
   }
 
+  static FindCaseIns(arr, val) {
+    return arr.find(entry => entry.toLowerCase() === val.toLowerCase());
+  }
+
 }

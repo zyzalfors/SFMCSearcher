@@ -198,30 +198,33 @@ export class Controller {
     await Utility.Utility.ImportStorage(data);
   }
 
-  static FilterData(pattern, isRegex, caseIns, items, item, field) {
-    if(!isRegex) pattern = pattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const regex = caseIns ? new RegExp(pattern, "i") : new RegExp(pattern);
-    return items.filter(entry => item.check(entry, field, regex));
-  }
-
   static async SearchDataByQuery(BUid, query, isRegex, caseIns) {
-    const parsed = new QueryParser.QueryParser(query).Parse();
+    const Check = (item, where, check) => {
+      if(typeof where === "object") {
+        if(where.op === "AND") return Check(item, where.left, check) && Check(item, where.right, check);
+        if(where.op === "OR") return Check(item, where.left, check) || Check(item, where.right, check);
+      }
+      return check(item, where.field, where.regex);
+    };
+    const parsed = new QueryParser.QueryParser(query).Parse(isRegex, caseIns);
     const item = Controller.items.find(entry => entry.itemsName.toLowerCase() === parsed.from.toLowerCase());
     if(!item) return [];
     const items = await Controller.ReadData(BUid, item.itemsName);
     if(items.length === 0) return [];
     const fields = ["Type"];
-    for(const parsedField of parsed.fields) {
-      const itemField = item.tableFields.find(entry => entry.toLowerCase() === parsedField.toLowerCase());
-      if(itemField) fields.push(itemField);
+    if(!parsed.fields.includes("*")) {
+      for(const parsedField of parsed.fields) {
+        const itemField = Utility.Utility.FindCaseIns(item.tableFields, parsedField);
+        if(itemField) fields.push(itemField);
+      }
+      if(fields.length === 1) return [];
     }
-    if(fields.length === 1) return [];
-    const field = parsed.where.field ? item.searchFields.find(entry => entry.toLowerCase() === parsed.where.field.toLowerCase()) : null;
-    const pattern = parsed.where.pattern ? parsed.where.pattern.replace(/^'/, "").replace(/'$/, "") : null;
-    const filtered = field && pattern ? Controller.FilterData(pattern, isRegex, caseIns, items, item, field) : items;
-    for(const entry of filtered) {
-      for(const field of Object.keys(entry)) {
-        if(!fields.includes(field)) delete entry[field];
+    const filtered = parsed.where ? items.filter(entry => Check(entry, parsed.where, item.check)) : items;
+    if(!parsed.fields.includes("*")) {
+      for(const entry of filtered) {
+        for(const field of Object.keys(entry)) {
+          if(!fields.includes(field)) delete entry[field];
+        }
       }
     }
     return filtered;
@@ -232,7 +235,9 @@ export class Controller {
     if(items.length === 0) return [];
     const item = Controller.items.find(entry => entry.type === items[0].Type);
     if(!item) return [];
-    return Controller.FilterData(pattern, isRegex, caseIns, items, item, field);
+    if(!isRegex) pattern = pattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const regex = caseIns ? new RegExp(pattern, "i") : new RegExp(pattern);
+    return items.filter(entry => item.check(entry, field, regex));
   }
 
   static async SearchData(BUid, itemsName, pattern, query, isRegex, caseIns, field) {

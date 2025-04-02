@@ -8,11 +8,11 @@ export class QueryParser {
   }
 
   static IsLiteral(token) {
-    return !/^(SELECT|FROM|WHERE|LIKE)$/i.test(token);
+    return !/^(SELECT|FROM|WHERE|LIKE|AND|OR)$/i.test(token);
   }
 
   IsValidState() {
-    return /^(VAL|TABLE)$/i.test(this.state);
+    return /^(WHERE_COND|TABLE)$/i.test(this.state);
   }
 
   Tokenize() {
@@ -21,9 +21,51 @@ export class QueryParser {
     this.tokens = matches.filter(entry => entry.trim());
   }
 
-  Parse() {
-    const parsed = {fields: [], from: null, where: {field: null, pattern: null}};
-    for(const token of this.tokens) {
+  ParseWhere(pos, isRegex, caseIns) {
+    const ParseTerm = o => {
+      let left = ParseFactor(o);
+      while(o.pos < this.tokens.length && /^OR$/i.test(this.tokens[o.pos])) {
+         o.pos++;
+         left = {left, op: "OR", right: ParseFactor(o)};
+      }
+      return left;
+    };
+    const ParseExpr = o => {
+      let left = ParseTerm(o);
+      while(o.pos < this.tokens.length && /^AND$/i.test(this.tokens[o.pos])) {
+         o.pos++;
+         left = {left, op: "AND", right: ParseTerm(o)};
+      }
+      return left;
+    };
+    const ParseCondition = o => {
+      const field = this.tokens[o.pos++];
+      const op = this.tokens[o.pos++];
+      const pattern = o.isRegex ? this.tokens[o.pos++].replace(/(^'|'$)/g, "") : this.tokens[o.pos++].replace(/(^'|'$)/g, "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const regex = o.caseIns ? new RegExp(pattern, "i") : new RegExp(pattern);
+      return {field, op, regex};
+    };
+    const ParseFactor = o => {
+      if(this.tokens[o.pos] === "(") {
+        o.pos++;
+        const ast = ParseExpr(o);
+        o.pos++;
+        return ast;
+      }
+      return ParseCondition(o);
+    };
+    try {
+      return ParseExpr({pos: pos, isRegex: isRegex, caseIns: caseIns});
+    }
+    catch(err) {
+      throw new Error("Invalid query");
+    }
+  }
+
+  Parse(isRegex, caseIns) {
+    const parsed = {fields: [], from: null, where: null};
+    for(const i in this.tokens) {
+      const token = this.tokens[i];
       if(this.state === "START" && /^SELECT$/i.test(token)) this.state = "SELECT_FIELD";
       else if(this.state === "SELECT_FIELD" && QueryParser.IsLiteral(token)) parsed.fields.push(token);
       else if(this.state === "SELECT_FIELD" && /^FROM$/i.test(token)) this.state = "FROM";
@@ -33,13 +75,9 @@ export class QueryParser {
       }
       else if(this.state === "TABLE" && /^WHERE$/i.test(token)) this.state = "WHERE";
       else if(this.state === "WHERE" && QueryParser.IsLiteral(token)) {
-        this.state = "WHERE_FIELD";
-        parsed.where.field = token;
-      }
-      else if(this.state === "WHERE_FIELD" && /^LIKE$/i.test(token)) this.state = "LIKE";
-      else if(this.state === "LIKE" && QueryParser.IsLiteral(token)) {
-        this.state = "VAL";
-        parsed.where.pattern = token;
+        this.state = "WHERE_COND";
+        parsed.where = this.ParseWhere(i, isRegex, caseIns);
+        break;
       }
     }
     if(!this.IsValidState()) throw new Error("Invalid query");
