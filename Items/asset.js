@@ -66,6 +66,8 @@ export class Asset {
   }
 
   static Check(item, field, regex) {
+    field = Utility.Utility.FindCaseIns(Asset.searchFields, field);
+    if(!field) return;
     return regex.test(item[field]);
   }
 

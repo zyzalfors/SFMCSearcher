@@ -51,6 +51,8 @@ export class Query {
   }
 
   static Check(item, field, regex) {
+    field = Utility.Utility.FindCaseIns(Query.searchFields, field);
+    if(!field) return;
     return regex.test(item[field]);
   }
 

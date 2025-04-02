@@ -41,6 +41,8 @@ export class Package {
   }
 
   static Check(item, field, regex) {
+    field = Utility.Utility.FindCaseIns(Package.searchFields, field);
+    if(!field) return;
     return regex.test(item[field]);
   }
 

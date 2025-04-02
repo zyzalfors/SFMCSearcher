@@ -79,6 +79,8 @@ export class Cloudpage {
   }
 
   static Check(item, field, regex) {
+    field = Utility.Utility.FindCaseIns(Cloudpage.searchFields, field);
+    if(!field) return;
     return regex.test(item[field]);
   }
 

@@ -43,6 +43,8 @@ export class Message {
   }
 
   static Check(item, field, regex) {
+    field = Utility.Utility.FindCaseIns(Message.searchFields, field);
+    if(!field) return;
     return regex.test(item[field]);
   }
 

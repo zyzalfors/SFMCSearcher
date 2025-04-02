@@ -47,6 +47,8 @@ export class AttributeGroup {
   }
 
   static Check(item, field, regex) {
+    field = Utility.Utility.FindCaseIns(AttributeGroup.searchFields, field);
+    if(!field) return;
     switch(field) {
       case "UsedDEKey":
         return item.UsedDEs.find(de => regex.test(de.key));

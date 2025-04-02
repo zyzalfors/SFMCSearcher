@@ -98,6 +98,8 @@ export class CustomerJourney {
   }
 
   static Check(item, field, regex) {
+    field = Utility.Utility.FindCaseIns(CustomerJourney.searchFields, field);
+    if(!field) return;
     const actTypes = ["EMAILV2", "SMSSYNC", "WHATSAPPACTIVITY"];
     switch(field) {
       case "ActivityId":

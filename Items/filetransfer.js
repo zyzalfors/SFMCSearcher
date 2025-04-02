@@ -45,6 +45,8 @@ export class FileTransfer {
   }
 
   static Check(item, field, regex) {
+    field = Utility.Utility.FindCaseIns(FileTransfer.searchFields, field);
+    if(!field) return;
     return regex.test(item[field]);
   }
 

@@ -63,6 +63,8 @@ export class Automation {
   }
 
   static Check(item, field, regex) {
+    field = Utility.Utility.FindCaseIns(Automation.searchFields, field);
+    if(!field) return;
     switch(field) {
       case "Activity":
         return Array.isArray(item.Steps) &&

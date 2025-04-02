@@ -49,6 +49,8 @@ export class Script {
   }
 
   static Check(item, field, regex) {
+    field = Utility.Utility.FindCaseIns(Script.searchFields, field);
+    if(!field) return;
     return regex.test(item[field]);
   }
 

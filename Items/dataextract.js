@@ -48,6 +48,8 @@ export class DataExtract {
   }
 
   static Check(item, field, regex) {
+    field = Utility.Utility.FindCaseIns(DataExtract.searchFields, field);
+    if(!field) return;
     return regex.test(item[field]);
   }
 

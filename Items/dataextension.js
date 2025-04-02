@@ -75,6 +75,8 @@ export class DataExtension {
   }*/
 
   static Check(item, field, regex) {
+    field = Utility.Utility.FindCaseIns(DataExtension.searchFields, field);
+    if(!field) return;
     return regex.test(item[field]);
   }
 
