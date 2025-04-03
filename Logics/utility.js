@@ -88,6 +88,7 @@ export class Utility {
       delete storage.data[storage.i][itemsName];
       if(Object.keys(storage.data[storage.i]).length === n) storage.data.splice(storage.i, 1);
     }
+    else return;
     chrome.storage.local.set({data: storage.data});
   }
 
