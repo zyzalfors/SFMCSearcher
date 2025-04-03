@@ -27,8 +27,7 @@ function PopulateResults(results) {
   const cell = document.createElement("th");
   cell.addEventListener("click", ev => SortResults(ev.target));
   row.appendChild(cell);
-  for(const field in results[0]) {
-    if(!item.tableFields.includes(field)) continue;
+  for(const field of item.tableFields) {
     const cell = document.createElement("th");
     cell.addEventListener("click", ev => SortResults(ev.target));
     cell.innerHTML = field;
@@ -41,8 +40,7 @@ function PopulateResults(results) {
     const cell = document.createElement("td");
     cell.innerHTML = n;
     row.appendChild(cell);
-    for(const field in result) {
-      if(!item.tableFields.includes(field)) continue;
+    for(const field of item.tableFields) {
       const cell = document.createElement("td");
       cell.innerHTML = result[field];
       row.appendChild(cell);
