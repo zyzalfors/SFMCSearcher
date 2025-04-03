@@ -2,8 +2,8 @@ import * as Utility from "../Logics/utility.js";
 
 export class FilterDefinition {
 
-  static tableFields = ["BUId", "BUName", "CategoryId", "CreatedByName", "CreatedDate", "Id", "Key", "ModifiedByName", "ModifiedDate", "Name", "Path", "SourceDE", "Xml"];
-  static searchFields = ["CategoryId", "CreatedByName", "CreatedDate", "Id", "Key", "ModifiedByName", "ModifiedDate", "Name", "Path", "SourceDE", "Xml"];
+  static tableFields = ["BUId", "BUName", "Id", "Key", "Name", "Path", "SourceDE", "Xml", "CreatedByName", "CreatedDate", "ModifiedByName", "ModifiedDate"];
+  static searchFields = ["CreatedByName", "CreatedDate", "Id", "Key", "ModifiedByName", "ModifiedDate", "Name", "Path", "SourceDE", "Xml"];
   static itemsName = "FilterDefinitions";
   static type = "filterdefinition";
 

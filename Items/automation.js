@@ -2,8 +2,8 @@ import * as Utility from "../Logics/utility.js";
 
 export class Automation {
 
-  static tableFields = ["AlertEmails", "BUId", "BUName", "CategoryId", "CreatedByName", "CreatedDate", "Id", "Key", "LastRuntime", "Link", "ModifiedByName", "ModifiedDate", "Name", "Path", "Recurrence", "Status", "Subtype"];
-  static searchFields = ["Activity", "AlertEmails", "CategoryId", "CreatedByName", "CreatedDate", "Id", "Key", "LastRuntime", "ModifiedByName", "ModifiedDate", "Name", "Path", "Recurrence", "Status", "Subtype"];
+  static tableFields = ["BUId", "BUName", "Id", "Key", "Name", "Path", "Link", "Status", "LastRuntime", "Recurrence", "AlertEmails", "Subtype", "CreatedByName", "CreatedDate", "ModifiedByName", "ModifiedDate"];
+  static searchFields = ["Activity", "AlertEmails", "CreatedByName", "CreatedDate", "Id", "Key", "LastRuntime", "ModifiedByName", "ModifiedDate", "Name", "Path", "Recurrence", "Status", "Subtype"];
   static itemsName = "Automations";
   static type = "automation";
 

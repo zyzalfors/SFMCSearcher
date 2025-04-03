@@ -2,8 +2,8 @@ import * as Utility from "../Logics/utility.js";
 
 export class Filter {
 
-  static tableFields = ["BUId", "BUName", "CategoryId", "CreatedDate", "FilterDefinitionId", "FilterDefinitionName", "Id", "Key", "ModifiedDate", "Name", "Path"];
-  static searchFields = ["CategoryId", "CreatedDate", "FilterDefinitionId", "FilterDefinitionName", "Id", "Key", "ModifiedDate", "Name", "Path"];
+  static tableFields = ["BUId", "BUName", "Id", "Key", "Name", "Path", "Link", "FilterDefinitionId", "FilterDefinitionName", "CreatedByName", "CreatedDate", "ModifiedByName", "ModifiedDate"];
+  static searchFields = ["CreatedByName", "CreatedDate", "FilterDefinitionId", "FilterDefinitionName", "Id", "Key", "ModifiedByName", "ModifiedDate", "Name", "Path"];
   static itemsName = "Filters";
   static type = "filter";
 
@@ -12,11 +12,14 @@ export class Filter {
                 BUId: BUid,
                 BUName: BUname,
                 CategoryId: item.categoryId,
+                CreatedByName: item._createdByName,
                 CreatedDate: item.createdDate,
                 FilterDefinitionId: item.filterDefinitionId,
                 FilterDefinitionName: item._filterDefinitionName,
                 Id: item.filterActivityId,
                 Key: item.customerKey,
+                Link: "https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/#ActivityModal/303/" + item.filterActivityId,
+                ModifiedByName: item._modifiedByName,
                 ModifiedDate: item.modifiedDate,
                 Name: item.name,
                 Path: item._path,
@@ -38,6 +41,8 @@ export class Filter {
         const filterDefinition  = await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/filterdefinitions/" + pageItem.filterDefinitionId);
         pageItem._filterDefinitionName = filterDefinition?.name;
         pageItem._path = Utility.Utility.GetFullPath(pageItem.categoryId, folders);
+        pageItem._createdByName = filterDefinition?.createdByName;
+        pageItem._modifiedByName = filterDefinition?.modifiedByName;
         data.push(Filter.Build(pageItem, stack, BUid, BUname));
       }
       await Utility.Utility.SetStorage(BUid, BUname, Filter.itemsName, data);

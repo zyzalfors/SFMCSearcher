@@ -2,8 +2,8 @@ import * as Utility from "../Logics/utility.js";
 
 export class Cloudpage {
 
-  static tableFields = ["AssetId", "BUId", "BUName", "CategoryId", "Code", "ContentId", "CreatedDate", "ModifiedDate", "Name", "PageId", "Path", "Status", "Subtype", "Url"];
-  static searchFields = ["AssetId", "CategoryId", "Code", "ContentId", "CreatedDate", "ModifiedDate", "Name", "PageId", "Path", "Status", "Subtype", "Url"];
+  static tableFields = ["BUId", "BUName", "AssetId", "ContentId", "PageId", "Name", "Path", "Status", "Url", "Code", "Subtype", "CreatedDate", "ModifiedDate"];
+  static searchFields = ["AssetId", "Code", "ContentId", "CreatedDate", "ModifiedDate", "Name", "PageId", "Path", "Status", "Subtype", "Url"];
   static itemsName = "Cloudpages";
   static type = "cloudpage";
 

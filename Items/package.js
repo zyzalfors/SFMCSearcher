@@ -2,8 +2,8 @@ import * as Utility from "../Logics/utility.js";
 
 export class Package {
 
-  static tableFields = ["AuthEndpoint", "BUId", "BUName", "ClientId", "ClientSecret", "Id", "Link", "ModifiedDate", "Name", "Owner", "RestEndpoint", "Signature", "SoapEndpoint", "Status"];
-  static searchFields = ["AuthEndpoint", "ClientId", "ClientSecret", "Id", "ModifiedDate", "Name", "Owner", "RestEndpoint", "Signature", "SoapEndpoint", "Status"];
+  static tableFields = ["BUId", "BUName", "Id", "Name", "Link", "Owner", "Status", "ClientId", "ClientSecret", "AuthEndpoint", "RestEndpoint", "SoapEndpoint", "Signature", "InstallDate", "ModifiedDate"];
+  static searchFields = ["AuthEndpoint", "ClientId", "ClientSecret", "Id", "InstallDate", "ModifiedDate", "Name", "Owner", "RestEndpoint", "SoapEndpoint", "Status"];
   static itemsName = "Packages";
   static type = "package";
 
@@ -15,6 +15,7 @@ export class Package {
                 ClientId: item.Components[0]?.ClientId,
                 ClientSecret: item.Components[0]?.ClientSecret,
                 Id: item.PackageId,
+                InstallDate: item._installDate,
                 Link: "https://members.s" + stack + ".exacttarget.com/Content/Administration/InstalledPackages.aspx/" + item.PackageId + "/details",
                 ModifiedDate: item.ApplicationLastUpdated,
                 Name: item.Name,
@@ -35,6 +36,7 @@ export class Package {
     const pageItems = pageData.PackageData;
     for(const pageItem of pageItems) {
       const item = await Utility.Utility.FetchJSON("https://members.s" + stack + ".exacttarget.com/Content/Administration/InstalledPackagesService/loadPackageDetails?applicationId=" + pageItem.PackageId);
+      item._installDate = pageItem.InstallDate;
       data.push(Package.Build(item, stack, BUid, BUname));
     }
     await Utility.Utility.SetStorage(BUid, BUname, Package.itemsName, data);

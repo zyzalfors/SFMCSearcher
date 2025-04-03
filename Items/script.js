@@ -2,8 +2,8 @@ import * as Utility from "../Logics/utility.js";
 
 export class Script {
 
-  static tableFields = ["BUId", "BUName", "CategoryId", "Code", "CreatedDate", "Id", "Key", "Link", "ModifiedDate", "Name", "Path"];
-  static searchFields = ["CategoryId", "Code", "CreatedDate", "Id", "Key", "ModifiedDate", "Name", "Path"];
+  static tableFields = ["BUId", "BUName", "Id", "Key", "Name", "Path", "Link", "Code", "CreatedDate", "ModifiedDate"];
+  static searchFields = ["Code", "CreatedDate", "Id", "Key", "ModifiedDate", "Name", "Path"];
   static itemsName = "Scripts";
   static type = "script";
 

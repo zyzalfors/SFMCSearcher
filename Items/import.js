@@ -2,7 +2,7 @@ import * as Utility from "../Logics/utility.js";
 
 export class Import {
 
-  static tableFields = ["AlertEmail", "BUId", "BUName", "CreatedDate", "Id", "Key", "Link1", "Link2", "ModifiedDate", "Name", "Pattern", "SourceDE", "TargetDE"];
+  static tableFields = ["BUId", "BUName", "Id", "Key", "Name", "Link1", "Link2", "Pattern", "SourceDE", "TargetDE", "AlertEmail", "CreatedDate", "ModifiedDate"];
   static searchFields = ["AlertEmail", "CreatedDate", "Id", "Key", "ModifiedDate", "Name", "Pattern", "SourceDE", "TargetDE"];
   static itemsName = "Imports";
   static type = "import";

@@ -2,7 +2,7 @@ import * as Utility from "../Logics/utility.js";
 
 export class CustomerJourney {
 
-  static tableFields = ["BUId", "BUName", "CreatedDate", "EventDefinitionId", "EventDefinitionKey", "FilterCriteria", "Id", "Link", "ModifiedDate", "Name", "Path", "Schedule", "ScheduleMode", "SourceDE", "SourceDEId", "Status", "Version"];
+  static tableFields = ["BUId", "BUName", "Id", "Name", "Path", "Link", "SourceDE", "SourceDEId", "FilterCriteria", "Schedule", "ScheduleMode", "Status", "Version", "EventDefinitionId", "EventDefinitionKey", "CreatedDate", "ModifiedDate"];
   static searchFields = ["ActivityId", "ActivityName", "AssetId", "AssetKey", "AssetName", "CreatedDate", "EventDefinitionId", "EventDefinitionKey", "FilterCriteria", "Id", "ModifiedDate", "Name", "Path", "Schedule", "ScheduleMode", "SourceDE", "SourceDEId", "Status", "TriggeredSendId", "UsedDE"];
   static itemsName = "CustomerJourneys";
   static type = "customerjourney";
@@ -12,6 +12,7 @@ export class CustomerJourney {
                 Activities: item.activities,
                 BUId: BUid,
                 BUName: BUname,
+                CategoryId: item.categoryId,
                 ConfigurationArguments: item._configurationArguments,
                 CreatedDate: item.createdDate,
                 EventDefinitionId: item._eventDefinitionId,

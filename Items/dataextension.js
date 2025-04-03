@@ -2,8 +2,8 @@ import * as Utility from "../Logics/utility.js";
 
 export class DataExtension {
 
-  static tableFields = ["BUId", "BUName", "CategoryId", "CreatedByName", "CreatedDate", "Id", "Key", "Link", "ModifiedByName", "ModifiedDate", "Name", "Path", "RowCount", "Sendable", "SendableKey", "Subtype"];
-  static searchFields = ["CategoryId", "CreatedByName", "CreatedDate", "Id", "Key",  "ModifiedByName", "ModifiedDate", "Name", "Path", "RowCount", "Sendable", "SendableKey", "Subtype"];
+  static tableFields = ["BUId", "BUName", "Id", "Key", "Name", "Path", "Link", "RowCount", "Sendable", "SendableKey", "Subtype", "CreatedByName", "CreatedDate", "ModifiedByName", "ModifiedDate"];
+  static searchFields = ["CreatedByName", "CreatedDate", "Id", "Key",  "ModifiedByName", "ModifiedDate", "Name", "Path", "RowCount", "Sendable", "SendableKey", "Subtype"];
   static itemsName = "DataExtensions";
   static type = "dataextension";
 

@@ -2,8 +2,8 @@ import * as Utility from "../Logics/utility.js";
 
 export class DataExtract {
 
-  static tableFields = ["BUId", "BUName", "CreatedDate", "Id", "Key", "ModifiedDate", "Name", "Pattern"];
-  static searchFields = ["CreatedDate", "Id", "Key", "ModifiedDate", "Name", "Pattern"];
+  static tableFields = ["BUId", "BUName", "Id", "Key", "Name", "Link", "Pattern", "Subtype", "CreatedDate", "ModifiedDate"];
+  static searchFields = ["CreatedDate", "Id", "Key", "ModifiedDate", "Name", "Pattern", "Subtype"];
   static itemsName = "DataExtracts";
   static type = "dataextract";
 
@@ -15,6 +15,7 @@ export class DataExtract {
                 Fields: item.dataFields,
                 Id: item.dataExtractDefinitionId,
                 Key: item.key,
+                Link: "https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/?hub=1#ActivityModal/73/" + item.dataExtractDefinitionId,
                 ModifiedDate: item._modifiedDate,
                 Name: item.name,
                 Pattern: item.fileSpec,

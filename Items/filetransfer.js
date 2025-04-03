@@ -2,7 +2,7 @@ import * as Utility from "../Logics/utility.js";
 
 export class FileTransfer {
 
-  static tableFields = ["BUId", "BUName", "CreatedDate", "Destination", "Id", "Key", "ModifiedDate", "Name", "Pattern"];
+  static tableFields = ["BUId", "BUName", "Id", "Key", "Name", "Link", "Pattern", "Destination", "CreatedDate", "ModifiedDate"];
   static searchFields = ["CreatedDate", "Destination", "Id", "Key", "ModifiedDate", "Name", "Pattern"];
   static itemsName = "FileTransfers";
   static type = "filetransfer";
@@ -15,6 +15,7 @@ export class FileTransfer {
                 Destination: item._destination,
                 Id: item.id,
                 Key: item.customerKey,
+                Link: "https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/?hub=1#ActivityDetails/53/" + item.id,
                 ModifiedDate: item.modifiedDate,
                 Name: item.name,
                 Pattern: item.fileSpec,
@@ -35,7 +36,7 @@ export class FileTransfer {
       for(const pageItem of pageItems) {
         const item = await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/filetransfers/" + pageItem.id);
         const ftpLocation = ftpLocations.find(entry => entry.id === item.fileTransferLocationId);
-        item._destination = ftpLocation?.relPath;
+        item._destination = ftpLocation?.relPath || ftpLocation?.name;
         data.push(FileTransfer.Build(item, stack, BUid, BUname));
       }
       await Utility.Utility.SetStorage(BUid, BUname, FileTransfer.itemsName, data);
