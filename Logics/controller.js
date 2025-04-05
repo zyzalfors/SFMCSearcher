@@ -169,14 +169,17 @@ export class Controller {
   static async Process(BUid, actionName, itemsName, pattern, query, isRegex, caseIns, field) {
     const action = Controller.actions.find(entry => entry.name === actionName);
     if(!action) return;
+
     return await action.proc(BUid, itemsName, pattern, query, isRegex, caseIns, field);
   }
 
   static async LoadData(itemsName) {
     const item = Controller.items.find(entry => entry.itemsName === itemsName);
     if(!item) return;
+
     const stack = await Utility.Utility.GetStack();
     const BUdata = await Utility.Utility.GetBUData(stack);
+
     await Utility.Utility.ClearStorage(BUdata.BUid, itemsName);
     await item.load(stack, BUdata.BUid, BUdata.BUname);
   }
@@ -184,6 +187,7 @@ export class Controller {
   static async ReadData(BUid, itemsName) {
     const storage = await Utility.Utility.GetStorage(BUid);
     if(!Array.isArray(storage.data)) return [];
+
     const items = [];
     if(!BUid) {
       for(const i in storage.data) {
@@ -191,6 +195,7 @@ export class Controller {
       }
     }
     else if(storage.i > -1 && storage.data[storage.i][itemsName]) items.push(...storage.data[storage.i][itemsName].Items);
+
     return items;
   }
 
@@ -206,11 +211,14 @@ export class Controller {
       }
       return check(item, where.field, where.regex);
     };
+
     const parsed = new QueryParser.QueryParser(query).Parse(isRegex, caseIns);
     const item = Controller.items.find(entry => entry.itemsName.toLowerCase() === parsed.from.toLowerCase());
     if(!item) return [];
+
     const items = await Controller.ReadData(BUid, item.itemsName);
     if(items.length === 0) return [];
+
     const fields = ["Type"];
     if(!parsed.fields.includes("*")) {
       for(const parsedField of parsed.fields) {
@@ -219,24 +227,29 @@ export class Controller {
       }
       if(fields.length === 1) return [];
     }
+
     const filtered = parsed.where ? items.filter(entry => Check(entry, parsed.where, item.check)) : items;
     if(!parsed.fields.includes("*")) {
-      for(const entry of filtered) {
-        for(const field of Object.keys(entry)) {
-          if(!fields.includes(field)) delete entry[field];
+      for(const item of filtered) {
+        for(const field of Object.keys(item)) {
+          if(!fields.includes(field)) delete item[field];
         }
       }
     }
+
     return filtered;
   }
 
   static async SearchDataByInput(BUid, itemsName, pattern, isRegex, caseIns, field) {
     const items = await Controller.ReadData(BUid, itemsName);
     if(items.length === 0) return [];
+
     const item = Controller.items.find(entry => entry.type === items[0].Type);
     if(!item) return [];
+
     if(!isRegex) pattern = pattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const regex = caseIns ? new RegExp(pattern, "i") : new RegExp(pattern);
+
     return items.filter(entry => item.check(entry, field, regex));
   }
 
