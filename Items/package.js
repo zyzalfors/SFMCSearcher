@@ -31,20 +31,23 @@ export class Package {
   }
 
   static async Load(stack, BUid, BUname) {
-    const data = [];
     const pageData = await Utility.Utility.FetchJSON("https://members.s" + stack + ".exacttarget.com/Content/Administration/InstalledPackagesService/LoadInstalledPackages");
     const pageItems = pageData.PackageData;
+
+    const items = [];
     for(const pageItem of pageItems) {
       const item = await Utility.Utility.FetchJSON("https://members.s" + stack + ".exacttarget.com/Content/Administration/InstalledPackagesService/loadPackageDetails?applicationId=" + pageItem.PackageId);
       item._installDate = pageItem.InstallDate;
-      data.push(Package.Build(item, stack, BUid, BUname));
+
+      items.push(Package.Build(item, stack, BUid, BUname));
     }
-    await Utility.Utility.SetStorage(BUid, BUname, Package.itemsName, data);
+    await Utility.Utility.SetStorage(BUid, BUname, Package.itemsName, items);
   }
 
   static Check(item, field, regex) {
     field = Utility.Utility.FindCaseIns(Package.searchFields, field);
     if(!field) return;
+
     return regex.test(item[field]);
   }
 

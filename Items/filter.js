@@ -30,22 +30,28 @@ export class Filter {
   }
 
   static async Load(stack, BUid, BUname) {
-    const folders = await Filter.GetFolders(stack);
     const pageSize = 500;
+
     let page = 1, pageItems = [0];
+    const folders = await Filter.GetFolders(stack);
+
     while(pageItems.length > 0) {
-      const data = [];
       const pageData = await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/filters/?$page=" + page + "&$pagesize=" + pageSize);
       pageItems = pageData.items;
+
+      const items = [];
       for(const pageItem of pageItems) {
         const filterDefinition  = await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/filterdefinitions/" + pageItem.filterDefinitionId);
+
         pageItem._filterDefinitionName = filterDefinition?.name;
         pageItem._path = Utility.Utility.GetFullPath(pageItem.categoryId, folders);
         pageItem._createdByName = filterDefinition?.createdByName;
         pageItem._modifiedByName = filterDefinition?.modifiedByName;
-        data.push(Filter.Build(pageItem, stack, BUid, BUname));
+
+        items.push(Filter.Build(pageItem, stack, BUid, BUname));
       }
-      await Utility.Utility.SetStorage(BUid, BUname, Filter.itemsName, data);
+      await Utility.Utility.SetStorage(BUid, BUname, Filter.itemsName, items);
+
       if(pageItems.length < pageData.pageSize) break;
       page++;
     }
@@ -58,6 +64,7 @@ export class Filter {
   static Check(item, field, regex) {
     field = Utility.Utility.FindCaseIns(Filter.searchFields, field);
     if(!field) return;
+
     return regex.test(item[field]);
   }
 

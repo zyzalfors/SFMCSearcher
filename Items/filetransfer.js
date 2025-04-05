@@ -27,19 +27,24 @@ export class FileTransfer {
 
   static async Load(stack, BUid, BUname) {
     const pageSize = 500;
-    const ftpLocations = (await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/ftpLocations")).items;
+
     let page = 1, pageItems = [0];
+    const ftpLocations = (await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/ftpLocations")).items;
+
     while(pageItems.length > 0) {
-      const data = [];
       const pageData = await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/filetransfers?$page=" + page + "&$pagesize=" + pageSize);
       pageItems = pageData.items;
+
+      const items = [];
       for(const pageItem of pageItems) {
         const item = await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/filetransfers/" + pageItem.id);
         const ftpLocation = ftpLocations.find(entry => entry.id === item.fileTransferLocationId);
         item._destination = ftpLocation?.relPath || ftpLocation?.name;
-        data.push(FileTransfer.Build(item, stack, BUid, BUname));
+
+        items.push(FileTransfer.Build(item, stack, BUid, BUname));
       }
-      await Utility.Utility.SetStorage(BUid, BUname, FileTransfer.itemsName, data);
+      await Utility.Utility.SetStorage(BUid, BUname, FileTransfer.itemsName, items);
+
       if(pageItems.length < pageData.pageSize) break;
       page++;
     }
@@ -48,6 +53,7 @@ export class FileTransfer {
   static Check(item, field, regex) {
     field = Utility.Utility.FindCaseIns(FileTransfer.searchFields, field);
     if(!field) return;
+
     return regex.test(item[field]);
   }
 

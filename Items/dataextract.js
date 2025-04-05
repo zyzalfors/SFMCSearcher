@@ -28,21 +28,26 @@ export class DataExtract {
 
   static async Load(stack, BUid, BUname) {
     const pageSize = 500;
-    const extTypes = await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/dataextracttypes");
+
     let page = 1, pageItems = [0];
+    const extTypes = await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/dataextracttypes");
+
     while(pageItems.length > 0) {
-      const data = [];
       const pageData = await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/dataextracts?$page=" + page + "&$pagesize=" + pageSize);
       pageItems = pageData.items;
+
+      const items = [];
       for(const pageItem of pageItems) {
         const item = await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/dataextracts/" + pageItem.dataExtractDefinitionId);
         item._createdDate = pageItem.createdDate;
         item._modifiedDate = pageItem.modifiedDate;
         const extType = extTypes.find(entry => entry.extractId === item.dataExtractTypeId);
         item._subtype = extType?.name;
-        data.push(DataExtract.Build(item, stack, BUid, BUname));
+
+        items.push(DataExtract.Build(item, stack, BUid, BUname));
       }
-      await Utility.Utility.SetStorage(BUid, BUname, DataExtract.itemsName, data);
+      await Utility.Utility.SetStorage(BUid, BUname, DataExtract.itemsName, items);
+
       if(pageItems.length < pageData.pageSize) break;
       page++;
     }
@@ -51,6 +56,7 @@ export class DataExtract {
   static Check(item, field, regex) {
     field = Utility.Utility.FindCaseIns(DataExtract.searchFields, field);
     if(!field) return;
+
     return regex.test(item[field]);
   }
 

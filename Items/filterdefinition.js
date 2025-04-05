@@ -29,19 +29,23 @@ export class FilterDefinition {
   }
 
   static async Load(stack, BUid, BUname) {
-    const folders = await FilterDefinition.GetFolders(stack);
     const pageSize = 500;
+    const folders = await FilterDefinition.GetFolders(stack);
+
     for(const folder of folders) {
       let page = 1, pageItems = [0];
+
       while(pageItems.length > 0) {
-        const data = [];
         const pageData = await Utility.Utility.FetchJSON("https://mc.s" + stack + ".exacttarget.com/cloud/fuelapi/email/v1/filters/filterdefinition/category/" + folder.categoryId + "?$page=" + page + "&$pagesize=" + pageSize);
         pageItems = pageData.items;
+
+        const items = [];
         for(const pageItem of pageItems) {
           pageItem._path = Utility.Utility.GetFullPath(pageItem.categoryId, folders);
-          data.push(FilterDefinition.Build(pageItem, stack, BUid, BUname));
+          items.push(FilterDefinition.Build(pageItem, stack, BUid, BUname));
         }
-        await Utility.Utility.SetStorage(BUid, BUname, FilterDefinition.itemsName, data);
+        await Utility.Utility.SetStorage(BUid, BUname, FilterDefinition.itemsName, items);
+
         if(pageItems.length < pageData.pageSize) break;
         page++;
       }
@@ -55,6 +59,7 @@ export class FilterDefinition {
   static Check(item, field, regex) {
     field = Utility.Utility.FindCaseIns(FilterDefinition.searchFields, field);
     if(!field) return;
+
     return regex.test(item[field]);
   }
 

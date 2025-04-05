@@ -34,15 +34,18 @@ export class Automation {
   }
 
   static async Load(stack, BUid, BUname) {
-    const folders = await Automation.GetFolders(stack);
     let page = 1, pageItems = [0];
+    const folders = await Automation.GetFolders(stack);
+
     while(pageItems.length > 0) {
-      const data = [];
       const pageData = await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/fuelapi/legacy/v1/beta/automations/automation/definition/?$skip=" + (page - 1));
       pageItems = pageData.entry;
+
+      const items = [];
       for(const pageItem of pageItems) {
-        const item = await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/automations/" + pageItem.id);
         const alerts = (await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/fuelapi/legacy/v1/beta/automations/notifications/" + pageItem.id)).workers;
+
+        const item = await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/automations/" + pageItem.id);
         item._alertEmails = Array.isArray(alerts) ? alerts.reduce((emails, entry) => emails + "," + entry.definition, "").replace(",", "") : "";
         item._createdByName = pageItem.createdBy?.name;
         item._createdDate = pageItem.createdDate;
@@ -50,9 +53,11 @@ export class Automation {
         item._modifiedByName = pageItem.modifiedBy?.name;
         item._modifiedDate = pageItem.modifiedDate;
         item._path = Utility.Utility.GetFullPath(item.categoryId, folders);
-        data.push(Automation.Build(item, stack, BUid, BUname));
+
+        items.push(Automation.Build(item, stack, BUid, BUname));
       }
-      await Utility.Utility.SetStorage(BUid, BUname, Automation.itemsName, data);
+      await Utility.Utility.SetStorage(BUid, BUname, Automation.itemsName, items);
+
       if(pageItems.length < pageData.itemsPerPage) break;
       page++;
     }
@@ -65,10 +70,11 @@ export class Automation {
   static Check(item, field, regex) {
     field = Utility.Utility.FindCaseIns(Automation.searchFields, field);
     if(!field) return;
+
     switch(field) {
       case "Activity":
-        return Array.isArray(item.Steps) &&
-               item.Steps.find(step => Array.isArray(step.activities) && step.activities.find(act => regex.test(act.name)));
+        return Array.isArray(item.Steps) && item.Steps.find(step => Array.isArray(step.activities) && step.activities.find(act => regex.test(act.name)));
+
       default:
         return regex.test(item[field]);
     }

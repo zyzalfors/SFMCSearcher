@@ -31,12 +31,15 @@ export class Message {
 
   static async Load(stack, BUid, BUname) {
     let page = 1, pageItems = [0];
+
     while(pageItems.length > 0) {
-      const data = [];
       const pageData = await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/mobileconnectfuel3/fuelapi//legacy/v1/beta/mobile/message?view=details&version=3&$skip=" + (page - 1));
       pageItems = pageData.entry;
-      for(const pageItem of pageItems) data.push(Message.Build(pageItem, stack, BUid, BUname));
-      await Utility.Utility.SetStorage(BUid, BUname, Message.itemsName, data);
+
+      const items = [];
+      for(const pageItem of pageItems) items.push(Message.Build(pageItem, stack, BUid, BUname));
+      await Utility.Utility.SetStorage(BUid, BUname, Message.itemsName, items);
+
       if(pageItems.length < pageData.itemsPerPage) break;
       page++;
     }
@@ -45,6 +48,7 @@ export class Message {
   static Check(item, field, regex) {
     field = Utility.Utility.FindCaseIns(Message.searchFields, field);
     if(!field) return;
+
     return regex.test(item[field]);
   }
 
