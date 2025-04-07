@@ -66,6 +66,10 @@ input[type="file"] {
   display: none;
 }
 
+input:focus, textarea:focus {
+  outline: none;
+}
+
 textarea {
   background-color: var(--back-light-color);
   color: var(--text-dark-color);
@@ -123,10 +127,5 @@ button, label {
 
 button:hover, label:hover, #results th:hover {
   background-color: var(--back-darker-color);
-  transition: 0.3s;
-}
-
-select:hover, textarea:hover, input:hover {
-  background-color: var(--hover-color);
   transition: 0.3s;
 }

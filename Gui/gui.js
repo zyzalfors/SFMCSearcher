@@ -28,6 +28,7 @@ function PopulateResults(results) {
 
   const item = Controller.Controller.items.find(entry => entry.type === results[0].Type);
   if(!item) return;
+  const fields = Object.keys(results[0]);
 
   const row = document.createElement("tr");
   const cell = document.createElement("th");
@@ -35,9 +36,10 @@ function PopulateResults(results) {
   row.appendChild(cell);
 
   for(const field of item.tableFields) {
+    if(!fields.includes(field)) continue;
     const cell = document.createElement("th");
-    cell.addEventListener("click", ev => SortResults(ev.target));
     cell.innerHTML = field;
+    cell.addEventListener("click", ev => SortResults(ev.target));
     row.appendChild(cell);
   }
   table.appendChild(row);
@@ -50,6 +52,7 @@ function PopulateResults(results) {
     row.appendChild(cell);
 
     for(const field of item.tableFields) {
+      if(!fields.includes(field)) continue;
       const cell = document.createElement("td");
       cell.innerHTML = result[field];
       row.appendChild(cell);
@@ -133,7 +136,7 @@ async function UpdateBUs() {
   const storedBUdata = await Utility.Utility.GetStoredBUData();
   for(const data of storedBUdata) {
     const option = document.createElement("option");
-    option.text = data.BUname + " (" + data.BUid + ")";
+    option.text = `${data.BUname} (${data.BUid})`;
     option.value = data.BUid;
     select.appendChild(option);
   }
@@ -149,7 +152,7 @@ async function UpdateBUs() {
   try {
     const currBUdata = await Utility.Utility.GetBUData();
     if(storedBUdata.find(entry => entry.BUid == currBUdata.BUid)) select.value = currBUdata.BUid;
-    currBU.innerText = currBUdata.BUname + " (" + currBUdata.BUid + ")";
+    currBU.innerText = `${currBUdata.BUname} (${currBUdata.BUid})`;
   }
   catch(err) {
     console.log(err);
@@ -165,7 +168,7 @@ function UpdateQuery(select) {
   const pos = queryArea.selectionStart;
   if(!query.trim()) return;
 
-  document.getElementById("query").value = query.substring(0, pos) + select.value + query.substring(pos);
+  document.getElementById("query").value = `${query.substring(0, pos)}${select.value}${query.substring(pos)}`;
 }
 
 function ProcessKey(ev) {
