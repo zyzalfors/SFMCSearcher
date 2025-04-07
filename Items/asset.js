@@ -37,7 +37,7 @@ export class Asset {
     const folders = await Asset.GetFolders(stack);
 
     while(pageItems.length > 0) {
-      const pageData = await Utility.Utility.FetchJSON("https://mc.s" + stack + ".exacttarget.com/cloud/fuelapi/asset/v1/content/assets/query?scope=ours%2Cshared", "POST", body);
+      const pageData = await Utility.Utility.FetchJSON(`https://mc.s${stack}.exacttarget.com/cloud/fuelapi/asset/v1/content/assets/query?scope=ours%2Cshared`, "POST", body);
       pageItems = pageData.items;
 
       const items = [];
@@ -58,7 +58,7 @@ export class Asset {
     let page = 1, pageItems = [0];
 
     while(pageItems.length > 0) {
-      const pageData = await Utility.Utility.FetchJSON("https://content-builder.s" + stack + ".marketingcloudapps.com/fuelapi/asset/v1/content/categories?$page=" + page + "&$pagesize=" + pageSize);
+      const pageData = await Utility.Utility.FetchJSON(`https://content-builder.s${stack}.marketingcloudapps.com/fuelapi/asset/v1/content/categories?$page=${page}&$pagesize=${pageSize}`);
       pageItems = pageData.items;
       folders.push(...pageItems);
 

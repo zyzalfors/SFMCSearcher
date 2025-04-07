@@ -18,7 +18,7 @@ export class Filter {
                 FilterDefinitionName: item._filterDefinitionName,
                 Id: item.filterActivityId,
                 Key: item.customerKey,
-                Link: "https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/#ActivityModal/303/" + item.filterActivityId,
+                Link: `https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/#ActivityModal/303/${item.filterActivityId}`,
                 ModifiedByName: item._modifiedByName,
                 ModifiedDate: item.modifiedDate,
                 Name: item.name,
@@ -36,12 +36,12 @@ export class Filter {
     const folders = await Filter.GetFolders(stack);
 
     while(pageItems.length > 0) {
-      const pageData = await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/filters/?$page=" + page + "&$pagesize=" + pageSize);
+      const pageData = await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/filters/?$page=${page}&$pagesize=${pageSize}`);
       pageItems = pageData.items;
 
       const items = [];
       for(const pageItem of pageItems) {
-        const filterDefinition  = await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/filterdefinitions/" + pageItem.filterDefinitionId);
+        const filterDefinition  = await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/filterdefinitions/${pageItem.filterDefinitionId}`);
 
         pageItem._filterDefinitionName = filterDefinition?.name;
         pageItem._path = Utility.Utility.GetFullPath(pageItem.categoryId, folders);
@@ -58,7 +58,7 @@ export class Filter {
   }
 
   static async GetFolders(stack) {
-    return (await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/folders/?$filter=categorytype%20eq%20filteractivity")).items;
+    return (await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/folders/?$filter=categorytype%20eq%20filteractivity`)).items;
   }
 
   static Check(item, field, regex) {

@@ -20,7 +20,7 @@ export class CustomerJourney {
                 Exits: item.exits,
                 FilterCriteria: item._metaData?.criteriaDescription,
                 Id: item.id,
-                Link: "https://mc.s" + stack + ".exacttarget.com/cloud/#app/Journey%20Builder/%23" + item.id + "/" + item.version,
+                Link: `https://mc.s${stack}.exacttarget.com/cloud/#app/Journey%20Builder/%23${item.id}/${item.version}`,
                 ModifiedDate: item.modifiedDate,
                 Name: item.name,
                 Path: item._path,
@@ -44,13 +44,13 @@ export class CustomerJourney {
     const folders = await CustomerJourney.GetFolders(stack);
 
     while(pageItems.length > 0) {
-      const pageData = await Utility.Utility.FetchJSON("https://jbinteractions.s" + stack + ".marketingcloudapps.com/fuelapi/interaction/v1/interactions/?mostRecentVersionOnly=false&mostRecentVersionOrRunningOnly=true&extras=trigger&extras=activities&$page=" + page + "&$pagesize=" + pageSize);
+      const pageData = await Utility.Utility.FetchJSON(`https://jbinteractions.s${stack}.marketingcloudapps.com/fuelapi/interaction/v1/interactions/?mostRecentVersionOnly=false&mostRecentVersionOrRunningOnly=true&extras=trigger&extras=activities&$page=${page}&$pagesize=${pageSize}`);
       pageItems = pageData.items;
 
       const items = [];
       for(const pageItem of pageItems) {
         const eventDefinitionId = pageItem.triggers[0]?.metaData?.eventDefinitionId;
-        const eventDefinition = eventDefinitionId ? await Utility.Utility.FetchJSON("https://jbinteractions.s" + stack + ".marketingcloudapps.com/fuelapi/interaction/v1/eventDefinitions/" + eventDefinitionId) : null;
+        const eventDefinition = eventDefinitionId ? await Utility.Utility.FetchJSON(`https://jbinteractions.s${stack}.marketingcloudapps.com/fuelapi/interaction/v1/eventDefinitions/${eventDefinitionId}`) : null;
 
         pageItem._dataExtensionId = eventDefinition?.dataExtensionId;
         pageItem._dataExtensionName = eventDefinition?.dataExtensionName;
@@ -79,7 +79,7 @@ export class CustomerJourney {
           const right = {property: prop, simpleOperator: "equals", value: assetId};
           const body = {page: {page: 1, pageSize: 1}, query: {leftOperand: left, logicalOperator: "AND", rightOperand: right}, fields: assetFields};
 
-          const asset = (await Utility.Utility.FetchJSON("https://mc.s" + stack + ".exacttarget.com/cloud/fuelapi/asset/v1/content/assets/query?scope=ours%2Cshared", "POST", body)).items[0];
+          const asset = (await Utility.Utility.FetchJSON(`https://mc.s${stack}.exacttarget.com/cloud/fuelapi/asset/v1/content/assets/query?scope=ours%2Cshared`, "POST", body)).items[0];
           act._AssetId = asset?.id;
           act._AssetName = asset?.name;
           act._AssetKey = asset?.customerKey;
@@ -99,7 +99,7 @@ export class CustomerJourney {
     let page = 1, pageItems = [0];
 
     while(pageItems.length > 0) {
-      const pageData = await Utility.Utility.FetchJSON("https://jbinteractions.s" + stack + ".marketingcloudapps.com/fuelapi/platform-internal/v1/categories/?$filter=categorytype%20eq%20journey&$page=" + page + "&$pagesize=" + pageSize);
+      const pageData = await Utility.Utility.FetchJSON(`https://jbinteractions.s${stack}.marketingcloudapps.com/fuelapi/platform-internal/v1/categories/?$filter=categorytype%20eq%20journey&$page=${page}&$pagesize=${pageSize}`);
       pageItems = pageData.items;
       folders.push(...pageItems);
 
@@ -123,7 +123,7 @@ export class CustomerJourney {
         return Array.isArray(item.Activities) && item.Activities.find(entry => regex.test(entry.name));
 
       case "AssetId": case "AssetKey": case "AssetName":
-        return Array.isArray(item.Activities) && item.Activities.find(entry => actTypes.includes(entry.type) && regex.test(entry["_" + field]));
+        return Array.isArray(item.Activities) && item.Activities.find(entry => actTypes.includes(entry.type) && regex.test(entry[`_${field}`]));
 
       case "TriggeredSendId":
         return Array.isArray(item.Activities) && item.Activities.find(entry => actTypes.includes(entry.type) && regex.test(entry.configurationArguments?.triggeredSendId));

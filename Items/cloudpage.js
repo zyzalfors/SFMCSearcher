@@ -38,7 +38,7 @@ export class Cloudpage {
 
     const items1 = [];
     while(pageItems.length > 0) {
-      const pageData = await Utility.Utility.FetchJSON("https://cloud-pages.s" + stack + ".marketingcloudapps.com/fuelapi/internal/v2/cloudpages/contents?$page=" + page + "&$pagesize=" + pageSize);
+      const pageData = await Utility.Utility.FetchJSON(`https://cloud-pages.s${stack}.marketingcloudapps.com/fuelapi/internal/v2/cloudpages/contents?$page=${page}&$pagesize=${pageSize}`);
       pageItems = pageData.entities;
       items1.push(...pageItems);
 
@@ -52,7 +52,7 @@ export class Cloudpage {
       pageItems = [0];
 
       while(pageItems.length > 0) {
-        const pageData = await Utility.Utility.FetchJSON("https://cloud-pages.s" + stack + ".marketingcloudapps.com/fuelapi/internal/v2/cloudpages/" + type + "?$page=" + page + "&$pagesize=" + pageSize);
+        const pageData = await Utility.Utility.FetchJSON(`https://cloud-pages.s${stack}.marketingcloudapps.com/fuelapi/internal/v2/cloudpages/${type}?$page=${page}&$pagesize=${pageSize}`);
         pageItems = pageData.entities;
 
         for(const pageItem of pageItems) {
@@ -81,7 +81,7 @@ export class Cloudpage {
     let page = 1, pageItems = [0];
 
     while(pageItems.length > 0) {
-      const pageData = await Utility.Utility.FetchJSON("https://content-builder.s" + stack + ".marketingcloudapps.com/fuelapi/asset/v1/content/categories?categoryType=cloudpages&$page=" + page + "&$pagesize=" + pageSize);
+      const pageData = await Utility.Utility.FetchJSON(`https://content-builder.s${stack}.marketingcloudapps.com/fuelapi/asset/v1/content/categories?categoryType=cloudpages&$page=${page}&$pagesize=${pageSize}`);
       pageItems = pageData.items;
       folders.push(...pageItems);
 

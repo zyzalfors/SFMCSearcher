@@ -26,14 +26,14 @@ export class AttributeGroup {
     let page = 1, pageItems = [0];
 
     while(pageItems.length > 0) {
-      const pageData = await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/contactsmeta/fuelapi/contacts-internal/v1/attributeGroups/views/defaultView?$page=" + page + "&$pageSize=" + pageSize);
+      const pageData = await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/contactsmeta/fuelapi/contacts-internal/v1/attributeGroups/views/defaultView?$page=${page}&$pageSize=${pageSize}`);
       pageItems = pageData.data;
 
       const items = [];
       for(const pageItem of pageItems) {
         pageItem._usedDEs = [];
 
-        const item = await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/contactsmeta/fuelapi/contacts-internal/v1/attributeGroups/" + pageItem.definitionID + "/setDefinitions/views/defaultView?nestedPageSize=1000&$pageSize=1000&$page=1");
+        const item = await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/contactsmeta/fuelapi/contacts-internal/v1/attributeGroups/${pageItem.definitionID}/setDefinitions/views/defaultView?nestedPageSize=1000&$pageSize=1000&$page=1`);
         if(!Array.isArray(item.data)) {
           items.push(AttributeGroup.Build(pageItem, stack, BUid, BUname));
           continue;
@@ -45,7 +45,7 @@ export class AttributeGroup {
           const DEid = data.storageReferenceID?.value;
           if(!DEid) continue;
 
-          const DEitem = await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/contactsmeta/fuelapi/internal/v1/customobjects/" + DEid);
+          const DEitem = await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/contactsmeta/fuelapi/internal/v1/customobjects/${DEid}`);
           pageItem._usedDEs.push({id: DEitem.id, key: DEitem.customerKey, name: DEitem.name});
         }
 

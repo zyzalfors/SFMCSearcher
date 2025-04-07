@@ -36,7 +36,7 @@ export class FilterDefinition {
       let page = 1, pageItems = [0];
 
       while(pageItems.length > 0) {
-        const pageData = await Utility.Utility.FetchJSON("https://mc.s" + stack + ".exacttarget.com/cloud/fuelapi/email/v1/filters/filterdefinition/category/" + folder.categoryId + "?$page=" + page + "&$pagesize=" + pageSize);
+        const pageData = await Utility.Utility.FetchJSON(`https://mc.s${stack}.exacttarget.com/cloud/fuelapi/email/v1/filters/filterdefinition/category/${folder.categoryId}?$page=${page}&$pagesize=${pageSize}`);
         pageItems = pageData.items;
 
         const items = [];
@@ -53,7 +53,7 @@ export class FilterDefinition {
   }
 
   static async GetFolders(stack) {
-    return (await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/folders/?$filter=categorytype%20eq%20filterdefinition")).items;
+    return (await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/folders/?$filter=categorytype%20eq%20filterdefinition`)).items;
   }
 
   static Check(item, field, regex) {

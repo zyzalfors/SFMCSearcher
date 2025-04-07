@@ -16,7 +16,7 @@ export class Package {
                 ClientSecret: item.Components[0]?.ClientSecret,
                 Id: item.PackageId,
                 InstallDate: item._installDate,
-                Link: "https://members.s" + stack + ".exacttarget.com/Content/Administration/InstalledPackages.aspx/" + item.PackageId + "/details",
+                Link: `https://members.s${stack}.exacttarget.com/Content/Administration/InstalledPackages.aspx/${item.PackageId}/details`,
                 ModifiedDate: item.ApplicationLastUpdated,
                 Name: item.Name,
                 Owner: item.OwnerName,
@@ -31,12 +31,12 @@ export class Package {
   }
 
   static async Load(stack, BUid, BUname) {
-    const pageData = await Utility.Utility.FetchJSON("https://members.s" + stack + ".exacttarget.com/Content/Administration/InstalledPackagesService/LoadInstalledPackages");
+    const pageData = await Utility.Utility.FetchJSON(`https://members.s${stack}.exacttarget.com/Content/Administration/InstalledPackagesService/LoadInstalledPackages`);
     const pageItems = pageData.PackageData;
 
     const items = [];
     for(const pageItem of pageItems) {
-      const item = await Utility.Utility.FetchJSON("https://members.s" + stack + ".exacttarget.com/Content/Administration/InstalledPackagesService/loadPackageDetails?applicationId=" + pageItem.PackageId);
+      const item = await Utility.Utility.FetchJSON(`https://members.s${stack}.exacttarget.com/Content/Administration/InstalledPackagesService/loadPackageDetails?applicationId=${pageItem.PackageId}`);
       item._installDate = pageItem.InstallDate;
 
       items.push(Package.Build(item, stack, BUid, BUname));

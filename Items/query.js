@@ -16,7 +16,7 @@ export class Query {
                 CreatedDate: item.createdDate,
                 Id: item.queryDefinitionId,
                 Key: item.key,
-                Link: "https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/?hub=1#ActivityDetails/300/" + item.queryDefinitionId,
+                Link: `https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/?hub=1#ActivityDetails/300/${item.queryDefinitionId}`,
                 ModifiedDate: item.modifiedDate,
                 Name: item.name,
                 Path: item._path,
@@ -35,7 +35,7 @@ export class Query {
     const folders = await Query.GetFolders(stack);
 
     while(pageItems.length > 0) {
-      const pageData = await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/queries/?$page=" + page + "&$pagesize=" + pageSize);
+      const pageData = await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/queries/?$page=${page}&$pagesize=${pageSize}`);
       pageItems = pageData.items;
 
       const items = [];
@@ -51,7 +51,7 @@ export class Query {
   }
 
   static async GetFolders(stack) {
-    return (await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/folders/?$filter=categorytype%20eq%20queryactivity")).items;
+    return (await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/folders/?$filter=categorytype%20eq%20queryactivity`)).items;
   }
 
   static Check(item, field, regex) {

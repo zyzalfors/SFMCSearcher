@@ -16,7 +16,7 @@ export class Message {
                 FromName: item.fromName,
                 Id: item.id,
                 Keyword: item.keyword?.keyword,
-                Link: "https://mc.s" + stack + ".exacttarget.com/cloud/#app/MobileConnect/Mobile/%23!/message/view/" + item.id,
+                Link: `https://mc.s${stack}.exacttarget.com/cloud/#app/MobileConnect/Mobile/%23!/message/view/${item.id}`,
                 ModifiedDate: item.lastUpdated,
                 Name: item.name,
                 NextKeyword: item.nextKeyword?.keyword,
@@ -33,7 +33,7 @@ export class Message {
     let page = 1, pageItems = [0];
 
     while(pageItems.length > 0) {
-      const pageData = await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/mobileconnectfuel3/fuelapi//legacy/v1/beta/mobile/message?view=details&version=3&$skip=" + (page - 1));
+      const pageData = await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/mobileconnectfuel3/fuelapi//legacy/v1/beta/mobile/message?view=details&version=3&$skip=${(page - 1)}`);
       pageItems = pageData.entry;
 
       const items = [];

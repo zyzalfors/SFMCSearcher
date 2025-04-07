@@ -16,7 +16,7 @@ export class DataExtension {
                 CreatedDate: item.createdDate,
                 Id: item.id,
                 Key: item.key,
-                Link: "https://mc.s" + stack + ".marketingcloudapps.com/contactsmeta/admin.html#admin/data-extension/" + item.id + "/properties/",
+                Link: `https://mc.s${stack}.marketingcloudapps.com/contactsmeta/admin.html#admin/data-extension/${item.id}/properties/`,
                 ModifiedByName: item.modifiedByName,
                 ModifiedDate: item.modifiedDate,
                 Name: item.name,
@@ -39,7 +39,7 @@ export class DataExtension {
       let page = 1, pageItems = [0];
 
       while(pageItems.length > 0) {
-        const pageData = await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/contactsmeta/fuelapi/data-internal/v1/customobjects/category/" + folder.id + "?retrievalType=1&$page=" + page + "&$pagesize=" + pageSize);
+        const pageData = await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/contactsmeta/fuelapi/data-internal/v1/customobjects/category/${folder.id}?retrievalType=1&$page=${page}&$pagesize=${pageSize}`);
         pageItems = pageData.items;
 
         const items = [];
@@ -56,7 +56,7 @@ export class DataExtension {
   }
 
   static async GetAllFolders(stack, categoryFilter, categoryId, folders) {
-    const pageItems = (await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/contactsmeta/fuelapi/legacy/v1/beta/folder/" + categoryId + "/children?$where=allowedtypes%20in%20" + categoryFilter)).entry;
+    const pageItems = (await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/contactsmeta/fuelapi/legacy/v1/beta/folder/${categoryId}/children?$where=allowedtypes%20in%20${categoryFilter}`)).entry;
 
     for(const pageItem of pageItems) {
       folders.push(pageItem);
@@ -66,7 +66,7 @@ export class DataExtension {
 
   static async GetFolders(stack) {
     const categoryTypes = ["dataextension", "salesforcedataextension", "synchronizeddataextension", "shared_data", "shared_dataextension", "shared_salesforcedataextension"];
-    const categoryFilter = "(%27" + categoryTypes.join("%27,%27") + "%27)";
+    const categoryFilter = `(%27${categoryTypes.join("%27,%27")}%27)`;
 
     const folders = [];
     await DataExtension.GetAllFolders(stack, categoryFilter, 0, folders);

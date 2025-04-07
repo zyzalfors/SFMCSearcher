@@ -15,8 +15,8 @@ export class Import {
                 CreatedDate: item.createdDate,
                 Id: item.importDefinitionId,
                 Key: item.customerKey,
-                Link1: "https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/?hub=1#ActivityDetails/43/" + item.importDefinitionId,
-                Link2: "https://mc.s" + stack + ".marketingcloudapps.com/contactsmeta/admin.html#admin/import-definition/" + item.importDefinitionId + "/properties",
+                Link1: `https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/?hub=1#ActivityDetails/43/${item.importDefinitionId}`,
+                Link2: `https://mc.s${stack}.marketingcloudapps.com/contactsmeta/admin.html#admin/import-definition/${item.importDefinitionId}/properties`,
                 ModifiedDate: item.modifiedDate,
                 Name: item.name,
                 Pattern: item.fileNamingPattern,
@@ -33,12 +33,12 @@ export class Import {
     let page = 1, pageItems = [0];
 
     while(pageItems.length > 0) {
-      const pageData = await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/imports/?$page=" + page + "&$pagesize=" + pageSize);
+      const pageData = await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/imports/?$page=${page}&$pagesize=${pageSize}`);
       pageItems = pageData.items;
 
       const items = [];
       for(const pageItem of pageItems) {
-        const item = await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/imports/" + pageItem.importDefinitionId);
+        const item = await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/imports/${pageItem.importDefinitionId}`);
         items.push(Import.Build(item, stack, BUid, BUname));
       }
       await Utility.Utility.SetStorage(BUid, BUname, Import.itemsName, items);

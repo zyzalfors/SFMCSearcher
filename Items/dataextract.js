@@ -15,7 +15,7 @@ export class DataExtract {
                 Fields: item.dataFields,
                 Id: item.dataExtractDefinitionId,
                 Key: item.key,
-                Link: "https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/?hub=1#ActivityModal/73/" + item.dataExtractDefinitionId,
+                Link: `https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/?hub=1#ActivityModal/73/${item.dataExtractDefinitionId}`,
                 ModifiedDate: item._modifiedDate,
                 Name: item.name,
                 Pattern: item.fileSpec,
@@ -30,15 +30,15 @@ export class DataExtract {
     const pageSize = 500;
 
     let page = 1, pageItems = [0];
-    const extTypes = await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/dataextracttypes");
+    const extTypes = await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/dataextracttypes`);
 
     while(pageItems.length > 0) {
-      const pageData = await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/dataextracts?$page=" + page + "&$pagesize=" + pageSize);
+      const pageData = await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/dataextracts?$page=${page}&$pagesize=${pageSize}`);
       pageItems = pageData.items;
 
       const items = [];
       for(const pageItem of pageItems) {
-        const item = await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/dataextracts/" + pageItem.dataExtractDefinitionId);
+        const item = await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/dataextracts/${pageItem.dataExtractDefinitionId}`);
         item._createdDate = pageItem.createdDate;
         item._modifiedDate = pageItem.modifiedDate;
         const extType = extTypes.find(entry => entry.extractId === item.dataExtractTypeId);

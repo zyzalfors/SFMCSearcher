@@ -15,7 +15,7 @@ export class FileTransfer {
                 Destination: item._destination,
                 Id: item.id,
                 Key: item.customerKey,
-                Link: "https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/?hub=1#ActivityDetails/53/" + item.id,
+                Link: `https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/?hub=1#ActivityDetails/53/${item.id}`,
                 ModifiedDate: item.modifiedDate,
                 Name: item.name,
                 Pattern: item.fileSpec,
@@ -29,15 +29,15 @@ export class FileTransfer {
     const pageSize = 500;
 
     let page = 1, pageItems = [0];
-    const ftpLocations = (await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/ftpLocations")).items;
+    const ftpLocations = (await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/ftpLocations`)).items;
 
     while(pageItems.length > 0) {
-      const pageData = await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/filetransfers?$page=" + page + "&$pagesize=" + pageSize);
+      const pageData = await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/filetransfers?$page=${page}&$pagesize=${pageSize}`);
       pageItems = pageData.items;
 
       const items = [];
       for(const pageItem of pageItems) {
-        const item = await Utility.Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/filetransfers/" + pageItem.id);
+        const item = await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/filetransfers/${pageItem.id}`);
         const ftpLocation = ftpLocations.find(entry => entry.id === item.fileTransferLocationId);
         item._destination = ftpLocation?.relPath || ftpLocation?.name;
 
