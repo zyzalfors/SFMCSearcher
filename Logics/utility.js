@@ -4,10 +4,10 @@ export class Utility {
 
   static storageFields = ["BUId", "BUName"];
 
-  static Output(data, down) {
-    const url = "data:application/json," + encodeURIComponent(JSON.stringify(data, null, 1));
-
-    if(down) chrome.downloads.download({url: url, filename: "sfmcs_export.json", conflictAction: "uniquify", saveAs: true});
+  static Output(data, down, BUid, itemsName) {
+    const url = `data:application/json,${encodeURIComponent(JSON.stringify(data, null, 1))}`;
+    const name = `sfmcs_${BUid}_${itemsName}.json`;
+    if(down) chrome.downloads.download({url: url, filename: name, conflictAction: "uniquify", saveAs: true});
     else chrome.tabs.create({url: url});
   }
 
@@ -27,7 +27,7 @@ export class Utility {
   static async GetBUData(stack) {
     if(!stack) stack = await Utility.GetStack();
 
-    const BUdata = await Utility.FetchJSON("https://mc.s" + stack + ".marketingcloudapps.com/contactsmeta/fuelapi/platform-internal/v1/accounts/@current");
+    const BUdata = await Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/contactsmeta/fuelapi/platform-internal/v1/accounts/@current`);
     return {BUid: BUdata?.accountId, BUname: BUdata?.name};
   }
 
@@ -140,7 +140,7 @@ export class Utility {
     }
 
     if(!data) return;
-    else if(actionName === "export") Utility.Output(data, true);
+    else if(actionName === "export") Utility.Output(data, true, BUid, itemsName);
     else if(actionName === "view") Utility.Output(data);
   }
 
