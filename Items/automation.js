@@ -3,7 +3,7 @@ import * as Utility from "../Logics/utility.js";
 export class Automation {
 
   static tableFields = ["BUId", "BUName", "Id", "Key", "Name", "Path", "Link", "Status", "LastRuntime", "Recurrence", "AlertEmails", "Subtype", "CreatedByName", "CreatedDate", "ModifiedByName", "ModifiedDate"];
-  static searchFields = ["Activity", "AlertEmails", "CreatedByName", "CreatedDate", "Id", "Key", "LastRuntime", "ModifiedByName", "ModifiedDate", "Name", "Path", "Recurrence", "Status", "Subtype"];
+  static searchFields = ["ActivityName", "ActivityObjectId", "AlertEmails", "CreatedByName", "CreatedDate", "Id", "Key", "LastRuntime", "ModifiedByName", "ModifiedDate", "Name", "Path", "Recurrence", "Status", "StepAnnotation", "Subtype"];
   static itemsName = "Automations";
   static type = "automation";
 
@@ -72,8 +72,14 @@ export class Automation {
     if(!field) return;
 
     switch(field) {
-      case "Activity":
+      case "ActivityName":
         return Array.isArray(item.Steps) && item.Steps.find(step => Array.isArray(step.activities) && step.activities.find(act => regex.test(act.name)));
+
+      case "ActivityObjectId":
+        return Array.isArray(item.Steps) && item.Steps.find(step => Array.isArray(step.activities) && step.activities.find(act => regex.test(act.activityObjectId)));
+
+      case "StepAnnotation":
+        return Array.isArray(item.Steps) && item.Steps.find(step => regex.test(step.name));
 
       default:
         return regex.test(item[field]);
