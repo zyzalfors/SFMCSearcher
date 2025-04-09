@@ -205,11 +205,14 @@ export class Controller {
 
   static async SearchDataByQuery(BUid, query, isRegex, caseIns) {
     const Check = (item, where, check) => {
-      if(typeof where === "object") {
-        if(where.op === "AND") return Check(item, where.left, check) && Check(item, where.right, check);
-        if(where.op === "OR") return Check(item, where.left, check) || Check(item, where.right, check);
+      switch(where.op) {
+        case "AND":
+          return Check(item, where.left, check) && Check(item, where.right, check);
+        case "OR":
+          return Check(item, where.left, check) || Check(item, where.right, check);
+        default:
+          return check(item, where.field, where.regex);
       }
-      return check(item, where.field, where.regex);
     };
 
     const parsed = new QueryParser.QueryParser(query).Parse(isRegex, caseIns);

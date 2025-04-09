@@ -161,7 +161,7 @@ export class Utility {
       }
     }
 
-    return parts.reverse().join("/");
+    return parts.reverse().join(" > ");
   }
 
   static SanitizeObj(o) {
