@@ -5,7 +5,7 @@ export class Message {
   static tableFields = ["BUId", "BUName", "Id", "Name", "Link", "Code", "Concatenate", "FromName", "Keyword", "NextKeyword", "Status", "Template", "Text", "ModifiedDate"];
   static searchFields = ["Code", "Concatenate", "FromName", "Id", "Keyword", "ModifiedDate", "Name", "NextKeyword", "Status", "Template", "Text"];
   static itemsName = "Messages";
-  static type = "message";
+  static type = "Message";
 
   static Build(item, stack, BUid, BUname) {
     const o = {

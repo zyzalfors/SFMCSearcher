@@ -5,7 +5,7 @@ export class Query {
   static tableFields = ["BUId", "BUName", "Id", "Key", "Name", "Path", "Link", "TargetDE", "UpdateType", "Code", "CreatedDate", "ModifiedDate"];
   static searchFields = ["Code", "CreatedDate", "Id", "Key", "ModifiedDate", "Name", "Path", "TargetDE", "UpdateType"];
   static itemsName = "Queries";
-  static type = "query";
+  static type = "Query";
 
   static Build(item, stack, BUid, BUname) {
     const o = {

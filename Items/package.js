@@ -5,7 +5,7 @@ export class Package {
   static tableFields = ["BUId", "BUName", "Id", "Name", "Link", "Owner", "Status", "ClientId", "ClientSecret", "AuthEndpoint", "RestEndpoint", "SoapEndpoint", "Signature", "InstallDate", "ModifiedDate"];
   static searchFields = ["AuthEndpoint", "ClientId", "ClientSecret", "Id", "InstallDate", "ModifiedDate", "Name", "Owner", "RestEndpoint", "SoapEndpoint", "Status"];
   static itemsName = "Packages";
-  static type = "package";
+  static type = "Package";
 
   static Build(item, stack, BUid, BUname) {
     const o = {

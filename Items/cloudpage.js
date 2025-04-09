@@ -5,7 +5,7 @@ export class Cloudpage {
   static tableFields = ["BUId", "BUName", "AssetId", "ContentId", "PageId", "Name", "Path", "Status", "Url", "Code", "Subtype", "CreatedDate", "ModifiedDate"];
   static searchFields = ["AssetId", "Code", "ContentId", "CreatedDate", "ModifiedDate", "Name", "PageId", "Path", "Status", "Subtype", "Url"];
   static itemsName = "Cloudpages";
-  static type = "cloudpage";
+  static type = "Cloudpage";
 
   static Build(item, stack, BUid, BUname) {
     const o = {

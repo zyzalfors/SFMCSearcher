@@ -5,7 +5,7 @@ export class Import {
   static tableFields = ["BUId", "BUName", "Id", "Key", "Name", "Link1", "Link2", "Pattern", "SourceDE", "TargetDE", "AlertEmail", "CreatedDate", "ModifiedDate"];
   static searchFields = ["AlertEmail", "CreatedDate", "Id", "Key", "ModifiedDate", "Name", "Pattern", "SourceDE", "TargetDE"];
   static itemsName = "Imports";
-  static type = "import";
+  static type = "Import";
 
   static Build(item, stack, BUid, BUname) {
     const o = {

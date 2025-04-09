@@ -5,7 +5,7 @@ export class Script {
   static tableFields = ["BUId", "BUName", "Id", "Key", "Name", "Path", "Link", "Code", "CreatedDate", "ModifiedDate"];
   static searchFields = ["Code", "CreatedDate", "Id", "Key", "ModifiedDate", "Name", "Path"];
   static itemsName = "Scripts";
-  static type = "script";
+  static type = "Script";
 
   static Build(item, stack, BUid, BUname) {
     const o = {

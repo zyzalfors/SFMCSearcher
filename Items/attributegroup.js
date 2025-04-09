@@ -5,7 +5,7 @@ export class AttributeGroup {
   static tableFields = ["BUId", "BUName", "Id", "Name", "UseDEs"];
   static searchFields = ["Id", "Name", "UsedDEKey", "UsedDEName", "UseDEs"];
   static itemsName = "AttributeGroups";
-  static type = "attributegroup";
+  static type = "AttributeGroup";
 
   static Build(item, stack, BUid, BUname) {
     const o = {

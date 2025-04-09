@@ -5,7 +5,7 @@ export class FileTransfer {
   static tableFields = ["BUId", "BUName", "Id", "Key", "Name", "Link", "Pattern", "Destination", "CreatedDate", "ModifiedDate"];
   static searchFields = ["CreatedDate", "Destination", "Id", "Key", "ModifiedDate", "Name", "Pattern"];
   static itemsName = "FileTransfers";
-  static type = "filetransfer";
+  static type = "FileTransfer";
 
   static Build(item, stack, BUid, BUname) {
     const o = {

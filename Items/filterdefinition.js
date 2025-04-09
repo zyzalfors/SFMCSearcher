@@ -5,7 +5,7 @@ export class FilterDefinition {
   static tableFields = ["BUId", "BUName", "Id", "Key", "Name", "Path", "SourceDE", "Xml", "CreatedByName", "CreatedDate", "ModifiedByName", "ModifiedDate"];
   static searchFields = ["CreatedByName", "CreatedDate", "Id", "Key", "ModifiedByName", "ModifiedDate", "Name", "Path", "SourceDE", "Xml"];
   static itemsName = "FilterDefinitions";
-  static type = "filterdefinition";
+  static type = "FilterDefinition";
 
   static Build(item, stack, BUid, BUname) {
     const o = {

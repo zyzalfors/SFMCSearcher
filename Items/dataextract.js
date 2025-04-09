@@ -5,7 +5,7 @@ export class DataExtract {
   static tableFields = ["BUId", "BUName", "Id", "Key", "Name", "Link", "Pattern", "Subtype", "CreatedDate", "ModifiedDate"];
   static searchFields = ["CreatedDate", "Id", "Key", "ModifiedDate", "Name", "Pattern", "Subtype"];
   static itemsName = "DataExtracts";
-  static type = "dataextract";
+  static type = "DataExtract";
 
   static Build(item, stack, BUid, BUname) {
     const o = {

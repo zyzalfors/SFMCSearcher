@@ -5,7 +5,7 @@ export class DataExtension {
   static tableFields = ["BUId", "BUName", "Id", "Key", "Name", "Path", "Link", "RowCount", "Sendable", "SendableKey", "Subtype", "CreatedByName", "CreatedDate", "ModifiedByName", "ModifiedDate"];
   static searchFields = ["CreatedByName", "CreatedDate", "Id", "Key",  "ModifiedByName", "ModifiedDate", "Name", "Path", "RowCount", "Sendable", "SendableKey", "Subtype"];
   static itemsName = "DataExtensions";
-  static type = "dataextension";
+  static type = "DataExtension";
 
   static Build(item, stack, BUid, BUname) {
     const o = {

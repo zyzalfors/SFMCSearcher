@@ -5,7 +5,7 @@ export class Asset {
   static tableFields = ["BUId", "BUName", "Id", "Key", "Name", "Path", "Subtype", "CreatedByName", "CreatedDate", "ModifiedByName", "ModifiedDate"];
   static searchFields = ["CreatedByName", "CreatedDate", "Id", "Key", "ModifiedByName", "ModifiedDate", "Name", "Path", "Subtype"];
   static itemsName = "Assets";
-  static type = "asset";
+  static type = "Asset";
 
   static Build(item, stack, BUid, BUname) {
     const o = {
