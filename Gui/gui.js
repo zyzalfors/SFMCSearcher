@@ -22,18 +22,20 @@ function SortResults(th) {
 function PopulateResults(results) {
   const table = document.getElementById("results");
   table._asc = true;
-
   while(table.rows.length > 0) table.deleteRow(0);
+
   if(results.length === 0) return;
 
   const item = Controller.Controller.items.find(entry => entry.type === results[0].Type);
   if(!item) return;
-  const fields = Object.keys(results[0]);
 
   const row = document.createElement("tr");
   const cell = document.createElement("th");
+  cell.innerHTML = results[0].Type;
   cell.addEventListener("click", ev => SortResults(ev.target));
   row.appendChild(cell);
+
+  const fields = Object.keys(results[0]);
 
   for(const field of item.tableFields) {
     if(!fields.includes(field)) continue;
@@ -69,17 +71,23 @@ async function Process(button) {
   button.innerText += "ing...";
   button.disabled = true;
 
-  const BUid = document.getElementById("BUdata").value;
-  const itemsName = document.getElementById("itemsNames").value;
-  const field = document.getElementById("fields").value;
-  const pattern = document.getElementById("pattern").value;
-  const query = document.getElementById("query").value;
-  const isRegex = document.getElementById("isRegex").checked;
-  const caseIns = document.getElementById("caseIns").checked;
-
   try {
-    const results = await Controller.Controller.Process(BUid, actionName, itemsName, pattern, query, isRegex, caseIns, field);
-    if(results) PopulateResults(results);
+    switch(actionName) {
+      case "import":
+        document.getElementById("imp").click();
+        break;
+
+      default:
+        const BUid = document.getElementById("BUdata").value;
+        const itemsName = document.getElementById("itemsNames").value;
+        const field = document.getElementById("fields").value;
+        const pattern = document.getElementById("pattern").value;
+        const query = document.getElementById("query").value;
+        const isRegex = document.getElementById("isRegex").checked;
+        const caseIns = document.getElementById("caseIns").checked;
+        const results = await Controller.Controller.Process(BUid, actionName, itemsName, pattern, query, isRegex, caseIns, field);
+        if(results) PopulateResults(results);
+    }
   }
   catch(err) {
     console.log(err);
@@ -181,7 +189,7 @@ function ProcessKey(ev) {
       break;
 
     case "KeyI":
-      document.getElementById("import").click();
+      document.getElementById("imp").click();
       break;
 
     case "KeyC":
@@ -222,6 +230,9 @@ function ProcessImport(input) {
     catch(err) {
       window.alert(err);
     }
+    finally {
+      input.value = null;
+    }
   });
 
   reader.addEventListener("error", () => {
@@ -248,7 +259,7 @@ async function InitGui() {
   document.getElementById("fields").addEventListener("change", ev => UpdateQuery(ev.target));
   document.addEventListener("keydown", ev => ProcessKey(ev));
   for(const button of document.getElementsByTagName("button")) button.addEventListener("click", async () => await Process(button));
-  document.getElementById("import").addEventListener("change", ev => ProcessImport(ev.target));
+  document.getElementById("imp").addEventListener("change", ev => ProcessImport(ev.target));
 
   await UpdateBUs();
   await UpdateFields();
