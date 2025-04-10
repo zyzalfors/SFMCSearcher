@@ -79,18 +79,32 @@ export class QueryParser {
     for(const i in this.tokens) {
       const token = this.tokens[i];
 
-      if(this.state === "START" && /^SELECT$/i.test(token)) this.state = "SELECT_FIELD";
-      else if(this.state === "SELECT_FIELD" && QueryParser.IsLiteral(token)) parsed.fields.push(token);
-      else if(this.state === "SELECT_FIELD" && /^FROM$/i.test(token)) this.state = "FROM";
-      else if(this.state === "FROM" && QueryParser.IsLiteral(token)) {
-        this.state = "TABLE";
-        parsed.from = token;
-      }
-      else if(this.state === "TABLE" && /^WHERE$/i.test(token)) this.state = "WHERE";
-      else if(this.state === "WHERE" && QueryParser.IsLiteral(token)) {
-        this.state = "WHERE_COND";
-        parsed.where = this.ParseWhere(i, isRegex, caseIns);
-        break;
+      switch(true) {
+        case this.state === "START" && /^SELECT$/i.test(token):
+          this.state = "SELECT_FIELD";
+          break;
+
+        case this.state === "SELECT_FIELD" && QueryParser.IsLiteral(token):
+          parsed.fields.push(token);
+          break;
+
+        case this.state === "SELECT_FIELD" && /^FROM$/i.test(token):
+          this.state = "FROM";
+          break;
+
+        case this.state === "FROM" && QueryParser.IsLiteral(token):
+          this.state = "TABLE";
+          parsed.from = token;
+          break;
+
+        case this.state === "TABLE" && /^WHERE$/i.test(token):
+          this.state = "WHERE";
+          break;
+
+        case this.state === "WHERE" && QueryParser.IsLiteral(token):
+          this.state = "WHERE_COND";
+          parsed.where = this.ParseWhere(i, isRegex, caseIns);
+          break;
       }
     }
 
