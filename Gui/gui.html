@@ -5,57 +5,66 @@
     <link rel="stylesheet" href="gui.css" defer>
 </head>
 <body>
-    <table id="inputs">
-        <tr>
-            <td>SFMC Searcher</td>
-        </tr>
-        <tr>
-            <td>Version:</td>
-            <td id="ver"></td>
-        </tr>
-        <tr>
-            <td>Current BU:</td>
-            <td id="currBU"></td>
-        </tr>
-        <tr>
-            <td>BU:</td>
-            <td><select id="BUdata"></select></td>
-        </tr>
-        <tr>
-            <td>Items:</td>
-            <td><select id="itemsNames"></select></td>
-        </tr>
-        <tr>
-            <td>Field:</td>
-            <td><select id="fields"></select></td>
-        </tr>
-        <tr>
-            <td>Pattern:</td>
-            <td><input type="text" id="pattern"></td>
-        </tr>
-        <tr>
-            <td>Query:</td>
-            <td><textarea id="query"></textarea></td>
-        </tr>
-        <tr>
-            <td>Regular expression:</td>
-            <td><input type="checkbox" id="isRegex"></td>
-        </tr>
-        <tr>
-            <td>Case insensitive:</td>
-            <td><input type="checkbox" id="caseIns" checked></td>
-        </tr>
-    </table>
-    <table id="buttons">
-        <tr>
-            <td><button id="load">Load</button></td>
-            <td><button id="import">Import</button><input type="file" id="imp"/></td>
-            <td><button id="clear">Clear</button></td>
-            <td><button id="export">Export</button></td>
-            <td><button id="view">View</button></td>
-            <td><button id="search">Search</button></td>
-        </tr>
-    </table>
-    <table id="results"></table>
+    <div id="header">
+        <div id="logo"><img src="./Sources/logo.png"></div>
+        <div id="name">SFMC Searcher</div>
+        <div id="bu"></div>
+        <div id="search-img"><img src="./Sources/search.png"></div>
+        <div id="load-img"><img src="./Sources/load.png"></div>
+        <div id="export-img"><img src="./Sources/export.png"></div>
+    </div>
+    <div class="cell">
+        <div>
+            <div class="row search export">
+                <div class="cell"><select id="stored-budata"></select></div>
+            </div>
+            <div class="row search export">
+                <div class="cell"><select id="stored-itemsnames"></select></div>
+            </div>
+            <div class="row search">
+                <div class="cell"><select id="itemfields"></select></div>
+            </div>
+            <div class="row search">
+                <div class="cell"><input id="pattern" type="text" placeholder="Type pattern ..."></div>
+            </div>
+            <div class="row search">
+                <div class="cell"><textarea id="query" placeholder="Type query ..."></textarea></div>
+            </div>
+            <div class="row search">
+                <div class="cell">
+                    <div class="check"><input id="isregex" type="checkbox"></div>
+                    <div class="label"><label for="isregex">Regular expression</label></div>
+                </div>
+            </div>
+            <div class="row search">
+                <div class="cell">
+                    <div class="check"><input id="caseins" type="checkbox" checked></div>
+                    <div class="label"><label for="caseins">Case insensitive</label></div>
+                </div>
+            </div>
+            <div class="row search">
+                <div class="cell"><button id="search">Search</button></div>
+            </div>
+            <div class="row load" style="display:none">
+                <div class="cell"><select id="load-itemsnames"></select></div>
+            </div>
+            <div class="row load" style="display:none">
+                <div class="cell"><button id="load">Load</button></div>
+            </div>
+            <div class="row load" style="display:none">
+                <div class="cell"><button id="import">Import</button><input type="file" id="imp"/></div>
+            </div>
+            <div class="row export" style="display:none">
+                <div class="cell"><button id="clear">Clear</button></div>
+            </div>
+            <div class="row export" style="display:none">
+                <div class="cell"><button id="export">Export</button></div>
+            </div>
+            <div class="row export" style="display:none">
+                <div class="cell"><button id="view">View</button></div>
+            </div>
+        </div>
+        <div><table id="results"></table></div>
+    </div>
 </body>
 </html>

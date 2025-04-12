@@ -1,51 +1,125 @@
 :root {
-  --back-light-color: #ffffff;
-  --back-dark-color: #0b5cab;
-  --back-darker-color: #032d60;
-  --text-light-color: #ffffff;
-  --text-dark-color: #000000;
+  --sf-orange: #E98300;
+  --sf-blue: #0D9DDA;
+  --sf-dark-blue: #0B5CAB;
+  --sf-darker-blue: #032d60;
   --border-color: #747474;
   --row-color: #f2f2f2;
+  --text-color: white;
+  --checked-color: black;
   --font-family: verdana, sans-serif;
-  --font-size: 13px;
-  --width: 300px;
 }
 
 * {
   font-family: var(--font-family);
-  font-size: var(--font-size);
 }
 
-body {
-  background-color: var(--back-light-color);
+#header {
+  display: flex;
+  margin: 0;
+  border: 0;
+  padding: 0;
+  border-bottom: 5px solid var(--sf-orange);
+}
+
+#logo, #search-img, #load-img, #export-img {
+  margin: 0;
+  border: 0;
+  padding: 6px;
+  height: auto;
+}
+
+#logo > img, #search-img > img, #load-img > img, #export-img > img {
+  height: 32px;
+  width: 32px;
+}
+
+#search-img > img:hover, #load-img > img:hover, #export-img > img:hover {
+  cursor: pointer;
+}
+
+#name {
+  margin: 0;
+  border: 0;
+  padding: 10px 6px;
+  color: var(--sf-blue);
+  font-weight: bold;
+  font-size: 15px;
+}
+
+#bu {
+  margin: 0;
+  border: 0;
+  padding-left: 6px;
+  padding-right: 6px;
+  padding-top: 12px;
+  padding-bottom: 10px;
+  color: var(--sf-dark-blue);
+  font-weight: lighter;
+  font-size: 13px;
+}
+
+.table {
+  display: table;
+  margin: 0;
+  border: 0;
+  padding: 0;
+}
+
+.row {
+  display: table-row;
+  margin: 0;
+  border: 0;
+  padding: 0;
+}
+
+.cell {
+  display: flex;
+  margin: 0;
+  border: 0;
+  padding: 6px;
+}
+
+.check {
+  padding-left: 0;
+  padding-right: 6px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.label {
+  margin: 0;
+  border: 0;
+  padding: 0;
 }
 
 select {
-  background-color: inherit;
-  color: var(--text-dark-color);
+  margin: 0;
   border: 1px solid var(--border-color);
-  width: calc(var(--width) + 5px);
-}
-
-option {
-  background-color: var(--back-light-color);
-  color: var(--text-dark-color);
+  padding: 6px;
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
 }
 
 input[type="text"] {
-  background-color: inherit;
-  color: var(--text-dark-color);
+  margin: 0;
   border: 1px solid var(--border-color);
-  width: var(--width);
+  padding: 6px;
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
 }
 
 input[type="checkbox"] {
-  background-color: inherit;
+  margin: 0;
   border: 1px solid var(--border-color);
+  padding: 0;
   width: 16px;
   height: 16px;
   margin: 0px 0px 0px 0px;
   appearance: none;
+  border-radius: 6px;
 }
 
 input[type="checkbox"]:checked::after {
@@ -53,7 +127,7 @@ input[type="checkbox"]:checked::after {
   display: block;
   width: 5px;
   height: 10px;
-  border: solid var(--text-dark-color);
+  border: solid var(--checked-color);
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
   position: relative;
@@ -65,26 +139,44 @@ input[type="file"] {
 }
 
 textarea {
-  background-color: inherit;
-  color: var(--text-dark-color);
+  margin: 0;
   border: 1px solid var(--border-color);
-  width: var(--width);
-  height: 54px;
+  padding: 6px;
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
 }
 
 select:focus, input:focus, textarea:focus {
   outline: none;
 }
 
-#inputs td {
-  background-color: inherit;
-  color: var(--text-dark-color);
-  padding: 6px 0px;
+button {
+  background-color: var(--sf-dark-blue);
+  color: var(--text-color);
+  margin: 0;
+  border: 0;
+  padding: 2px 55px;
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+}
+
+button:hover, #results th:hover {
+  cursor: pointer;
+  background-color: var(--sf-darker-blue);
+  transition: 0.3s;
+}
+
+button:active {
+  transform: translateY(2px);
 }
 
 #results th {
-  background-color: var(--back-dark-color);
-  color: var(--text-light-color);
+  background-color: var(--sf-dark-blue);
+  color: var(--text-color);
+  margin: 0;
+  border: 0;
   padding: 12px;
   text-align: left;
   position: sticky;
@@ -92,38 +184,12 @@ select:focus, input:focus, textarea:focus {
 }
 
 #results td {
-  color: var(--text-dark-color);
+  margin: 0;
+  border: 0;
   padding: 12px;
   text-align: left;
 }
 
 #results tr:nth-child(even) {
   background-color: var(--row-color);
-}
-
-#results tr:nth-child(odd) {
-  background-color: var(--back-light-color);
-}
-
-#buttons td {
-  background-color: inherit;
-  padding: 6px 0px;
-}
-
-button {
-  background-color: var(--back-dark-color);
-  color: var(--text-light-color);
-  border: none;
-  padding: 2px 55px;
-  text-align: center;
-  width: 160px;
-}
-
-button:hover, label:hover, #results th:hover {
-  background-color: var(--back-darker-color);
-  transition: 0.3s;
-}
-
-button:active {
-  transform: translateY(2px);
 }

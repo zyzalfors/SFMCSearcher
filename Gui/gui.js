@@ -77,16 +77,23 @@ async function Process(button) {
         document.getElementById("imp").click();
         break;
 
-      default:
-        const BUid = document.getElementById("BUdata").value;
-        const itemsName = document.getElementById("itemsNames").value;
-        const field = document.getElementById("fields").value;
+      case "clear": case "export": case "search": case "view":  {
+        const BUid = document.getElementById("stored-budata").value;
+        const itemsName = document.getElementById("stored-itemsnames").value;
+        const field = document.getElementById("itemfields").value;
         const pattern = document.getElementById("pattern").value;
         const query = document.getElementById("query").value;
-        const isRegex = document.getElementById("isRegex").checked;
-        const caseIns = document.getElementById("caseIns").checked;
+        const isRegex = document.getElementById("isregex").checked;
+        const caseIns = document.getElementById("caseins").checked;
         const results = await Controller.Controller.Process(BUid, actionName, itemsName, pattern, query, isRegex, caseIns, field);
         if(results) PopulateResults(results);
+      }
+      break;
+
+      default: {
+        const itemsName = document.getElementById("load-itemsnames").value;
+        await Controller.Controller.Process(null, actionName, itemsName);
+      }
     }
   }
   catch(err) {
@@ -96,87 +103,8 @@ async function Process(button) {
   finally {
     button.innerText = text;
     button.disabled = false;
-
-    if(["load", "clear"].includes(actionName)) {
-      await UpdateBUs();
-      await UpdateGui();
-    }
+    if(["load", "clear"].includes(actionName)) await InitBUData();
   }
-}
-
-async function UpdateFields() {
-  const select = document.getElementById("fields");
-  while(select.options.length > 0) select.remove(0);
-
-  const itemsName = document.getElementById("itemsNames").value;
-  const item = Controller.Controller.items.find(entry => entry.itemsName === itemsName);
-  if(!item) return;
-
-  for(const field of item.searchFields) {
-    const option = document.createElement("option");
-    option.value = field;
-    option.text = field;
-    select.appendChild(option);
-  }
-
-  await UpdateGui();
-}
-
-async function UpdateGui() {
-  const BUid = document.getElementById("BUdata").value;
-  const itemsName = document.getElementById("itemsNames").value;
-  const storage = await Utility.Utility.GetStorage(BUid);
-
-  const vis = Array.isArray(storage.data) && (
-    (storage.i < 0 && storage.data.find(entry => entry[itemsName])) ||
-    (storage.i > -1 && storage.data[storage.i][itemsName])) ? "" : "none";
-
-  document.getElementById("clear").style.display = vis;
-  document.getElementById("export").style.display = vis;
-  document.getElementById("view").style.display = vis;
-  document.getElementById("search").style.display = vis;
-}
-
-async function UpdateBUs() {
-  const select = document.getElementById("BUdata");
-  while(select.options.length > 0) select.remove(0);
-
-  const storedBUdata = await Utility.Utility.GetStoredBUData();
-  for(const data of storedBUdata) {
-    const option = document.createElement("option");
-    option.text = `${data.BUname} (${data.BUid})`;
-    option.value = data.BUid;
-    select.appendChild(option);
-  }
-
-  if(storedBUdata.length > 1) {
-    const option = document.createElement("option");
-    option.text = "--All--";
-    option.value = "";
-    select.appendChild(option);
-  }
-
-  const currBU = document.getElementById("currBU");
-  try {
-    const currBUdata = await Utility.Utility.GetBUData();
-    if(storedBUdata.find(entry => entry.BUid == currBUdata.BUid)) select.value = currBUdata.BUid;
-    currBU.innerText = `${currBUdata.BUname} (${currBUdata.BUid})`;
-  }
-  catch(err) {
-    console.log(err);
-  }
-  finally {
-    if(!currBU.innerText) currBU.innerText = "-";
-  }
-}
-
-function UpdateQuery(select) {
-  const queryArea = document.getElementById("query");
-  const query = queryArea.value;
-  const pos = queryArea.selectionStart;
-  if(!query.trim()) return;
-
-  document.getElementById("query").value = `${query.substring(0, pos)}${select.value}${query.substring(pos)}`;
 }
 
 function ProcessKey(ev) {
@@ -189,7 +117,7 @@ function ProcessKey(ev) {
       break;
 
     case "KeyI":
-      document.getElementById("imp").click();
+      button = document.getElementById("imp");
       break;
 
     case "KeyC":
@@ -209,7 +137,7 @@ function ProcessKey(ev) {
       break;
   }
 
-  if(button && !button.disabled && !button.style.display) Process(button);
+  if(button && !button.disabled) button.click();
 }
 
 function ProcessImport(input) {
@@ -224,8 +152,7 @@ function ProcessImport(input) {
       if(!action) return;
 
       await action.proc(JSON.parse(reader.result));
-      await UpdateBUs();
-      await UpdateGui();
+      await InitBUData();
     }
     catch(err) {
       window.alert(err);
@@ -242,27 +169,122 @@ function ProcessImport(input) {
   reader.readAsText(file);
 }
 
-async function InitGui() {
-  document.getElementById("ver").innerText = chrome.runtime.getManifest().version;
+function InitItemFields() {
+  const itemFields = document.getElementById("itemfields");
+  while(itemFields.options.length > 0) itemFields.remove(0);
 
-  const select = document.getElementById("itemsNames");
-  for(const item of Controller.Controller.items) {
+  const itemsName = document.getElementById("stored-itemsnames").value;
+  const item = Controller.Controller.items.find(entry => entry.itemsName === itemsName);
+  if(!item) return;
+
+  for(const field of item.searchFields) {
     const option = document.createElement("option");
-    option.text = item.itemsName;
-    option.value = item.itemsName;
-    select.appendChild(option);
+    option.value = field;
+    option.text = field;
+    itemFields.appendChild(option);
+  }
+}
+
+async function InitItemsNames() {
+  const itemsNames = document.getElementById("stored-itemsnames");
+  while(itemsNames.options.length > 0) itemsNames.remove(0);
+
+  const BUid = document.getElementById("stored-budata").value;
+  const storage = await Utility.Utility.GetStorage(BUid);
+  if(!Array.isArray(storage.data)) return;
+
+  let data;
+  if(!BUid) data = storage.data;
+  else if(storage.i > -1) data = [storage.data[storage.i]];
+
+  const fields = [...Utility.Utility.storageFields];
+
+  for(const entry of data) {
+    for(const field in entry) {
+      if(fields.includes(field)) continue;
+      fields.push(field);
+
+      const option = document.createElement("option");
+      option.value = field;
+      option.text = field;
+      itemsNames.appendChild(option);
+    }
   }
 
-  select.addEventListener("change", async () => await UpdateFields());
-  document.getElementById("BUdata").addEventListener("change", async () => await UpdateGui());
-  document.getElementById("itemsNames").addEventListener("change", ev => UpdateQuery(ev.target));
-  document.getElementById("fields").addEventListener("change", ev => UpdateQuery(ev.target));
-  document.addEventListener("keydown", ev => ProcessKey(ev));
-  for(const button of document.getElementsByTagName("button")) button.addEventListener("click", async () => await Process(button));
-  document.getElementById("imp").addEventListener("change", ev => ProcessImport(ev.target));
+  InitItemFields();
+}
 
-  await UpdateBUs();
-  await UpdateFields();
+async function InitBUData() {
+  const BUdata = document.getElementById("stored-budata");
+  while(BUdata.options.length > 0) BUdata.remove(0);
+
+  const data = await Utility.Utility.GetStoredBUData();
+  if(data.length > 1) {
+    const option = document.createElement("option");
+    option.text = "--All--";
+    option.value = "";
+    BUdata.appendChild(option);
+  }
+
+  for(const entry of data) {
+    const option = document.createElement("option");
+    option.text = `${entry.BUname} (${entry.BUid})`;
+    option.value = entry.BUid;
+    BUdata.appendChild(option);
+  }
+
+  await InitItemsNames();
+}
+
+function InitSearchGui() {
+  for(const div of document.getElementsByClassName("load")) div.style.display = "none";
+  for(const div of document.getElementsByClassName("export")) div.style.display = "none";
+  for(const div of document.getElementsByClassName("search")) div.style.display = "";
+}
+
+function InitLoadGui() {
+  for(const div of document.getElementsByClassName("search")) div.style.display = "none";
+  for(const div of document.getElementsByClassName("export")) div.style.display = "none";
+  for(const div of document.getElementsByClassName("load")) div.style.display = "";
+}
+
+function InitExportGui() {
+  for(const div of document.getElementsByClassName("load")) div.style.display = "none";
+  for(const div of document.getElementsByClassName("search")) div.style.display = "none";
+  for(const div of document.getElementsByClassName("export")) div.style.display = "";
+}
+
+async function InitGui() {
+  try {
+    document.getElementById("name").innerText += ` v${chrome.runtime.getManifest().version}`;
+
+    const data = await Utility.Utility.GetBUData();
+    document.getElementById("bu").innerText = `${data.BUname} (${data.BUid})`;
+
+    document.getElementById("search-img").addEventListener("click", () => InitSearchGui());
+    document.getElementById("load-img").addEventListener("click", () => InitLoadGui());
+    document.getElementById("export-img").addEventListener("click", () => InitExportGui());
+
+    document.getElementById("stored-budata").addEventListener("change", async () => await InitItemsNames());
+    document.getElementById("stored-itemsnames").addEventListener("change", () => InitItemFields());
+
+    const itemsNames = document.getElementById("load-itemsnames");
+    for(const item of Controller.Controller.items) {
+      const option = document.createElement("option");
+      option.text = item.itemsName;
+      option.value = item.itemsName;
+      itemsNames.appendChild(option);
+    }
+
+    for(const btn of document.getElementsByTagName("button")) btn.addEventListener("click", async ev => await Process(ev.target));
+    document.getElementById("imp").addEventListener("change", ev => ProcessImport(ev.target));
+    document.addEventListener("keydown", ev => ProcessKey(ev));
+
+    await InitBUData();
+  }
+  catch(err) {
+    console.log(err);
+  }
 }
 
 await InitGui();
