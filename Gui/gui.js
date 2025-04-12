@@ -191,10 +191,10 @@ async function InitItemsNames() {
 
   const BUid = document.getElementById("stored-budata").value;
   const storage = await Utility.Utility.GetStorage(BUid);
-  if(!Array.isArray(storage.data)) return;
 
   let data = [];
-  if(!BUid) data = storage.data;
+  if(!Array.isArray(storage.data)) data = [];
+  else if(!BUid) data = storage.data;
   else if(storage.i > -1) data = [storage.data[storage.i]];
 
   const fields = [...Utility.Utility.storageFields];
