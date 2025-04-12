@@ -7,6 +7,7 @@ export class Utility {
   static Output(data, down, BUid, itemsName) {
     const url = `data:application/json,${encodeURIComponent(JSON.stringify(data, null, 1))}`;
     const name = `sfmcs_${BUid}_${itemsName}.json`;
+
     if(down) chrome.downloads.download({url: url, filename: name, conflictAction: "uniquify", saveAs: true});
     else chrome.tabs.create({url: url});
   }
@@ -18,7 +19,6 @@ export class Utility {
 
   static async GetStack() {
     const tabs = await chrome.tabs.query({});
-
     for(const tab of tabs) {
       if(tab.url.includes("exacttarget.com")) return tab.url.match(/\d+/)[0];
     }
@@ -26,7 +26,6 @@ export class Utility {
 
   static async GetBUData(stack) {
     if(!stack) stack = await Utility.GetStack();
-
     const BUdata = await Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/contactsmeta/fuelapi/platform-internal/v1/accounts/@current`);
     return {BUid: BUdata?.accountId, BUname: BUdata?.name};
   }
@@ -34,7 +33,6 @@ export class Utility {
   static async GetStorage(BUid) {
     const data = (await chrome.storage.local.get()).data;
     const i = Array.isArray(data) ? data.findIndex(entry => entry.BUId == BUid) : -1;
-
     return {data: data, i: i};
   }
 
@@ -42,32 +40,30 @@ export class Utility {
     const storage = await Utility.GetStorage();
     if(!Array.isArray(storage.data)) return [];
 
-    const BUdata = [];
-    for(const data of storage.data) BUdata.push({BUid: data.BUId, BUname: data.BUName});
+    const data = [];
+    for(const entry of storage.data) data.push({BUid: entry.BUId, BUname: entry.BUName});
 
-    return BUdata;
+    return data;
   }
 
   static async SetStorage(BUid, BUname, itemsName, items) {
     if(!Array.isArray(items) || items.length === 0) return;
 
     const storage = await Utility.GetStorage(BUid);
+
     if(!Array.isArray(storage.data)) {
       const data = {BUId: BUid, BUName: BUname};
       data[itemsName] = {Size: items.length, Items: items};
-
       storage.data = [data];
     }
     else if(storage.i < 0) {
       const data = {BUId: BUid, BUName: BUname};
       data[itemsName] = {Size: items.length, Items: items};
-
       storage.data.push(data);
     }
     else {
       const storedItems = storage.data[storage.i][itemsName] ? storage.data[storage.i][itemsName].Items : [];
       storedItems.push(...items);
-
       storage.data[storage.i][itemsName] = {Size: storedItems.length, Items: storedItems};
     }
 
@@ -75,12 +71,14 @@ export class Utility {
   }
 
   static async ImportStorage(data) {
-    const BUid = data.BUId, BUname = data.BUName;
+    if(!Array.isArray(data)) data = [data];
 
-    const itemsName = Object.keys(data).find(entry => !Utility.storageFields.includes(entry));
-    if(!Controller.Controller.items.find(entry => entry.itemsName === itemsName)) return;
-
-    await Utility.SetStorage(BUid, BUname, itemsName, data[itemsName].Items);
+    for(const entry of data) {
+      for(const field in entry) {
+        if(Utility.storageFields.includes(field) || !Controller.Controller.items.find(entry => entry.itemsName === field)) continue;
+        await Utility.SetStorage(entry.BUId, entry.BUName, field, entry[field].Items);
+      }
+    }
   }
 
   static async ClearStorage(BUid, itemsName) {
@@ -88,10 +86,10 @@ export class Utility {
     if(!Array.isArray(storage.data)) return;
 
     const n = Utility.storageFields.length;
+
     if(!BUid) {
       for(let i = 0; i < storage.data.length; i++) {
         delete storage.data[i][itemsName];
-
         if(Object.keys(storage.data[i]).length === n) {
           storage.data.splice(i, 1);
           i--;
@@ -100,7 +98,6 @@ export class Utility {
     }
     else if(storage.i > -1) {
       delete storage.data[storage.i][itemsName];
-
       if(Object.keys(storage.data[storage.i]).length === n) storage.data.splice(storage.i, 1);
     }
     else return;
