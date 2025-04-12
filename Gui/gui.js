@@ -193,7 +193,7 @@ async function InitItemsNames() {
   const storage = await Utility.Utility.GetStorage(BUid);
   if(!Array.isArray(storage.data)) return;
 
-  let data;
+  let data = [];
   if(!BUid) data = storage.data;
   else if(storage.i > -1) data = [storage.data[storage.i]];
 
