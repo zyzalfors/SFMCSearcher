@@ -29,7 +29,11 @@ async function InitGui() {
   div.appendChild(results);
   document.body.appendChild(div);
 
-  document.addEventListener("keydown", ev => inputs.ProcessKey(ev));
+  document.addEventListener("keydown", ev => {
+    header.ProcessKey(ev);
+    inputs.ProcessKey(ev);
+  });
+
   await inputs.InitBUs();
 }
 
