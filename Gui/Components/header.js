@@ -55,19 +55,67 @@ export class Header extends HTMLElement {
         font-weight: lighter;
         font-size: 13px;
       }
+
+      .tooltip {
+        display: none;
+        background-color: var(--dark-background-color);
+        color: var(--text-color);
+        margin: 0;
+        border: 0;
+        padding: 4px;
+        border-radius: 6px;
+        position: absolute;
+        z-index: 1;
+      }
+
+      div:hover > span {
+        display: inline;
+        transform: translateX(-50%);
+        transform: translateY(-50%);
+      }
     </style>
     <div id="header">
       <div id="logo"><img src="${logo}"></div>
       <div id="title">${name} v${ver}</div>
       <div id="bu">${bu}</div>
-      <div id="search-img"><img src="${search}"></div>
-      <div id="load-img"><img src="${load}"></div>
-      <div id="export-img"><img src="${exp}"></div>
+      <div id="search-img">
+        <img src="${search}">
+        <span class="tooltip">Search</span>
+      </div>
+      <div id="load-img">
+        <img src="${load}">
+        <span class="tooltip">Load</span>
+      </div>
+      <div id="export-img">
+        <img src="${exp}">
+        <span class="tooltip">Export</span>
+      </div>
     </div>`;
 
     this.node.getElementById("search-img").addEventListener("click", () => inputs.InitSearch());
     this.node.getElementById("load-img").addEventListener("click", () => inputs.InitLoad());
     this.node.getElementById("export-img").addEventListener("click", () => inputs.InitExport());
+  }
+
+  ProcessKey(ev) {
+    if(ev.ctrlKey) return;
+
+    let div;
+    switch(ev.code) {
+      case "KeyS":
+        div = this.node.getElementById("search-img");
+        break;
+
+      case "KeyL":
+        div = this.node.getElementById("load-img");
+        break;
+
+      case "KeyE":
+        div = this.node.getElementById("export-img");
+        break;
+    }
+
+    if(div) div.click();
   }
 
 }

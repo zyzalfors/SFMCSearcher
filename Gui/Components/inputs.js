@@ -78,6 +78,10 @@ export class Inputs extends HTMLElement {
         outline: none;
       }
 
+      select:hover, input:hover, textarea:hover {
+        cursor: pointer;
+      }
+
       button {
         background-color: var(--sf-dark-blue);
         color: var(--text-color);
@@ -366,36 +370,7 @@ export class Inputs extends HTMLElement {
   }
 
   ProcessKey(ev) {
-    if(ev.ctrlKey || "APP-INPUTS" === ev.target.tagName.toUpperCase()) return;
-
-    let button;
-    switch(ev.code) {
-      case "KeyL":
-        button = this.node.getElementById("load");
-        break;
-
-      case "KeyI":
-        button = this.node.getElementById("imp");
-        break;
-
-      case "KeyC":
-        button = this.node.getElementById("clear");
-        break;
-
-      case "KeyE":
-        button = this.node.getElementById("export");
-        break;
-
-      case "KeyV":
-        button = this.node.getElementById("view");
-        break;
-
-      case "Enter":
-        button = this.node.getElementById("search");
-        break;
-    }
-
-    if(button && !button.disabled) button.click();
+    if(ev.ctrlKey && ev.code === "Enter") this.node.getElementById("search").click();
   }
 
 }
