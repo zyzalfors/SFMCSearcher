@@ -1,9 +1,9 @@
-import * as Utility from "../Logics/utility.js";
+import * as Utility from "/Logics/utility.js";
 
 export class Query {
 
   static tableFields = ["BUId", "BUName", "Id", "Key", "Name", "Path", "Link", "TargetDE", "UpdateType", "Code", "CreatedDate", "ModifiedDate"];
-  static searchFields = ["Code", "CreatedDate", "Id", "Key", "ModifiedDate", "Name", "Path", "TargetDE", "UpdateType"];
+  static searchFields = ["BUId", "BUName", "Code", "CreatedDate", "Id", "Key", "ModifiedDate", "Name", "Path", "TargetDE", "UpdateType"];
   static itemsName = "Queries";
   static type = "Query";
 

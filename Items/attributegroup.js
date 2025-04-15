@@ -1,9 +1,9 @@
-import * as Utility from "../Logics/utility.js";
+import * as Utility from "/Logics/utility.js";
 
 export class AttributeGroup {
 
   static tableFields = ["BUId", "BUName", "Id", "Name", "UseDEs"];
-  static searchFields = ["Id", "Name", "UsedDEKey", "UsedDEName", "UseDEs"];
+  static searchFields = ["BUId", "BUName", "Id", "Name", "UsedDEKey", "UsedDEName", "UseDEs"];
   static itemsName = "AttributeGroups";
   static type = "AttributeGroup";
 

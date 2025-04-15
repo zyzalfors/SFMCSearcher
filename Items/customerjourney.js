@@ -1,9 +1,9 @@
-import * as Utility from "../Logics/utility.js";
+import * as Utility from "/Logics/utility.js";
 
 export class CustomerJourney {
 
   static tableFields = ["BUId", "BUName", "Id", "Name", "Path", "Link", "SourceDE", "SourceDEId", "FilterCriteria", "Schedule", "ScheduleMode", "Status", "Version", "EventDefinitionId", "EventDefinitionKey", "CreatedDate", "ModifiedDate"];
-  static searchFields = ["ActivityId", "ActivityName", "AssetId", "AssetKey", "AssetName", "CreatedDate", "EventDefinitionId", "EventDefinitionKey", "FilterCriteria", "Id", "ModifiedDate", "Name", "Path", "Schedule", "ScheduleMode", "SourceDE", "SourceDEId", "Status", "TriggeredSendId", "UsedDE"];
+  static searchFields = ["ActivityId", "ActivityName", "AssetId", "AssetKey", "AssetName", "BUId", "BUName", "CreatedDate", "EventDefinitionId", "EventDefinitionKey", "FilterCriteria", "Id", "ModifiedDate", "Name", "Path", "Schedule", "ScheduleMode", "SourceDE", "SourceDEId", "Status", "TriggeredSendId", "UsedDE"];
   static itemsName = "CustomerJourneys";
   static type = "CustomerJourney";
 

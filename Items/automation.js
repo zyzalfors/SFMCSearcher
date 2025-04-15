@@ -1,9 +1,9 @@
-import * as Utility from "../Logics/utility.js";
+import * as Utility from "/Logics/utility.js";
 
 export class Automation {
 
   static tableFields = ["BUId", "BUName", "Id", "Key", "Name", "Path", "Link", "Status", "LastRuntime", "Recurrence", "AlertEmails", "Subtype", "CreatedByName", "CreatedDate", "ModifiedByName", "ModifiedDate"];
-  static searchFields = ["ActivityName", "ActivityObjectId", "AlertEmails", "CreatedByName", "CreatedDate", "Id", "Key", "LastRuntime", "ModifiedByName", "ModifiedDate", "Name", "Path", "Recurrence", "Status", "StepAnnotation", "Subtype"];
+  static searchFields = ["ActivityName", "ActivityObjectId", "AlertEmails", "BUId", "BUName", "CreatedByName", "CreatedDate", "Id", "Key", "LastRuntime", "ModifiedByName", "ModifiedDate", "Name", "Path", "Recurrence", "Status", "StepAnnotation", "Subtype"];
   static itemsName = "Automations";
   static type = "Automation";
 

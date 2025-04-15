@@ -1,9 +1,9 @@
-import * as Utility from "../Logics/utility.js";
+import * as Utility from "/Logics/utility.js";
 
 export class FileTransfer {
 
   static tableFields = ["BUId", "BUName", "Id", "Key", "Name", "Link", "Pattern", "Destination", "CreatedDate", "ModifiedDate"];
-  static searchFields = ["CreatedDate", "Destination", "Id", "Key", "ModifiedDate", "Name", "Pattern"];
+  static searchFields = ["BUId", "BUName", "CreatedDate", "Destination", "Id", "Key", "ModifiedDate", "Name", "Pattern"];
   static itemsName = "FileTransfers";
   static type = "FileTransfer";
 

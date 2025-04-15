@@ -1,9 +1,9 @@
-import * as Utility from "../Logics/utility.js";
+import * as Utility from "/Logics/utility.js";
 
 export class DataExtract {
 
   static tableFields = ["BUId", "BUName", "Id", "Key", "Name", "Link", "Pattern", "Subtype", "CreatedDate", "ModifiedDate"];
-  static searchFields = ["CreatedDate", "Id", "Key", "ModifiedDate", "Name", "Pattern", "Subtype"];
+  static searchFields = ["BUId", "BUName", "CreatedDate", "Id", "Key", "ModifiedDate", "Name", "Pattern", "Subtype"];
   static itemsName = "DataExtracts";
   static type = "DataExtract";
 
