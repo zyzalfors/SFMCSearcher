@@ -1,20 +1,20 @@
-import * as Utility from "./utility.js";
-import * as QueryParser from "./queryparser.js";
-import * as Asset from "../Items/asset.js";
-import * as AttributeGroup from "../Items/attributegroup.js";
-import * as Automation from "../Items/automation.js";
-import * as Cloudpage from "../Items/cloudpage.js";
-import * as CustomerJourney from "../Items/customerjourney.js";
-import * as DataExtension from "../Items/dataextension.js";
-import * as DataExtract from "../Items/dataextract.js";
-import * as FileTransfer from "../Items/filetransfer.js";
-import * as Filter from "../Items/filter.js";
-import * as FilterDefinition from "../Items/filterdefinition.js";
-import * as Import from "../Items/import.js";
-import * as Message from "../Items/message.js";
-import * as Package from "../Items/package.js";
-import * as Query from "../Items/query.js";
-import * as Script from "../Items/script.js";
+import * as Utility from "/Logics/utility.js";
+import * as QueryParser from "/Logics/queryparser.js";
+import * as Asset from "/Items/asset.js";
+import * as AttributeGroup from "/Items/attributegroup.js";
+import * as Automation from "/Items/automation.js";
+import * as Cloudpage from "/Items/cloudpage.js";
+import * as CustomerJourney from "/Items/customerjourney.js";
+import * as DataExtension from "/Items/dataextension.js";
+import * as DataExtract from "/Items/dataextract.js";
+import * as FileTransfer from "/Items/filetransfer.js";
+import * as Filter from "/Items/filter.js";
+import * as FilterDefinition from "/Items/filterdefinition.js";
+import * as Import from "/Items/import.js";
+import * as Message from "/Items/message.js";
+import * as Package from "/Items/package.js";
+import * as Query from "/Items/query.js";
+import * as Script from "/Items/script.js";
 
 export class Controller {
 
@@ -142,35 +142,35 @@ export class Controller {
 
   static actions = [{
                       name: "clear",
-                      proc: async (BUid, itemsName, pattern, query, isRegex, caseIns, field) => await Utility.Utility.ClearStorage(BUid, itemsName)
+                      proc: async inp => await Utility.Utility.ClearStorage(inp.BUid, inp.itemsName)
                     },
                     {
                       name: "export",
-                      proc: async (BUid, itemsName, pattern, query, isRegex, caseIns, field) => await Utility.Utility.ReadStorage(BUid, "export", itemsName)
+                      proc: async inp => await Utility.Utility.ReadStorage("export", inp.BUid, inp.itemsName)
                     },
                     {
                       name: "import",
-                      proc: async data => await Controller.ImportData(data)
+                      proc: async inp => await Controller.ImportData(inp)
                     },
                     {
                       name: "load",
-                      proc: async (BUid, itemsName, pattern, query, isRegex, caseIns, field) => await Controller.LoadData(itemsName)
+                      proc: async inp => await Controller.LoadData(inp.itemsName)
                     },
                     {
                       name: "search",
-                      proc: async (BUid, itemsName, pattern, query, isRegex, caseIns, field) => await Controller.SearchData(BUid, itemsName, pattern, query, isRegex, caseIns, field)
+                      proc: async inp => await Controller.SearchData(inp.BUid, inp.itemsName, inp.field, inp.pattern, inp.query, inp.useQuery, inp.isRegex, inp.caseIns)
                     },
                     {
                       name: "view",
-                      proc: async (BUid, itemsName, pattern, query, isRegex, caseIns, field) => await Utility.Utility.ReadStorage(BUid, "view", itemsName)
+                      proc: async inp => await Utility.Utility.ReadStorage("view", inp.BUid, inp.itemsName)
                     }
                    ];
 
-  static async Process(BUid, actionName, itemsName, pattern, query, isRegex, caseIns, field) {
-    const action = Controller.actions.find(entry => entry.name === actionName);
+  static async Process(inp) {
+    const action = Controller.actions.find(entry => entry.name === inp.actionName);
     if(!action) return;
 
-    return await action.proc(BUid, itemsName, pattern, query, isRegex, caseIns, field);
+    return await action.proc(inp);
   }
 
   static async LoadData(itemsName) {
@@ -203,7 +203,7 @@ export class Controller {
     await Utility.Utility.ImportStorage(data);
   }
 
-  static async SearchDataByQuery(BUid, query, isRegex, caseIns) {
+  static async SearchDataByQuery(query, isRegex, caseIns) {
     const Check = (item, where, check) => {
       switch(where.op) {
         case "AND":
@@ -219,7 +219,7 @@ export class Controller {
     const item = Controller.items.find(entry => entry.itemsName.toLowerCase() === parsed.from.toLowerCase());
     if(!item) return [];
 
-    const items = await Controller.ReadData(BUid, item.itemsName);
+    const items = await Controller.ReadData(null, item.itemsName);
     if(items.length === 0) return [];
 
     const fields = ["Type"];
@@ -243,7 +243,7 @@ export class Controller {
     return filtered;
   }
 
-  static async SearchDataByInput(BUid, itemsName, pattern, isRegex, caseIns, field) {
+  static async SearchDataByInput(BUid, itemsName, field, pattern, isRegex, caseIns) {
     const items = await Controller.ReadData(BUid, itemsName);
     if(items.length === 0) return [];
 
@@ -256,9 +256,9 @@ export class Controller {
     return items.filter(entry => item.check(entry, field, regex));
   }
 
-  static async SearchData(BUid, itemsName, pattern, query, isRegex, caseIns, field) {
-    if(query) return await Controller.SearchDataByQuery(BUid, query, isRegex, caseIns);
-    return await Controller.SearchDataByInput(BUid, itemsName, pattern, isRegex, caseIns, field);
+  static async SearchData(BUid, itemsName, field, pattern, query, useQuery, isRegex, caseIns) {
+    if(useQuery) return await Controller.SearchDataByQuery(query, isRegex, caseIns);
+    return await Controller.SearchDataByInput(BUid, itemsName, field, pattern, isRegex, caseIns);
   }
 
 }

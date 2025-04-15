@@ -1,4 +1,4 @@
-import * as Controller from "./controller.js";
+import * as Controller from "/Logics/controller.js";
 
 export class Utility {
 
@@ -33,7 +33,7 @@ export class Utility {
   static async GetStorage(BUid) {
     const data = (await chrome.storage.local.get()).data;
     const i = Array.isArray(data) ? data.findIndex(entry => entry.BUId == BUid) : -1;
-    return {data: data, i: i};
+    return {data, i};
   }
 
   static async GetStoredBUData() {
@@ -105,7 +105,7 @@ export class Utility {
     chrome.storage.local.set({data: storage.data});
   }
 
-  static async ReadStorage(BUid, actionName, itemsName) {
+  static async ReadStorage(actionName, BUid, itemsName) {
     const storage = await Utility.GetStorage(BUid);
     if(!Array.isArray(storage.data)) return;
 
