@@ -98,7 +98,7 @@ export class Header extends HTMLElement {
   }
 
   ProcessKey(ev) {
-    if(ev.ctrlKey) return;
+    if(ev.ctrlKey || "APP-INPUTS" === ev.target.tagName.toUpperCase()) return;
 
     let div;
     switch(ev.code) {
