@@ -17,10 +17,9 @@ async function InitGui() {
   const manifest = chrome.runtime.getManifest();
   const data = await GetBUData();
 
-  const results = new Results.Results(Controller.Controller);
+  const results = new Results.Results(Utility.Utility, Controller.Controller);
   const inputs = new Inputs.Inputs(results, Utility.Utility, Controller.Controller);
-
-  const header = new Header.Header(manifest.name, manifest.version, data?.BUname, data?.BUid, "./Sources/logo.png", "./Sources/search.png", "./Sources/load.png", "./Sources/export.png", inputs);
+  const header = new Header.Header(manifest.name, manifest.version, data?.BUname, data?.BUid, "/Gui/Sources/logo.png", "/Gui/Sources/search.png", "/Gui/Sources/load.png", "/Gui/Sources/export.png", inputs);
   document.body.appendChild(header);
 
   const div = document.createElement("div");
