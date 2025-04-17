@@ -152,6 +152,9 @@ export class Inputs extends HTMLElement {
       <div class="entry export" style="display:none">
         <button id="view">View</button>
       </div>
+      <div class="entry export" style="display:none">
+        <button id="export-res">Export results</button>
+      </div>
     </div>`;
 
     this.results = results;
@@ -328,7 +331,6 @@ export class Inputs extends HTMLElement {
     button.innerText += "ing...";
     button.disabled = true;
 
-    let inp;
     try {
       switch(actionName) {
         case "import":
@@ -336,7 +338,7 @@ export class Inputs extends HTMLElement {
           break;
 
         case "clear": case "export": case "search": case "view":
-          inp = {
+          const res = await this.controller.Process({
                   actionName: actionName,
                   BUid: this.node.getElementById("stored-bus").value,
                   itemsName: this.node.getElementById("stored-items").value,
@@ -346,16 +348,17 @@ export class Inputs extends HTMLElement {
                   useQuery: this.node.getElementById("usequery").checked,
                   isRegex: this.node.getElementById("isregex").checked,
                   caseIns: this.node.getElementById("caseins").checked
-                };
+                });
+          if(res) this.results.Populate(res);
+          break;
+
+        case "export-res":
+          this.results.Export();
           break;
 
         case "load":
-          inp = {actionName: actionName, itemsName: this.node.getElementById("load-items").value};
+          await this.controller.Process({actionName: actionName, itemsName: this.node.getElementById("load-items").value});
           break;
-      }
-      if(inp) {
-        const res = await this.controller.Process(inp);
-        if(res) this.results.Populate(res);
       }
     }
     catch(err) {

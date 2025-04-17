@@ -1,6 +1,6 @@
 export class Results extends HTMLElement {
 
-  constructor(controller) {
+  constructor(utility, controller) {
     super();
 
     this.node = this.attachShadow({mode: "closed"});
@@ -42,6 +42,7 @@ export class Results extends HTMLElement {
       <table id="results"></table>
     </div>`;
 
+    this.utility = utility;
     this.controller = controller;
   }
 
@@ -64,6 +65,8 @@ export class Results extends HTMLElement {
   }
 
   Populate(res) {
+    if(!Array.isArray(res)) return;
+
     const table = this.node.getElementById("results");
     table._asc = true;
     while(table.rows.length > 0) table.deleteRow(0);
@@ -109,6 +112,23 @@ export class Results extends HTMLElement {
 
       n++;
     }
+  }
+
+  Export() {
+    const table = this.node.getElementById("results");
+    if(table.rows.length === 0) return;
+
+    const sv = [];
+    for(const tableRow of table.rows) {
+      const row = [];
+      for(const tableCell of tableRow.cells) row.push(tableCell.innerText);
+      sv.push(row);
+    }
+
+    const sep = "|";
+    const data = sv.map(row => row.join(sep)).join("\n");
+    const itemsName = table.rows[0].cells[0].innerText;
+    this.utility.Output("sv", data, true, null, itemsName);
   }
 
 }
