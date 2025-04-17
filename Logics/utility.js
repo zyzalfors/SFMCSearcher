@@ -4,11 +4,23 @@ export class Utility {
 
   static storageFields = ["BUId", "BUName"];
 
-  static Output(data, down, BUid, itemsName) {
-    const url = `data:application/json,${encodeURIComponent(JSON.stringify(data, null, 1))}`;
-    const name = `sfmcs_${BUid}_${itemsName}.json`;
+  static Output(type, data, down, BUid, itemsName) {
+    let url, name;
 
-    if(down) chrome.downloads.download({url: url, filename: name, conflictAction: "uniquify", saveAs: true});
+    switch(type) {
+      case "json":
+        url = `data:application/json,${encodeURIComponent(JSON.stringify(data, null, 1))}`;
+        name = `sfmcs_${BUid}_${itemsName}.json`;
+        break;
+
+      case "sv":
+        url = `data:text/csv,${encodeURIComponent(data)}`;
+        name = `sfmcs_${itemsName}.csv`;
+        break;
+    }
+
+    if(!url || !name) return;
+    else if(down) chrome.downloads.download({url: url, filename: name, conflictAction: "uniquify", saveAs: true});
     else chrome.tabs.create({url: url});
   }
 
@@ -137,8 +149,8 @@ export class Utility {
     }
 
     if(!data) return;
-    else if(actionName === "export") Utility.Output(data, true, BUid, itemsName);
-    else if(actionName === "view") Utility.Output(data);
+    else if(actionName === "export") Utility.Output("json", data, true, BUid, itemsName);
+    else if(actionName === "view") Utility.Output("json", data);
   }
 
   static GetFullPath(categoryId, folders, item) {
