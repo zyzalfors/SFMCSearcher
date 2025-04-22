@@ -35,11 +35,11 @@ export class Filter {
     let page = 1, pageItems = [0];
     const folders = await Filter.GetFolders(stack);
 
+    const items = [];
     while(pageItems.length > 0) {
       const pageData = await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/filters/?$page=${page}&$pagesize=${pageSize}`);
       pageItems = pageData.items;
 
-      const items = [];
       for(const pageItem of pageItems) {
         const filterDefinition  = await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/filterdefinitions/${pageItem.filterDefinitionId}`);
 
@@ -50,11 +50,11 @@ export class Filter {
 
         items.push(Filter.Build(pageItem, stack, BUid, BUname));
       }
-      await Utility.Utility.SetStorage(BUid, BUname, Filter.itemsName, items);
 
       if(pageItems.length < pageData.pageSize) break;
       page++;
     }
+    await Utility.Utility.SetStorage(BUid, BUname, Filter.itemsName, items);
   }
 
   static async GetFolders(stack) {

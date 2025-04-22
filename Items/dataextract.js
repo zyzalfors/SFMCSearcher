@@ -32,11 +32,11 @@ export class DataExtract {
     let page = 1, pageItems = [0];
     const extTypes = await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/dataextracttypes`);
 
+    const items = [];
     while(pageItems.length > 0) {
       const pageData = await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/dataextracts?$page=${page}&$pagesize=${pageSize}`);
       pageItems = pageData.items;
 
-      const items = [];
       for(const pageItem of pageItems) {
         const item = await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/dataextracts/${pageItem.dataExtractDefinitionId}`);
         item._createdDate = pageItem.createdDate;
@@ -46,11 +46,11 @@ export class DataExtract {
 
         items.push(DataExtract.Build(item, stack, BUid, BUname));
       }
-      await Utility.Utility.SetStorage(BUid, BUname, DataExtract.itemsName, items);
 
       if(pageItems.length < pageData.pageSize) break;
       page++;
     }
+    await Utility.Utility.SetStorage(BUid, BUname, DataExtract.itemsName, items);
   }
 
   static Check(item, field, regex) {

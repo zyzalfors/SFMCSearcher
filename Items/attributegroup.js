@@ -25,11 +25,11 @@ export class AttributeGroup {
     const pageSize = 500;
     let page = 1, pageItems = [0];
 
+    const items = [];
     while(pageItems.length > 0) {
       const pageData = await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/contactsmeta/fuelapi/contacts-internal/v1/attributeGroups/views/defaultView?$page=${page}&$pageSize=${pageSize}`);
       pageItems = pageData.data;
 
-      const items = [];
       for(const pageItem of pageItems) {
         pageItem._usedDEs = [];
 
@@ -51,11 +51,11 @@ export class AttributeGroup {
 
         items.push(AttributeGroup.Build(pageItem, stack, BUid, BUname));
       }
-      await Utility.Utility.SetStorage(BUid, BUname, AttributeGroup.itemsName, items);
 
       if(pageItems.length < pageData.pageSize) break;
       page++;
     }
+    await Utility.Utility.SetStorage(BUid, BUname, AttributeGroup.itemsName, items);
   }
 
   static Check(item, field, regex) {

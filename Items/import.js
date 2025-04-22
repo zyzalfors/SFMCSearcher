@@ -32,20 +32,20 @@ export class Import {
     const pageSize = 500;
     let page = 1, pageItems = [0];
 
+    const items = [];
     while(pageItems.length > 0) {
       const pageData = await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/imports/?$page=${page}&$pagesize=${pageSize}`);
       pageItems = pageData.items;
 
-      const items = [];
       for(const pageItem of pageItems) {
         const item = await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/imports/${pageItem.importDefinitionId}`);
         items.push(Import.Build(item, stack, BUid, BUname));
       }
-      await Utility.Utility.SetStorage(BUid, BUname, Import.itemsName, items);
 
       if(pageItems.length < pageData.pageSize) break;
       page++;
     }
+    await Utility.Utility.SetStorage(BUid, BUname, Import.itemsName, items);
   }
 
   static Check(item, field, regex) {

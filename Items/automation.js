@@ -37,11 +37,11 @@ export class Automation {
     let page = 1, pageItems = [0];
     const folders = await Automation.GetFolders(stack);
 
+    const items = [];
     while(pageItems.length > 0) {
       const pageData = await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/legacy/v1/beta/automations/automation/definition/?$skip=${(page - 1)}`);
       pageItems = pageData.entry;
 
-      const items = [];
       for(const pageItem of pageItems) {
         const alerts = (await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/legacy/v1/beta/automations/notifications/${pageItem.id}`)).workers;
 
@@ -56,11 +56,11 @@ export class Automation {
 
         items.push(Automation.Build(item, stack, BUid, BUname));
       }
-      await Utility.Utility.SetStorage(BUid, BUname, Automation.itemsName, items);
 
       if(pageItems.length < pageData.itemsPerPage) break;
       page++;
     }
+    await Utility.Utility.SetStorage(BUid, BUname, Automation.itemsName, items);
   }
 
   static async GetFolders(stack) {

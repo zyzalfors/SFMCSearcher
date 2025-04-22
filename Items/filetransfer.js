@@ -31,11 +31,11 @@ export class FileTransfer {
     let page = 1, pageItems = [0];
     const ftpLocations = (await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/ftpLocations`)).items;
 
+    const items = [];
     while(pageItems.length > 0) {
       const pageData = await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/filetransfers?$page=${page}&$pagesize=${pageSize}`);
       pageItems = pageData.items;
 
-      const items = [];
       for(const pageItem of pageItems) {
         const item = await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/filetransfers/${pageItem.id}`);
         const ftpLocation = ftpLocations.find(entry => entry.id === item.fileTransferLocationId);
@@ -43,11 +43,11 @@ export class FileTransfer {
 
         items.push(FileTransfer.Build(item, stack, BUid, BUname));
       }
-      await Utility.Utility.SetStorage(BUid, BUname, FileTransfer.itemsName, items);
 
       if(pageItems.length < pageData.pageSize) break;
       page++;
     }
+    await Utility.Utility.SetStorage(BUid, BUname, FileTransfer.itemsName, items);
   }
 
   static Check(item, field, regex) {

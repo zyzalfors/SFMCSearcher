@@ -34,20 +34,20 @@ export class Query {
     let page = 1, pageItems = [0];
     const folders = await Query.GetFolders(stack);
 
+    const items = [];
     while(pageItems.length > 0) {
       const pageData = await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/queries/?$page=${page}&$pagesize=${pageSize}`);
       pageItems = pageData.items;
 
-      const items = [];
       for(const pageItem of pageItems) {
         pageItem._path = Utility.Utility.GetFullPath(pageItem.categoryId, folders);
         items.push(Query.Build(pageItem, stack, BUid, BUname));
       }
-      await Utility.Utility.SetStorage(BUid, BUname, Query.itemsName, items);
 
       if(pageItems.length < pageData.pageSize) break;
       page++;
     }
+    await Utility.Utility.SetStorage(BUid, BUname, Query.itemsName, items);
   }
 
   static async GetFolders(stack) {

@@ -36,21 +36,21 @@ export class Asset {
     const body = {page: {page: page, pageSize: pageSize}, query: {property: "assetType.id", simpleOperator: "IN", values: assetTypeIds}, fields: assetFields};
     const folders = await Asset.GetFolders(stack);
 
+    const items = [];
     while(pageItems.length > 0) {
       const pageData = await Utility.Utility.FetchJSON(`https://mc.s${stack}.exacttarget.com/cloud/fuelapi/asset/v1/content/assets/query?scope=ours%2Cshared`, "POST", body);
       pageItems = pageData.items;
 
-      const items = [];
       for(const pageItem of pageItems) {
         pageItem._path = Utility.Utility.GetFullPath(pageItem.category.id, folders, pageItem);
         items.push(Asset.Build(pageItem, stack, BUid, BUname));
       }
-      await Utility.Utility.SetStorage(BUid, BUname, Asset.itemsName, items);
 
       if(pageItems.length < pageData.pageSize) break;
       page++;
       body.page.page = page;
     }
+    await Utility.Utility.SetStorage(BUid, BUname, Asset.itemsName, items);
   }
 
   static async GetFolders(stack) {

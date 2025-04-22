@@ -32,6 +32,7 @@ export class FilterDefinition {
     const pageSize = 500;
     const folders = await FilterDefinition.GetFolders(stack);
 
+    const items = [];
     for(const folder of folders) {
       let page = 1, pageItems = [0];
 
@@ -39,17 +40,16 @@ export class FilterDefinition {
         const pageData = await Utility.Utility.FetchJSON(`https://mc.s${stack}.exacttarget.com/cloud/fuelapi/email/v1/filters/filterdefinition/category/${folder.categoryId}?$page=${page}&$pagesize=${pageSize}`);
         pageItems = pageData.items;
 
-        const items = [];
         for(const pageItem of pageItems) {
           pageItem._path = Utility.Utility.GetFullPath(pageItem.categoryId, folders);
           items.push(FilterDefinition.Build(pageItem, stack, BUid, BUname));
         }
-        await Utility.Utility.SetStorage(BUid, BUname, FilterDefinition.itemsName, items);
 
         if(pageItems.length < pageData.pageSize) break;
         page++;
       }
     }
+    await Utility.Utility.SetStorage(BUid, BUname, FilterDefinition.itemsName, items);
   }
 
   static async GetFolders(stack) {

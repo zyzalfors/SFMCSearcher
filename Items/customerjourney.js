@@ -2,8 +2,8 @@ import * as Utility from "/Logics/utility.js";
 
 export class CustomerJourney {
 
-  static tableFields = ["BUId", "BUName", "Id", "Name", "Path", "Link", "SourceDE", "SourceDEId", "FilterCriteria", "Schedule", "ScheduleMode", "Status", "Version", "EventDefinitionId", "EventDefinitionKey", "CreatedDate", "ModifiedDate"];
-  static searchFields = ["ActivityId", "ActivityName", "AssetId", "AssetKey", "AssetName", "BUId", "BUName", "CreatedDate", "EventDefinitionId", "EventDefinitionKey", "FilterCriteria", "Id", "ModifiedDate", "Name", "Path", "Schedule", "ScheduleMode", "SourceDE", "SourceDEId", "Status", "TriggeredSendId", "UsedDE"];
+  static tableFields = ["BUId", "BUName", "Id", "DefinitionId", "Name", "Path", "Link", "SourceDE", "SourceDEId", "FilterCriteria", "Schedule", "ScheduleMode", "Status", "Version", "EventDefinitionId", "EventDefinitionKey", "CreatedDate", "ModifiedDate"];
+  static searchFields = ["ActivityId", "ActivityName", "AssetId", "AssetKey", "AssetName", "BUId", "BUName", "CreatedDate", "DefinitionId", "EventDefinitionId", "EventDefinitionKey", "FilterCriteria", "Id", "ModifiedDate", "Name", "Path", "Schedule", "ScheduleMode", "SourceDE", "SourceDEId", "Status", "TriggeredSendId", "UsedDE"];
   static itemsName = "CustomerJourneys";
   static type = "CustomerJourney";
 
@@ -15,6 +15,7 @@ export class CustomerJourney {
                 CategoryId: item.categoryId,
                 ConfigurationArguments: item._configurationArguments,
                 CreatedDate: item.createdDate,
+                DefinitionId: item.definitionId,
                 EventDefinitionId: item._eventDefinitionId,
                 EventDefinitionKey: item._eventDefinitionKey,
                 Exits: item.exits,
@@ -43,11 +44,11 @@ export class CustomerJourney {
     let page = 1, pageItems = [0];
     const folders = await CustomerJourney.GetFolders(stack);
 
+    const items = [];
     while(pageItems.length > 0) {
       const pageData = await Utility.Utility.FetchJSON(`https://jbinteractions.s${stack}.marketingcloudapps.com/fuelapi/interaction/v1/interactions/?mostRecentVersionOnly=false&mostRecentVersionOrRunningOnly=true&extras=trigger&extras=activities&$page=${page}&$pagesize=${pageSize}`);
       pageItems = pageData.items;
 
-      const items = [];
       for(const pageItem of pageItems) {
         const eventDefinitionId = pageItem.triggers[0]?.metaData?.eventDefinitionId;
         const eventDefinition = eventDefinitionId ? await Utility.Utility.FetchJSON(`https://jbinteractions.s${stack}.marketingcloudapps.com/fuelapi/interaction/v1/eventDefinitions/${eventDefinitionId}`) : null;
@@ -87,11 +88,11 @@ export class CustomerJourney {
 
         items.push(CustomerJourney.Build(pageItem, stack, BUid, BUname));
       }
-      await Utility.Utility.SetStorage(BUid, BUname, CustomerJourney.itemsName, items);
 
       if(pageItems.length < pageData.pageSize) break;
       page++;
     }
+    await Utility.Utility.SetStorage(BUid, BUname, CustomerJourney.itemsName, items);
   }
 
   static async GetFolders(stack) {

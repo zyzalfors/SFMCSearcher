@@ -35,6 +35,7 @@ export class DataExtension {
     const pageSize = 500;
     const folders = await DataExtension.GetFolders(stack);
 
+    const items = [];
     for(const folder of folders) {
       let page = 1, pageItems = [0];
 
@@ -42,17 +43,16 @@ export class DataExtension {
         const pageData = await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/contactsmeta/fuelapi/data-internal/v1/customobjects/category/${folder.id}?retrievalType=1&$page=${page}&$pagesize=${pageSize}`);
         pageItems = pageData.items;
 
-        const items = [];
         for(const pageItem of pageItems) {
           pageItem._path = Utility.Utility.GetFullPath(pageItem.categoryId, folders);
           items.push(DataExtension.Build(pageItem, stack, BUid, BUname));
         }
-        await Utility.Utility.SetStorage(BUid, BUname, DataExtension.itemsName, items);
 
         if(pageItems.length < pageData.pageSize) break;
         page++;
       }
     }
+    await Utility.Utility.SetStorage(BUid, BUname, DataExtension.itemsName, items);
   }
 
   static async GetAllFolders(stack, categoryFilter, categoryId, folders) {

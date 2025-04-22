@@ -32,17 +32,17 @@ export class Message {
   static async Load(stack, BUid, BUname) {
     let page = 1, pageItems = [0];
 
+    const items = [];
     while(pageItems.length > 0) {
       const pageData = await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/mobileconnectfuel3/fuelapi//legacy/v1/beta/mobile/message?view=details&version=3&$skip=${(page - 1)}`);
       pageItems = pageData.entry;
 
-      const items = [];
       for(const pageItem of pageItems) items.push(Message.Build(pageItem, stack, BUid, BUname));
-      await Utility.Utility.SetStorage(BUid, BUname, Message.itemsName, items);
 
       if(pageItems.length < pageData.itemsPerPage) break;
       page++;
     }
+    await Utility.Utility.SetStorage(BUid, BUname, Message.itemsName, items);
   }
 
   static Check(item, field, regex) {
