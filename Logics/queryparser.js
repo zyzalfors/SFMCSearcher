@@ -68,7 +68,7 @@ export class QueryParser {
     try {
       return ParseExpr({pos: pos, isRegex: isRegex, caseIns: caseIns});
     }
-    catch(err) {
+    catch {
       throw new Error("Invalid query");
     }
   }

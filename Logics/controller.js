@@ -11,6 +11,7 @@ import * as FileTransfer from "/Items/filetransfer.js";
 import * as Filter from "/Items/filter.js";
 import * as FilterDefinition from "/Items/filterdefinition.js";
 import * as Import from "/Items/import.js";
+import * as JourneyHistoryEntry from "/Items/journeyhistoryentry.js";
 import * as Message from "/Items/message.js";
 import * as Package from "/Items/package.js";
 import * as Query from "/Items/query.js";
@@ -105,6 +106,14 @@ export class Controller {
                     searchFields: Import.Import.searchFields,
                     load: async (stack, BUid, BUname) => await Import.Import.Load(stack, BUid, BUname),
                     check: (item, field, regex) => Import.Import.Check(item, field, regex)
+                  },
+                  {
+                    itemsName: JourneyHistoryEntry.JourneyHistoryEntry.itemsName,
+                    type: JourneyHistoryEntry.JourneyHistoryEntry.type,
+                    tableFields: JourneyHistoryEntry.JourneyHistoryEntry.tableFields,
+                    searchFields: JourneyHistoryEntry.JourneyHistoryEntry.searchFields,
+                    load: async (stack, BUid, BUname) => await JourneyHistoryEntry.JourneyHistoryEntry.Load(stack, BUid, BUname),
+                    check: (item, field, regex) => JourneyHistoryEntry.JourneyHistoryEntry.Check(item, field, regex)
                   },
                   {
                     itemsName: Message.Message.itemsName,

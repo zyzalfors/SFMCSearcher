@@ -24,9 +24,14 @@ export class Utility {
     else chrome.tabs.create({url: url});
   }
 
-  static async FetchJSON(url, method, body) {
-    const req = method && body ? await fetch(url, {"method": method.toUpperCase(), "headers": {"Content-Type": "application/json"}, "body": JSON.stringify(body)}) : await fetch(url);
+  static async FetchJSON(url, method, body, token) {
+    const req = method && body ? await fetch(url, {"method": method.toUpperCase(), "headers": {"Content-Type": "application/json", "x-csrf-token": token}, "body": JSON.stringify(body)}) : await fetch(url);
     return await req.json();
+  }
+
+  static async FetchHTML(url) {
+    const req = await fetch(url);
+    return await req.text();
   }
 
   static async GetStack() {
