@@ -1,8 +1,8 @@
 # SFMC Searcher (Salesforce Marketing Cloud Searcher)
 
-This Chrome/Edge extension is designed to enhance and speed up navigation and discovery of Salesforce Marketing Cloud objects.
+This Chrome/Edge extension is designed to enhance searching of Salesforce Marketing Cloud items.
 
-It allows users to quickly navigate through various Marketing Cloud objects, including:
+It allows users to quickly navigate through various Marketing Cloud items:
 - Assets
 - Attribute Groups
 - Automations
@@ -13,6 +13,8 @@ It allows users to quickly navigate through various Marketing Cloud objects, inc
 - File Transfers
 - Filters
 - Filter Definitions
+- Imports
+- Journey History Entries
 - SMS Messages
 - Packages
 - Queries
