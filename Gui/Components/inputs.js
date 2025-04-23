@@ -174,13 +174,16 @@ export class Inputs extends HTMLElement {
     this.node.getElementById("fields").addEventListener("change", ev => this.UpdateQuery(ev.target));
     this.node.getElementById("usequery").addEventListener("change", ev => this.InitQuery(ev.target));
 
-    const items =  this.node.getElementById("load-items");
+    const items = this.node.getElementById("load-items");
+    const frag = document.createDocumentFragment();
+
     for(const item of this.controller.items) {
       const option = document.createElement("option");
       option.text = item.itemsName;
       option.value = item.itemsName;
-      items.appendChild(option);
+      frag.appendChild(option);
     }
+    items.appendChild(frag);
 
     for(const btn of this.node.querySelectorAll("button")) btn.addEventListener("click", async ev => await this.Process(ev.target));
     this.node.getElementById("imp").addEventListener("change", ev => this.ProcessImport(ev.target));
@@ -231,23 +234,26 @@ export class Inputs extends HTMLElement {
 
   InitFields() {
     const fields = this.node.getElementById("fields");
-    while(fields.options.length > 0) fields.remove(0);
+    fields.innerHTML = "";
 
     const itemsName = this.node.getElementById("stored-items").value;
     const item = this.controller.items.find(entry => entry.itemsName === itemsName);
     if(!item) return;
 
+    const frag = document.createDocumentFragment();
     for(const field of item.searchFields) {
       const option = document.createElement("option");
       option.value = field;
       option.text = field;
-      fields.appendChild(option);
+      frag.appendChild(option);
     }
+
+    fields.appendChild(frag);
   }
 
   async InitItems() {
     const items = this.node.getElementById("stored-items");
-    while(items.options.length > 0) items.remove(0);
+    items.innerHTML = "";
 
     const BUid = this.node.getElementById("stored-bus").value;
     const storage = await this.utility.GetStorage(BUid);
@@ -258,6 +264,7 @@ export class Inputs extends HTMLElement {
     else if(storage.i > -1) data = [storage.data[storage.i]];
 
     const fields = [...this.utility.storageFields];
+    const frag = document.createDocumentFragment();
 
     for(const entry of data) {
       for(const field in entry) {
@@ -267,32 +274,36 @@ export class Inputs extends HTMLElement {
         const option = document.createElement("option");
         option.value = field;
         option.text = field;
-        items.appendChild(option);
+        frag.appendChild(option);
       }
     }
 
+    items.appendChild(frag);
     this.InitFields();
   }
 
   async InitBUs() {
     const BUs = this.node.getElementById("stored-bus");
-    while(BUs.options.length > 0) BUs.remove(0);
+    BUs.innerHTML = "";
 
     const data = await this.utility.GetStoredBUData();
+    const frag = document.createDocumentFragment();
+
     if(data.length > 1) {
       const option = document.createElement("option");
       option.text = "--All--";
       option.value = "";
-      BUs.appendChild(option);
+      frag.appendChild(option);
     }
 
     for(const entry of data) {
       const option = document.createElement("option");
       option.text = `${entry.BUname} (${entry.BUid})`;
       option.value = entry.BUid;
-      BUs.appendChild(option);
+      frag.appendChild(option);
     }
 
+    BUs.appendChild(frag);
     await this.InitItems();
   }
 

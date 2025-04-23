@@ -58,9 +58,12 @@ export class Results extends HTMLElement {
       return table._asc ? val1.localeCompare(val2) : val2.localeCompare(val1);
     });
 
-    while(table.rows.length > 1) table.deleteRow(1);
-    for(const row of rows) table.appendChild(row);
+    const frag = document.createDocumentFragment();
+    frag.appendChild(table.rows[0]);
+    for(const row of rows) frag.appendChild(row);
 
+    table.innerHTML = "";
+    table.appendChild(frag);
     table._asc = !table._asc;
   }
 
@@ -68,21 +71,20 @@ export class Results extends HTMLElement {
     if(!Array.isArray(res)) return;
 
     const table = this.node.getElementById("results");
-    table._asc = true;
-    while(table.rows.length > 0) table.deleteRow(0);
-
+    table.innerHTML = "";
     if(res.length === 0) return;
 
     const item = this.controller.items.find(entry => entry.type === res[0].Type);
     if(!item) return;
+
+    const fields = Object.keys(res[0]);
+    const frag = document.createDocumentFragment();
 
     const row = document.createElement("tr");
     const cell = document.createElement("th");
     cell.innerHTML = res[0].Type;
     cell.addEventListener("click", ev => this.Sort(ev.target));
     row.appendChild(cell);
-
-    const fields = Object.keys(res[0]);
 
     for(const field of item.tableFields) {
       if(!fields.includes(field)) continue;
@@ -92,7 +94,7 @@ export class Results extends HTMLElement {
       cell.addEventListener("click", ev => this.Sort(ev.target));
       row.appendChild(cell);
     }
-    table.appendChild(row);
+    frag.appendChild(row);
 
     let n = 1;
     for(const result of res) {
@@ -108,10 +110,13 @@ export class Results extends HTMLElement {
         cell.innerHTML = result[field];
         row.appendChild(cell);
       }
-      table.appendChild(row);
+      frag.appendChild(row);
 
       n++;
     }
+
+    table.appendChild(frag);
+    table._asc = false;
   }
 
   Export() {
