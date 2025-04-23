@@ -43,13 +43,13 @@ export class JourneyHistoryEntry {
 
     const start = new Date();
     start.setDate(start.getDate() - 30);
-    start.setHours(0, 0, 0, 0);
+    const startUTC = new Date(Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate(), 0, 0, 0));
 
     const end = new Date();
     end.setDate(end.getDate() + 1);
-    end.setHours(0, 0, 0, 0);
+    const endUTC = new Date(Date.UTC(end.getUTCFullYear(), end.getUTCMonth(), end.getUTCDate(), 0, 0, 0));
 
-    const body = {start: start.toISOString(), end: end.toISOString()};
+    const body = {start: startUTC.toISOString(), end: endUTC.toISOString()};
 
     const html = await Utility.Utility.FetchHTML(`https://jbinteractions.s${stack}.marketingcloudapps.com`);
     const match = html.match(/csrfToken:\s*'([^']+)'/);

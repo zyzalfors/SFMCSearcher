@@ -41,7 +41,7 @@ export class Filter {
       pageItems = pageData.items;
 
       for(const pageItem of pageItems) {
-        const filterDefinition  = await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/filterdefinitions/${pageItem.filterDefinitionId}`);
+        const filterDefinition = await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/filterdefinitions/${pageItem.filterDefinitionId}`);
 
         pageItem._filterDefinitionName = filterDefinition?.name;
         pageItem._path = Utility.Utility.GetFullPath(pageItem.categoryId, folders);
