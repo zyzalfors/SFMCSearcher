@@ -102,7 +102,7 @@ export class CustomerJourney {
     while(pageItems.length > 0) {
       const pageData = await Utility.Utility.FetchJSON(`https://jbinteractions.s${stack}.marketingcloudapps.com/fuelapi/platform-internal/v1/categories/?$filter=categorytype%20eq%20journey&$page=${page}&$pagesize=${pageSize}`);
       pageItems = pageData.items;
-      folders.push(...pageItems);
+      pageItems.forEach(entry => folders.push(entry));
 
       if(pageItems.length < pageData.pageSize) break;
       page++;

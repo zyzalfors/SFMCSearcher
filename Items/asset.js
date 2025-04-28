@@ -66,7 +66,7 @@ export class Asset {
     while(pageItems.length > 0) {
       const pageData = await Utility.Utility.FetchJSON(`https://content-builder.s${stack}.marketingcloudapps.com/fuelapi/asset/v1/content/categories?$page=${page}&$pagesize=${pageSize}`);
       pageItems = pageData.items;
-      folders.push(...pageItems);
+      pageItems.forEach(entry => folders.push(entry));
 
       if(pageItems.length < pageData.pageSize) break;
       page++;
