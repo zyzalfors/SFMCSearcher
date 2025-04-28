@@ -200,10 +200,10 @@ export class Controller {
     const items = [];
     if(!BUid) {
       for(const i in storage.data) {
-        if(storage.data[i][itemsName]) items.push(...storage.data[i][itemsName].Items);
+        if(storage.data[i][itemsName]) storage.data[i][itemsName].Items.forEach(entry => items.push(entry));
       }
     }
-    else if(storage.i > -1 && storage.data[storage.i][itemsName]) items.push(...storage.data[storage.i][itemsName].Items);
+    else if(storage.i > -1 && storage.data[storage.i][itemsName]) storage.data[storage.i][itemsName].Items.forEach(entry => items.push(entry));
 
     return items;
   }

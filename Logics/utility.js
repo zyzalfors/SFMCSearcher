@@ -80,7 +80,7 @@ export class Utility {
     }
     else {
       const storedItems = storage.data[storage.i][itemsName] ? storage.data[storage.i][itemsName].Items : [];
-      storedItems.push(...items);
+      items.forEach(entry => storedItems.push(entry));
       storage.data[storage.i][itemsName] = {Size: storedItems.length, Items: storedItems};
     }
 
