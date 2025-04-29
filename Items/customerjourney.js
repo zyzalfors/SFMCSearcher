@@ -40,6 +40,7 @@ export class CustomerJourney {
   static async Load(stack, BUid, BUname) {
     const pageSize = 50;
     const assetFields = ["customerKey", "id", "name"];
+    const actTypes = ["INAPPSYNCACTIVITY", "PUSHNOTIFICATIONACTIVITY", "SENDTOLINESYNC", "SMSSYNC", "WHATSAPPACTIVITY"];
 
     let page = 1, pageItems = [0];
     const folders = await CustomerJourney.GetFolders(stack);
@@ -69,7 +70,7 @@ export class CustomerJourney {
             prop = "data.email.legacy.legacyId";
             assetId = act.configurationArguments?.triggeredSend?.emailId;
           }
-          else if(act.type === "SMSSYNC" || act.type === "WHATSAPPACTIVITY") {
+          else if(actTypes.includes(act.type)) {
             assetTypeIds = [230];
             prop = "id";
             assetId = act.configurationArguments?.assetId;
@@ -115,7 +116,7 @@ export class CustomerJourney {
     field = Utility.Utility.FindCaseIns(CustomerJourney.searchFields, field);
     if(!field) return;
 
-    const actTypes = ["EMAILV2", "SMSSYNC", "WHATSAPPACTIVITY"];
+    const actTypes = ["EMAILV2", "INAPPSYNCACTIVITY", "PUSHNOTIFICATIONACTIVITY", "SENDTOLINESYNC", "SMSSYNC", "WHATSAPPACTIVITY"];
     switch(field) {
       case "ActivityId":
         return Array.isArray(item.Activities) && item.Activities.find(entry => regex.test(entry.id));

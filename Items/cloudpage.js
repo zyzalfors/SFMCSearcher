@@ -21,7 +21,7 @@ export class Cloudpage {
                 PageId: item.pageId,
                 Path: item._path,
                 Status: item.status,
-                Subtype: item._cloudType,
+                Subtype: item._subType,
                 Type: Cloudpage.type,
                 Url: item.url
               };
@@ -31,7 +31,7 @@ export class Cloudpage {
 
   static async Load(stack, BUid, BUname) {
     const pageSize = 500;
-    const cloudTypes = ["landing-pages", "code-resources", "microsites", "smartcapture-forms"];
+    const subTypes = ["landing-pages", "code-resources", "microsites", "smartcapture-forms"];
 
     let page = 1, pageItems = [0];
     const folders = await Cloudpage.GetFolders(stack);
@@ -47,17 +47,17 @@ export class Cloudpage {
     }
 
     const items2 = [];
-    for(const type of cloudTypes) {
+    for(const subType of subTypes) {
       page = 1;
       pageItems = [0];
 
       while(pageItems.length > 0) {
-        const pageData = await Utility.Utility.FetchJSON(`https://cloud-pages.s${stack}.marketingcloudapps.com/fuelapi/internal/v2/cloudpages/${type}?$page=${page}&$pagesize=${pageSize}`);
+        const pageData = await Utility.Utility.FetchJSON(`https://cloud-pages.s${stack}.marketingcloudapps.com/fuelapi/internal/v2/cloudpages/${subType}?$page=${page}&$pagesize=${pageSize}`);
         pageItems = pageData.entities;
 
         for(const pageItem of pageItems) {
           pageItem._path = Utility.Utility.GetFullPath(pageItem.categoryId, folders);
-          pageItem._cloudType = type;
+          pageItem._subType = subType;
         }
         pageItems.forEach(entry => items2.push(entry));
 
