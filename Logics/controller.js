@@ -213,17 +213,6 @@ export class Controller {
   }
 
   static async SearchDataByQuery(query, isRegex, caseIns) {
-    const Check = (item, where, check) => {
-      switch(where.op) {
-        case "AND":
-          return Check(item, where.left, check) && Check(item, where.right, check);
-        case "OR":
-          return Check(item, where.left, check) || Check(item, where.right, check);
-        default:
-          return check(item, where.field, where.regex);
-      }
-    };
-
     const parsed = new QueryParser.QueryParser(query).Parse(isRegex, caseIns);
     const item = Controller.items.find(entry => entry.itemsName.toLowerCase() === parsed.from.toLowerCase());
     if(!item) return [];
@@ -240,7 +229,7 @@ export class Controller {
       if(fields.length === 1) return [];
     }
 
-    const filtered = parsed.where ? items.filter(entry => Check(entry, parsed.where, item.check)) : items;
+    const filtered = parsed.where ? items.filter(entry => QueryParser.QueryParser.CheckWhere(entry, parsed.where, item.check)) : items;
     if(!parsed.fields.includes("*")) {
       for(const item of filtered) {
         for(const field of Object.keys(item)) {

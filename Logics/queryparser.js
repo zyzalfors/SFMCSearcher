@@ -112,4 +112,15 @@ export class QueryParser {
     return parsed;
   }
 
+  static CheckWhere(item, where, itemCheck) {
+    switch(where.op) {
+      case "AND":
+        return CheckWhere(item, where.left, itemCheck) && CheckWhere(item, where.right, itemCheck);
+      case "OR":
+        return CheckWhere(item, where.left, itemCheck) || CheckWhere(item, where.right, itemCheck);
+      default:
+        return itemCheck(item, where.field, where.regex);
+    }
+  }
+
 }
