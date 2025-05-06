@@ -1,5 +1,6 @@
-import * as Utility from "/Logics/utility.js";
+import * as DEImporter from "/Logics/deimporter.js";
 import * as QueryParser from "/Logics/queryparser.js";
+import * as Utility from "/Logics/utility.js";
 import * as Asset from "/Items/asset.js";
 import * as AttributeGroup from "/Items/attributegroup.js";
 import * as Automation from "/Items/automation.js";
@@ -172,6 +173,10 @@ export class Controller {
                     {
                       name: "view",
                       proc: async inp => await Utility.Utility.ReadStorage("view", inp.BUid, inp.itemsName)
+                    },
+                    {
+                      name: "import-de",
+                      proc: async inp => await Controller.ImportDEData(inp)
                     }
                    ];
 
@@ -257,6 +262,11 @@ export class Controller {
   static async SearchData(BUid, itemsName, field, pattern, query, useQuery, isRegex, caseIns) {
     if(useQuery) return await Controller.SearchDataByQuery(query, isRegex, caseIns);
     return await Controller.SearchDataByInput(BUid, itemsName, field, pattern, isRegex, caseIns);
+  }
+
+  static async ImportDEData(inp) {
+    const stack = await Utility.Utility.GetStack();
+    await DEImporter.DEImporter.Import(stack, inp.DEname, inp.data, inp.sep, inp.chunkSize, inp.method);
   }
 
 }

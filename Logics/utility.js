@@ -25,13 +25,16 @@ export class Utility {
   }
 
   static async FetchJSON(url, method, body, token) {
-    const req = method && body ? await fetch(url, {"method": method.toUpperCase(), "headers": {"Content-Type": "application/json", "x-csrf-token": token}, "body": JSON.stringify(body)}) : await fetch(url);
-    return await req.json();
+    try {
+      const resp = method && body ? await fetch(url, {"method": method.toUpperCase(), "headers": {"Content-Type": "application/json", "x-csrf-token": token}, "body": JSON.stringify(body)}) : await fetch(url);
+      return await resp.json();
+    }
+    catch {}
   }
 
   static async FetchHTML(url) {
-    const req = await fetch(url);
-    return await req.text();
+    const resp = await fetch(url);
+    return await resp.text();
   }
 
   static async GetStack() {
