@@ -31,7 +31,7 @@ export class DEImporter {
       for(const j in vals) {
         const header = headers[j];
 
-        if(keyFields.find(entry => entry === header)) entry.keys[header] = vals[j];
+        if(Utility.Utility.FindCaseIns(keyFields, header)) entry.keys[header] = vals[j];
         else entry.values[header] = vals[j];
       }
     }
