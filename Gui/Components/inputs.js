@@ -1,6 +1,10 @@
+import * as Controller from "/Logics/controller.js";
+import * as DEImporter from "/Logics/deimporter.js";
+import * as Utility from "/Logics/utility.js";
+
 export class Inputs extends HTMLElement {
 
-  constructor(results, utility, controller) {
+  constructor(results) {
     super();
 
     this.node = this.attachShadow({mode: "closed"});
@@ -65,7 +69,7 @@ export class Inputs extends HTMLElement {
         display: none;
       }
 
-      textarea {
+      textarea, input[type="text"], input[type="number"] {
         margin: 0;
         border: 1px solid var(--border-color);
         padding: 6px;
@@ -120,16 +124,16 @@ export class Inputs extends HTMLElement {
         <textarea id="query" placeholder="Type query ..."></textarea>
       </div>
       <div class="entry search">
-        <div class="check"><input id="usequery" type="checkbox"></div>
-        <div class="label"><label for="usequery">Query</label></div>
+        <div class="check"><input id="use-query" type="checkbox"></div>
+        <div class="label"><label for="use-query">Query</label></div>
       </div>
       <div class="entry search">
-        <div class="check"><input id="isregex" type="checkbox"></div>
-        <div class="label"><label for="isregex">Regular expression</label></div>
+        <div class="check"><input id="is-regex" type="checkbox"></div>
+        <div class="label"><label for="is-regex">Regular expression</label></div>
       </div>
       <div class="entry search">
-        <div class="check"><input id="caseins" type="checkbox" checked></div>
-        <div class="label"><label for="caseins">Case insensitive</label></div>
+        <div class="check"><input id="case-ins" type="checkbox" checked></div>
+        <div class="label"><label for="case-ins">Case insensitive</label></div>
       </div>
       <div class="entry search">
         <button id="search">Search</button>
@@ -153,13 +157,29 @@ export class Inputs extends HTMLElement {
         <button id="view">View</button>
       </div>
       <div class="entry export" style="display:none">
-        <button id="export-res">Export results</button>
+        <button id="export-res">Results export</button>
+      </div>
+      <div class="entry deimport" style="display:none">
+        <input type="text" id="de-name" placeholder="Type DE name ...">
+      </div>
+      <div class="entry deimport" style="display:none">
+        <textarea id="de-data" placeholder="Type separated values ..." wrap="off"></textarea>
+      </div>
+      <div class="entry deimport" style="display:none">
+        <input type="text" id="sep" placeholder="Type separator ...">
+      </div>
+      <div class="entry deimport" style="display:none">
+        <input type="number" id="chunk-size" placeholder="Type chunk size ..." min="1">
+      </div>
+      <div class="entry deimport" style="display:none">
+        <select id="import-de-methods"></select>
+      </div>
+      <div class="entry deimport" style="display:none">
+        <button id="import-de">Import</button>
       </div>
     </div>`;
 
     this.results = results;
-    this.utility = utility;
-    this.controller = controller;
 
     this.node.getElementById("stored-bus").addEventListener("change", async ev => {
       this.UpdateQuery(ev.target);
@@ -172,18 +192,28 @@ export class Inputs extends HTMLElement {
     });
 
     this.node.getElementById("fields").addEventListener("change", ev => this.UpdateQuery(ev.target));
-    this.node.getElementById("usequery").addEventListener("change", ev => this.InitQuery(ev.target));
+    this.node.getElementById("use-query").addEventListener("change", ev => this.InitQuery(ev.target));
 
-    const items = this.node.getElementById("load-items");
     const frag = document.createDocumentFragment();
 
-    for(const item of this.controller.items) {
+    const items = this.node.getElementById("load-items");
+    for(const item of Controller.Controller.items) {
       const option = document.createElement("option");
       option.text = item.itemsName;
       option.value = item.itemsName;
       frag.appendChild(option);
     }
     items.appendChild(frag);
+    frag.innerHTML = "";
+
+    const methods = this.node.getElementById("import-de-methods");
+    for(const method of DEImporter.DEImporter.methods) {
+      const option = document.createElement("option");
+      option.text = method;
+      option.value = method;
+      frag.appendChild(option);
+    }
+    methods.appendChild(frag);
 
     for(const btn of this.node.querySelectorAll("button")) btn.addEventListener("click", async ev => await this.Process(ev.target));
     this.node.getElementById("imp").addEventListener("change", ev => this.ProcessImport(ev.target));
@@ -192,6 +222,7 @@ export class Inputs extends HTMLElement {
   InitSearch() {
     for(const div of this.node.querySelectorAll(".load")) div.style.display = "none";
     for(const div of this.node.querySelectorAll(".export")) div.style.display = "none";
+    for(const div of this.node.querySelectorAll(".deimport")) div.style.display = "none";
     for(const div of this.node.querySelectorAll(".search")) div.removeAttribute("style");
     this.InitQuery();
   }
@@ -199,19 +230,28 @@ export class Inputs extends HTMLElement {
   InitLoad() {
     for(const div of this.node.querySelectorAll(".search")) div.style.display = "none";
     for(const div of this.node.querySelectorAll(".export")) div.style.display = "none";
+    for(const div of this.node.querySelectorAll(".deimport")) div.style.display = "none";
     for(const div of this.node.querySelectorAll(".load")) div.removeAttribute("style");
   }
 
   InitExport() {
     for(const div of this.node.querySelectorAll(".load")) div.style.display = "none";
     for(const div of this.node.querySelectorAll(".search")) div.style.display = "none";
+    for(const div of this.node.querySelectorAll(".deimport")) div.style.display = "none";
     for(const div of this.node.querySelectorAll(".export")) div.removeAttribute("style");
+  }
+
+  InitDEImport() {
+    for(const div of this.node.querySelectorAll(".load")) div.style.display = "none";
+    for(const div of this.node.querySelectorAll(".search")) div.style.display = "none";
+    for(const div of this.node.querySelectorAll(".export")) div.style.display = "none";
+    for(const div of this.node.querySelectorAll(".deimport")) div.removeAttribute("style");
   }
 
   InitQuery() {
     const pattern = this.node.getElementById("pattern");
     const query = this.node.getElementById("query");
-    const show = this.node.getElementById("usequery").checked;
+    const show = this.node.getElementById("use-query").checked;
     if(show) {
       pattern.parentElement.style.display = "none";
       query.parentElement.removeAttribute("style");
@@ -223,7 +263,7 @@ export class Inputs extends HTMLElement {
   }
 
   UpdateQuery(select) {
-    if(!this.node.getElementById("usequery").checked) return;
+    if(!this.node.getElementById("use-query").checked) return;
 
     const queryArea = this.node.getElementById("query");
     const query = queryArea.value;
@@ -237,7 +277,7 @@ export class Inputs extends HTMLElement {
     fields.innerHTML = "";
 
     const itemsName = this.node.getElementById("stored-items").value;
-    const item = this.controller.items.find(entry => entry.itemsName === itemsName);
+    const item = Controller.Controller.items.find(entry => entry.itemsName === itemsName);
     if(!item) return;
 
     const frag = document.createDocumentFragment();
@@ -256,14 +296,14 @@ export class Inputs extends HTMLElement {
     items.innerHTML = "";
 
     const BUid = this.node.getElementById("stored-bus").value;
-    const storage = await this.utility.GetStorage(BUid);
+    const storage = await Utility.Utility.GetStorage(BUid);
 
     let data = [];
     if(!Array.isArray(storage.data)) data = [];
     else if(!BUid) data = storage.data;
     else if(storage.i > -1) data = [storage.data[storage.i]];
 
-    const fields = [...this.utility.storageFields];
+    const fields = [...Utility.Utility.storageFields];
     const frag = document.createDocumentFragment();
 
     for(const entry of data) {
@@ -286,7 +326,7 @@ export class Inputs extends HTMLElement {
     const BUs = this.node.getElementById("stored-bus");
     BUs.innerHTML = "";
 
-    const data = await this.utility.GetStoredBUData();
+    const data = await Utility.Utility.GetStoredBUData();
     const frag = document.createDocumentFragment();
 
     if(data.length > 1) {
@@ -315,7 +355,7 @@ export class Inputs extends HTMLElement {
 
     reader.addEventListener("load", async () => {
       try {
-        const action = this.controller.actions.find(entry => entry.name === "import");
+        const action = Controller.Controller.actions.find(entry => entry.name === "import");
         if(!action) return;
 
         await action.proc(JSON.parse(reader.result));
@@ -344,21 +384,32 @@ export class Inputs extends HTMLElement {
 
     try {
       switch(actionName) {
+        case "import-de":
+          await Controller.Controller.Process({
+            actionName: actionName,
+            DEname: this.node.getElementById("de-name").value.trim(),
+            data: this.node.getElementById("de-data").value,
+            sep: this.node.getElementById("sep").value.trim(),
+            chunkSize: this.node.getElementById("chunk-size").value.trim(),
+            method: this.node.getElementById("import-de-methods").value
+          });
+          break;
+
         case "import":
           this.node.getElementById("imp").click();
           break;
 
         case "clear": case "export": case "search": case "view":
-          const res = await this.controller.Process({
+          const res = await Controller.Controller.Process({
                   actionName: actionName,
                   BUid: this.node.getElementById("stored-bus").value,
                   itemsName: this.node.getElementById("stored-items").value,
                   field: this.node.getElementById("fields").value,
                   pattern: this.node.getElementById("pattern").value,
                   query: this.node.getElementById("query").value,
-                  useQuery: this.node.getElementById("usequery").checked,
-                  isRegex: this.node.getElementById("isregex").checked,
-                  caseIns: this.node.getElementById("caseins").checked
+                  useQuery: this.node.getElementById("use-query").checked,
+                  isRegex: this.node.getElementById("is-regex").checked,
+                  caseIns: this.node.getElementById("case-ins").checked
                 });
           if(res) this.results.Populate(res);
           break;
@@ -368,7 +419,7 @@ export class Inputs extends HTMLElement {
           break;
 
         case "load":
-          await this.controller.Process({actionName: actionName, itemsName: this.node.getElementById("load-items").value});
+          await Controller.Controller.Process({actionName: actionName, itemsName: this.node.getElementById("load-items").value});
           break;
       }
     }
@@ -384,7 +435,13 @@ export class Inputs extends HTMLElement {
   }
 
   ProcessKey(ev) {
-    if(ev.ctrlKey && ev.code === "Enter") this.node.getElementById("search").click();
+    if(ev.ctrlKey && ev.code === "Enter") {
+      const search = this.node.getElementById("search");
+      const importDE = this.node.getElementById("import-de");
+
+      if(search.parentNode.style.display !== "none") search.click();
+      else if(importDE.parentNode.style.display !== "none") importDE.click();
+    }
   }
 
 }

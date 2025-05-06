@@ -1,8 +1,8 @@
 export class Header extends HTMLElement {
 
-  constructor(name, ver, BUname, BUid, logo, search, load, exp, inputs) {
+  constructor(inp) {
     super();
-    const bu = BUname && BUid ? `${BUname} (${BUid})` : "";
+    const bu = inp.BUname && inp.BUid ? `${inp.BUname} (${inp.BUid})` : "";
 
     this.node = this.attachShadow({mode: "closed"});
     this.node.innerHTML = `
@@ -19,19 +19,19 @@ export class Header extends HTMLElement {
         border-bottom: 5px solid var(--sf-orange);
       }
 
-      #logo, #search-img, #load-img, #export-img {
+      #logo, #search-img, #load-img, #export-img, #deimport-img {
         margin: 0;
         border: 0;
         padding: 6px;
         height: auto;
       }
 
-      #logo > img, #search-img > img, #load-img > img, #export-img > img {
+      #logo > img, #search-img > img, #load-img > img, #export-img > img, #deimport-img > img {
         height: 32px;
         width: 32px;
       }
 
-      #search-img > img:hover, #load-img > img:hover, #export-img > img:hover {
+      #search-img > img:hover, #load-img > img:hover, #export-img > img:hover, #deimport-img > img:hover {
         cursor: pointer;
       }
 
@@ -75,26 +75,31 @@ export class Header extends HTMLElement {
       }
     </style>
     <div id="header">
-      <div id="logo"><img src="${logo}"></div>
-      <div id="title">${name} v${ver}</div>
+      <div id="logo"><img src="${inp.logo}"></div>
+      <div id="title">${inp.name} v${inp.ver}</div>
       <div id="bu">${bu}</div>
       <div id="search-img">
-        <img src="${search}">
+        <img src="${inp.search}">
         <span class="tooltip">Search</span>
       </div>
       <div id="load-img">
-        <img src="${load}">
+        <img src="${inp.load}">
         <span class="tooltip">Load</span>
       </div>
       <div id="export-img">
-        <img src="${exp}">
+        <img src="${inp.exp}">
         <span class="tooltip">Export</span>
+      </div>
+      <div id="deimport-img">
+        <img src="${inp.deimp}">
+        <span class="tooltip">DE Import</span>
       </div>
     </div>`;
 
-    this.node.getElementById("search-img").addEventListener("click", () => inputs.InitSearch());
-    this.node.getElementById("load-img").addEventListener("click", () => inputs.InitLoad());
-    this.node.getElementById("export-img").addEventListener("click", () => inputs.InitExport());
+    this.node.getElementById("search-img").addEventListener("click", () => inp.inputs.InitSearch());
+    this.node.getElementById("load-img").addEventListener("click", () => inp.inputs.InitLoad());
+    this.node.getElementById("export-img").addEventListener("click", () => inp.inputs.InitExport());
+    this.node.getElementById("deimport-img").addEventListener("click", () => inp.inputs.InitDEImport());
   }
 
   ProcessKey(ev) {
@@ -102,6 +107,10 @@ export class Header extends HTMLElement {
 
     let div;
     switch(ev.code) {
+      case "KeyI":
+        div = this.node.getElementById("deimport-img");
+        break;
+
       case "KeyS":
         div = this.node.getElementById("search-img");
         break;

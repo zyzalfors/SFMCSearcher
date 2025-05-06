@@ -1,6 +1,9 @@
+import * as Controller from "/Logics/controller.js";
+import * as Utility from "/Logics/utility.js";
+
 export class Results extends HTMLElement {
 
-  constructor(utility, controller) {
+  constructor() {
     super();
 
     this.node = this.attachShadow({mode: "closed"});
@@ -41,9 +44,6 @@ export class Results extends HTMLElement {
     <div>
       <table id="results"></table>
     </div>`;
-
-    this.utility = utility;
-    this.controller = controller;
   }
 
   Sort(th) {
@@ -74,7 +74,7 @@ export class Results extends HTMLElement {
     table.innerHTML = "";
     if(res.length === 0) return;
 
-    const item = this.controller.items.find(entry => entry.type === res[0].Type);
+    const item = Controller.Controller.items.find(entry => entry.type === res[0].Type);
     if(!item) return;
 
     const fields = Object.keys(res[0]);
@@ -133,7 +133,7 @@ export class Results extends HTMLElement {
     const sep = "|";
     const data = sv.map(row => row.join(sep)).join("\n");
     const itemsName = table.rows[0].cells[0].innerText;
-    this.utility.Output("sv", data, true, null, itemsName);
+    Utility.Utility.Output("sv", data, true, null, itemsName);
   }
 
 }
