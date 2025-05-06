@@ -1,5 +1,4 @@
 import * as Utility from "/Logics/utility.js";
-import * as Controller from "/Logics/controller.js";
 import * as Header from "/Gui/Components/header.js";
 import * as Inputs from "/Gui/Components/inputs.js";
 import * as Results from "/Gui/Components/results.js";
@@ -17,9 +16,20 @@ async function InitGui() {
   const manifest = chrome.runtime.getManifest();
   const data = await GetBUData();
 
-  const results = new Results.Results(Utility.Utility, Controller.Controller);
-  const inputs = new Inputs.Inputs(results, Utility.Utility, Controller.Controller);
-  const header = new Header.Header(manifest.name, manifest.version, data?.BUname, data?.BUid, "/Gui/Sources/logo.png", "/Gui/Sources/search.png", "/Gui/Sources/load.png", "/Gui/Sources/export.png", inputs);
+  const results = new Results.Results();
+  const inputs = new Inputs.Inputs(results);
+  const header = new Header.Header({
+          name: manifest.name,
+          ver: manifest.version,
+          BUname: data?.BUname,
+          BUid: data?.BUid,
+          logo: "/Gui/Sources/logo.png",
+          search: "/Gui/Sources/search.png",
+          load: "/Gui/Sources/load.png",
+          exp: "/Gui/Sources/export.png",
+          deimp: "/Gui/Sources/deimport.png",
+          inputs: inputs
+        });
   document.body.appendChild(header);
 
   const div = document.createElement("div");
