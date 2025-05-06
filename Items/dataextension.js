@@ -2,8 +2,8 @@ import * as Utility from "/Logics/utility.js";
 
 export class DataExtension {
 
-  static tableFields = ["BUId", "BUName", "Id", "Key", "Name", "Path", "Link", "RowCount", "Sendable", "SendableKey", "Subtype", "CreatedByName", "CreatedDate", "ModifiedByName", "ModifiedDate"];
-  static searchFields = ["BUId", "BUName", "CreatedByName", "CreatedDate", "Id", "Key",  "ModifiedByName", "ModifiedDate", "Name", "Path", "RowCount", "Sendable", "SendableKey", "Subtype"];
+  static tableFields = ["BUId", "BUName", "Id", "Key", "Name", "Path", "Description", "Link", "RowCount", "Sendable", "SendableKey", "Subtype", "CreatedByName", "CreatedDate", "ModifiedByName", "ModifiedDate"];
+  static searchFields = ["BUId", "BUName", "CreatedByName", "CreatedDate", "Description", "Id", "Key",  "ModifiedByName", "ModifiedDate", "Name", "Path", "RowCount", "Sendable", "SendableKey", "Subtype"];
   static itemsName = "DataExtensions";
   static type = "DataExtension";
 
@@ -14,6 +14,7 @@ export class DataExtension {
                 CategoryId: item.categoryId,
                 CreatedByName: item.createdByName,
                 CreatedDate: item.createdDate,
+                Description: item.description,
                 Id: item.id,
                 Key: item.key,
                 Link: `https://mc.s${stack}.marketingcloudapps.com/contactsmeta/admin.html#admin/data-extension/${item.id}/properties/`,

@@ -21,7 +21,7 @@ export class Cloudpage {
                 PageId: item.pageId,
                 Path: item._path,
                 Status: item.status,
-                Subtype: item._subType,
+                Subtype: item._subtype,
                 Type: Cloudpage.type,
                 Url: item.url
               };
@@ -57,7 +57,7 @@ export class Cloudpage {
 
         for(const pageItem of pageItems) {
           pageItem._path = Utility.Utility.GetFullPath(pageItem.categoryId, folders);
-          pageItem._subType = subType;
+          pageItem._subtype = subType;
         }
         pageItems.forEach(entry => items2.push(entry));
 
