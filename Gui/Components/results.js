@@ -20,6 +20,7 @@ export class Results extends HTMLElement {
         border: 0;
         padding: 12px;
         text-align: left;
+        border-radius: 6px;
         position: sticky;
         top: 0;
       }
@@ -35,6 +36,7 @@ export class Results extends HTMLElement {
         border: 0;
         padding: 12px;
         text-align: left;
+        border-radius: 6px;
       }
 
       #results tr:nth-child(even) {
