@@ -50,7 +50,8 @@ export class DEImporter {
 
       case "Overwrite":
         par = "?method=insert";
-        await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/contactsmeta/fuelapi/internal/v1/customobjects/${DEid}/cleardata`, "POST", {}, token);
+        try {await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/contactsmeta/fuelapi/internal/v1/customobjects/${DEid}/cleardata`, "POST", {}, token);}
+        catch {}
         break;
 
       default:

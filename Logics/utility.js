@@ -25,11 +25,8 @@ export class Utility {
   }
 
   static async FetchJSON(url, method, body, token) {
-    try {
-      const resp = method && body ? await fetch(url, {"method": method.toUpperCase(), "headers": {"Content-Type": "application/json", "x-csrf-token": token}, "body": JSON.stringify(body)}) : await fetch(url);
-      return await resp.json();
-    }
-    catch {}
+    const resp = method && body ? await fetch(url, {"method": method.toUpperCase(), "headers": {"Content-Type": "application/json", "x-csrf-token": token}, "body": JSON.stringify(body)}) : await fetch(url);
+    return await resp.json();
   }
 
   static async FetchHTML(url) {
