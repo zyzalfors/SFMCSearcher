@@ -47,7 +47,7 @@ export class Utility {
   static async GetBUData(stack) {
     if(!stack) stack = await Utility.GetStack();
     const BUdata = await Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/contactsmeta/fuelapi/platform-internal/v1/accounts/@current`);
-    return {BUid: BUdata?.accountId, BUname: BUdata?.name};
+    return {BUid: BUdata.accountId, BUname: BUdata.name};
   }
 
   static async GetStorage(BUid) {
