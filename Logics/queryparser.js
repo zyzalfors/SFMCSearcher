@@ -115,10 +115,10 @@ export class QueryParser {
   static CheckWhere(item, where, itemCheck) {
     switch(where.op) {
       case "AND":
-        return CheckWhere(item, where.left, itemCheck) && CheckWhere(item, where.right, itemCheck);
+        return QueryParser.CheckWhere(item, where.left, itemCheck) && QueryParser.CheckWhere(item, where.right, itemCheck);
 
       case "OR":
-        return CheckWhere(item, where.left, itemCheck) || CheckWhere(item, where.right, itemCheck);
+        return QueryParser.CheckWhere(item, where.left, itemCheck) || QueryParser.CheckWhere(item, where.right, itemCheck);
 
       default:
         return itemCheck(item, where.field, where.regex);
