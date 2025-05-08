@@ -20,7 +20,7 @@ It allows users to quickly navigate through various Marketing Cloud items:
 - Queries
 - Scripts
 
-It is developed using vanilla JavaScript, HTML, and CSS, and leverages the Marketing Cloud's native API, relying solely on session authentication to load object data. 
+It is developed using vanilla JavaScript, HTML, and CSS, and leverages the Marketing Cloud's native APIs, relying solely on session authentication to load object data. 
 
 Loaded object data are stored in browser storage and can be navigated even without a logged-in session.
 
