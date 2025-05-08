@@ -2,8 +2,8 @@ import * as Utility from "/Logics/utility.js";
 
 export class Script {
 
-  static tableFields = ["BUId", "BUName", "Id", "Key", "Name", "Path", "Link", "Code", "CreatedDate", "ModifiedDate"];
-  static searchFields = ["BUId", "BUName", "Code", "CreatedDate", "Id", "Key", "ModifiedDate", "Name", "Path"];
+  static tableFields = ["BUId", "BUName", "Id", "Key", "Name", "Path", "Link", "Code", "CreatedBy", "CreatedDate", "ModifiedBy", "ModifiedDate"];
+  static searchFields = ["BUId", "BUName", "Code", "CreatedBy", "CreatedDate", "Id", "Key", "ModifiedBy", "ModifiedDate", "Name", "Path"];
   static itemsName = "Scripts";
   static type = "Script";
 
@@ -13,10 +13,12 @@ export class Script {
                 BUName: BUname,
                 CategoryId: item.categoryId,
                 Code: Utility.Utility.SanitizeXml(item.script),
+                CreatedBy: item._createdBy,
                 CreatedDate: item.createdDate,
                 Id: item.ssjsActivityId,
                 Key: item.key,
                 Link: `https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/?hub=1#ActivityModal/423/${item.ssjsActivityId}`,
+                ModifiedBy: item._modifiedBy,
                 ModifiedDate: item.modifiedDate,
                 Name: item.name,
                 Path: item._path,
@@ -39,6 +41,11 @@ export class Script {
 
       for(const pageItem of pageItems) {
         pageItem._path = Utility.Utility.GetFullPath(pageItem.categoryId, folders);
+
+        const item = await Utility.Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/scripts/${pageItem.ssjsActivityId}`);
+        pageItem._createdBy = item?.createdBy;
+        pageItem._modifiedBy = item?.modifiedBy;
+
         items.push(Script.Build(pageItem, stack, BUid, BUname));
       }
 
