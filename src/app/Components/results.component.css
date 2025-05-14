@@ -1,0 +1,47 @@
+.entry {
+  display: block;
+  margin: 0;
+  border: 0;
+  padding: 10px;
+}
+
+.th {
+  background-color: var(--sf-dark-blue);
+  color: var(--text-color);
+  margin: 0;
+  border: 0;
+  padding: 6px;
+  text-align: left;
+  border-radius: 6px;
+  position: sticky;
+  top: 0;
+  height: 100%;
+}
+
+.th:hover {
+  cursor: pointer;
+  background-color: var(--sf-darker-blue);
+  transition: 0.3s;
+}
+
+.td {
+  margin: 0;
+  border: 0;
+  padding: 6px;
+  text-align: left;
+  border-radius: 6px;
+}
+
+.tr:nth-child(even) {
+  background-color: var(--row-color);
+}
+
+::ng-deep .mat-sort-header-arrow {
+  color: white !important;
+  opacity: 1 !important;
+}
+
+mat-paginator {
+  display: flex !important;
+  justify-content: flex-start !important;
+}
