@@ -1,0 +1,36 @@
+<div>
+  <div class="entry">
+    <select #bus (change)="OnChange($event)"></select>
+  </div>
+  <div class="entry">
+    <select #items (change)="OnChange($event)"></select>
+  </div>
+  <div class="entry">
+    <select #fields (change)="OnChange($event)"></select>
+  </div>
+  <div [hidden]="showQuery">
+    <div class="entry">
+      <textarea #pattern placeholder="Type pattern ..."></textarea>
+    </div>
+  </div>
+  <div [hidden]="!showQuery">
+    <div class="entry">
+      <textarea #query placeholder="Type query ..."></textarea>
+    </div>
+  </div>
+  <div class="entry">
+    <div class="check"><input #usequery type="checkbox" (change)="InitQuery()"></div>
+    <div class="label">Query</div>
+  </div>
+  <div class="entry">
+    <div class="check"><input #isregex type="checkbox"></div>
+    <div class="label">Regular expression</div>
+  </div>
+  <div class="entry">
+    <div class="check"><input #caseins type="checkbox" checked></div>
+    <div class="label">Case insensitive</div>
+  </div>
+  <div class="entry">
+    <button #search (click)="Search()">Search</button>
+  </div>
+</div>
