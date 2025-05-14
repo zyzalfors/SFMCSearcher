@@ -1,0 +1,17 @@
+:root {
+  --sf-orange: #E98300;
+  --sf-blue: #0D9DDA;
+  --sf-dark-blue: #0B5CAB;
+  --sf-darker-blue: #032D60;
+  --border-color: #747474;
+  --dark-background-color: #3C3C3C;
+  --row-color: #F2F2F2;
+  --text-color: white;
+  --checked-color: black;
+  --font-family: verdana, sans-serif;
+  --border-radius: 6px;
+}
+
+* {
+  font-family: var(--font-family);
+}
