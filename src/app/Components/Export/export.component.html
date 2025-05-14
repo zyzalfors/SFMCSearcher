@@ -1,0 +1,18 @@
+<div class="entry">
+  <select #bus (change)="InitItems()"></select>
+</div>
+<div class="entry">
+  <select #items></select>
+</div>
+<div class="entry">
+  <button #clear (click)="Process($event)">Clear</button>
+</div>
+<div class="entry">
+  <button #export (click)="Process($event)">Export</button>
+</div>
+<div class="entry">
+  <button #view (click)="Process($event)">View</button>
+</div>
+<div class="entry">
+  <button #resexport (click)="Process($event)">Results export</button>
+</div>
