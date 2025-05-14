@@ -85,6 +85,7 @@ export class LoadComponent {
       }
       finally {
         input.value = "";
+        this.emitter.emit();
       }
     });
 
