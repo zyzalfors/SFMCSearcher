@@ -1,0 +1,18 @@
+<div class="entry">
+  <input #dename type="text" placeholder="Type DE name ...">
+</div>
+<div class="entry">
+  <textarea #devalues placeholder="Type separated values ..." wrap="off"></textarea>
+</div>
+<div class="entry">
+  <input #sep type="text" placeholder="Type separator ...">
+</div>
+<div class="entry">
+  <input #chunksize type="number" placeholder="Type chunk size ..." min="1">
+</div>
+<div class="entry">
+  <select #methods></select>
+</div>
+<div class="entry">
+  <button #import (click)="Process($event)">Import</button>
+</div>
