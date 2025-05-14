@@ -1,0 +1,13 @@
+<div class="entry">
+  <table mat-table matSort matPaginator [dataSource]="dataSource" #results>
+    <ng-container *ngFor="let header of headers" [matColumnDef]="header">
+      <th class="th" *matHeaderCellDef mat-sort-header>{{header}}</th>
+      <td class="td" mat-cell *matCellDef="let element">{{element[header]}}</td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="headers"></tr>
+    <tr class="tr" mat-row *matRowDef="let row; columns: headers;"></tr>
+  </table>
+  <div [hidden]="!showPaginator">
+    <mat-paginator [pageSizeOptions]="[20, 40, 80]" showFirstLastButtons></mat-paginator>
+  </div>
+</div>
