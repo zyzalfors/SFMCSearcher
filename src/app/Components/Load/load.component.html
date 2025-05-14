@@ -1,0 +1,10 @@
+<div class="entry">
+  <select #items></select>
+</div>
+<div class="entry">
+  <button #load (click)="Process($event)">Load</button>
+</div>
+<div class="entry">
+  <button #import (click)="Process($event)">Import</button>
+  <input #imp type="file" (change)="ProcessImport()">
+</div>
