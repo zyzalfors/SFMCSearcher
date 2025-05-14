@@ -1,0 +1,49 @@
+.entry {
+  display: flex;
+  margin: 0;
+  border: 0;
+  padding: 6px;
+}
+
+textarea, input[type="text"], input[type="number"] {
+  margin: 0;
+  border: 1px solid var(--border-color);
+  padding: 6px;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--border-radius);
+}
+
+select {
+  margin: 0;
+  border: 1px solid var(--border-color);
+  padding: 6px;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--border-radius);
+}
+
+select:focus {
+  outline: none;
+}
+
+button {
+  margin: 0;
+  border: 0;
+  padding: 2px 55px;
+  background-color: var(--sf-dark-blue);
+  color: var(--text-color);
+  width: 100%;
+  height: 100%;
+  border-radius: var(--border-radius);
+}
+
+button:hover{
+  cursor: pointer;
+  background-color: var(--sf-darker-blue);
+  transition: 0.3s;
+}
+
+button:active {
+  transform: translateY(2px);
+}
