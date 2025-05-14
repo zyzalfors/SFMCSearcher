@@ -1,0 +1,25 @@
+<div class="header">
+  <div class="imgdiv">
+    <img src="{{logoIconUrl}}">
+  </div>
+  <div class="title">{{name}} v{{version}}</div>
+  @if(BUname && BUid) {
+  <div class="bu">{{BUname}} ({{BUid}})</div>
+  }
+  <div class="imgdiv" (click)="OnClick($event)">
+    <img #search src="{{searchIconUrl}}">
+    <span class="tooltip">Search</span>
+  </div>
+  <div class="imgdiv" (click)="OnClick($event)">
+    <img #load src="{{loadIconUrl}}">
+    <span class="tooltip">Load</span>
+  </div>
+  <div class="imgdiv" (click)="OnClick($event)">
+    <img #export src="{{exportIconUrl}}">
+    <span class="tooltip">Export</span>
+  </div>
+  <div class="imgdiv" (click)="OnClick($event)">
+    <img #deimport src="{{deImportIconUrl}}">
+    <span class="tooltip">DE Import</span>
+  </div>
+</div>
