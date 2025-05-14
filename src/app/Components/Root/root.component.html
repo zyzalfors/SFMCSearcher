@@ -1,0 +1,10 @@
+<div>
+  <app-header [name]="name" [version]="version" [BUname]="BUname" [BUid]="BUid" (emitter)="OnHeaderEmitted($event)"></app-header>
+</div>
+<div class="entry">
+  <app-search #search [hidden]="!showSearch" (emitter)="OnSearchEmitted($event)"></app-search>
+  <app-load [hidden]="!showLoad" (emitter)="OnLoadEmitted()"></app-load>
+  <app-export #export [hidden]="!showExport" (emitter)="OnExportEmitted($event)"></app-export>
+  <app-deimport [hidden]="!showDEImport"></app-deimport>
+  <app-results #results></app-results>
+</div>
