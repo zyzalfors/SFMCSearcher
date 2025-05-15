@@ -77,7 +77,7 @@ export class CustomerJourney {
             assetId = act.configurationArguments?.assetId;
           }
 
-          if(assetTypeIds && assetId) {
+          if(assetTypeIds && prop && assetId) {
             const left: any = {property: "assetType.id", simpleOperator: "IN", values: assetTypeIds};
             const right: any = {property: prop, simpleOperator: "equals", value: assetId};
             const body: any = {page: {page: 1, pageSize: 1}, query: {leftOperand: left, logicalOperator: "AND", rightOperand: right}, fields: CustomerJourney.assetFields};
