@@ -52,9 +52,10 @@ export abstract class InputComponent {
     const storage: any = await Utility.GetData(BUid);
 
     let data: any[] = [];
-    if(!Array.isArray(storage.data)) data = [];
-    else if(!BUid) data = storage.data;
-    else if(storage.i > -1) data = [storage.data[storage.i]];
+    if(Array.isArray(storage.data)) {
+      if(!BUid) data = storage.data;
+      else if(storage.i > -1) data = [storage.data[storage.i]];
+    }
 
     const fields: string[] = [...Utility.storageFields];
     const frag: DocumentFragment = document.createDocumentFragment();
