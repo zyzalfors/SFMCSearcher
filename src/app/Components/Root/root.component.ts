@@ -28,7 +28,7 @@ export class RootComponent {
   @ViewChild("results")
   private readonly results!: ResultsComponent;
 
-  @ViewChild("search") 
+  @ViewChild("search")
   private readonly search!: SearchComponent;
 
   @ViewChild("export")
@@ -69,7 +69,7 @@ export class RootComponent {
       case inp.clear:
         await this.search.InitBUs();
         break;
-    } 
+    }
   }
 
   public async OnLoadEmitted(): Promise<void> {
