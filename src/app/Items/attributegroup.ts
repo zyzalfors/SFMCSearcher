@@ -64,10 +64,10 @@ export class AttributeGroup {
 
     switch(itemField) {
       case "UsedDEKey":
-        return item.UsedDEs.find((entry: any) => regex.test(entry.key));
+        return item.DEs.find((entry: any) => regex.test(entry.key));
 
       case "UsedDEName":
-        return item.UsedDEs.find((entry: any) => regex.test(entry.name));
+        return item.DEs.find((entry: any) => regex.test(entry.name));
 
       default:
         return regex.test(item[itemField]);

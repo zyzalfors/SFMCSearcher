@@ -3,12 +3,13 @@ import { Utility } from "../Logics/utility";
 export class CustomerJourney {
 
   public static readonly tableFields: string[] = ["BUId", "BUName", "Id", "DefinitionId", "Name", "Path", "Link", "SourceDE", "SourceDEId", "FilterCriteria", "Schedule", "ScheduleMode", "Status", "Version", "EventDefinitionId", "EventDefinitionKey", "CreatedDate", "ModifiedDate"];
-  public static readonly searchFields: string[] = ["ActivityId", "ActivityName", "AssetId", "AssetKey", "AssetName", "BUId", "BUName", "CreatedDate", "DefinitionId", "EventDefinitionId", "EventDefinitionKey", "FilterCriteria", "Id", "ModifiedDate", "Name", "Path", "Schedule", "ScheduleMode", "SourceDE", "SourceDEId", "Status", "TriggeredSendId", "UsedDE"];
+  public static readonly searchFields: string[] = ["ActivityId", "ActivityName", "AssetId", "AssetKey", "AssetName", "BUId", "BUName", "CreatedDate", "DefinitionId", "EventDefinitionId", "EventDefinitionKey", "FilterCriteria", "Id", "ModifiedDate", "Name", "Path", "Schedule", "ScheduleMode", "SourceDE", "SourceDEId", "Status", "TriggeredSendId", "TriggeredSendKey", "UsedDE"];
   public static readonly itemsName: string = "CustomerJourneys";
   public static readonly type: string = "CustomerJourney";
   private static readonly pageSize: number = 500;
   private static readonly assetFields: string[] = ["customerKey", "id", "name"];
-  private static readonly actTypes: string[] = ["INAPPSYNCACTIVITY", "PUSHNOTIFICATIONACTIVITY", "SENDTOLINESYNC", "SMSSYNC", "WHATSAPPACTIVITY"];
+  private static readonly actTypes: string[] = ["EMAILV2", "INAPPSYNCACTIVITY", "PUSHNOTIFICATIONACTIVITY", "SENDTOLINESYNC", "SMSSYNC", "WHATSAPPACTIVITY"];
+  private static readonly actFields: string[] = ["_AssetId", "_AssetKey", "_AssetName", "configurationArguments", "id", "name", "type"];
 
   private static Build(item: any, stack: string, BUid: string, BUname: string): void {
     return Utility.SanitizeObj({
@@ -65,26 +66,31 @@ export class CustomerJourney {
           let prop: any;
           let assetId: any;
 
-          if(act.type === "EMAILV2") {
+          if(act.type === CustomerJourney.actTypes[0]) {
             assetTypeIds = [5, 207, 208, 209];
             prop = "data.email.legacy.legacyId";
             assetId = act.configurationArguments?.triggeredSend?.emailId;
           }
-          else if(CustomerJourney.actTypes.includes(act.type)) {
+          else if(CustomerJourney.actTypes.includes(act.type, 1)) {
             assetTypeIds = [230];
             prop = "id";
             assetId = act.configurationArguments?.assetId;
           }
-          if(!assetTypeIds || !assetId) continue;
 
-          const left: any = {property: "assetType.id", simpleOperator: "IN", values: assetTypeIds};
-          const right: any = {property: prop, simpleOperator: "equals", value: assetId};
-          const body: any = {page: {page: 1, pageSize: 1}, query: {leftOperand: left, logicalOperator: "AND", rightOperand: right}, fields: CustomerJourney.assetFields};
+          if(assetTypeIds && assetId) {
+            const left: any = {property: "assetType.id", simpleOperator: "IN", values: assetTypeIds};
+            const right: any = {property: prop, simpleOperator: "equals", value: assetId};
+            const body: any = {page: {page: 1, pageSize: 1}, query: {leftOperand: left, logicalOperator: "AND", rightOperand: right}, fields: CustomerJourney.assetFields};
 
-          const asset: any = (await Utility.FetchJSON(`https://mc.s${stack}.exacttarget.com/cloud/fuelapi/asset/v1/content/assets/query?scope=ours%2Cshared`, "POST", body)).items[0];
-          act._AssetId = asset?.id;
-          act._AssetName = asset?.name;
-          act._AssetKey = asset?.customerKey;
+            const asset: any = (await Utility.FetchJSON(`https://mc.s${stack}.exacttarget.com/cloud/fuelapi/asset/v1/content/assets/query?scope=ours%2Cshared`, "POST", body)).items[0];
+            act._AssetId = asset?.id;
+            act._AssetName = asset?.name;
+            act._AssetKey = asset?.customerKey;
+          }
+
+          for(const field in act) {
+            if(!CustomerJourney.actFields.includes(field)) delete act[field];
+          }
         }
 
         items.push(CustomerJourney.Build(pageItem, stack, BUid, BUname));
@@ -130,6 +136,9 @@ export class CustomerJourney {
 
       case "TriggeredSendId":
         return Array.isArray(item.Activities) && item.Activities.find((entry: any) => CustomerJourney.actTypes.includes(entry.type) && regex.test(entry.configurationArguments?.triggeredSendId));
+
+      case "TriggeredSendKey":
+        return Array.isArray(item.Activities) && item.Activities.find((entry: any) => CustomerJourney.actTypes.includes(entry.type) && regex.test(entry.configurationArguments?.triggeredSendKey));
 
       case "UsedDE":
         const exitCriteria: string = item.Exits[0]?.configurationArguments?.criteria;
