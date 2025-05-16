@@ -49,27 +49,14 @@ export abstract class InputComponent {
     items.innerHTML = "";
 
     const BUid: string = this.BUs.nativeElement.value;
-    const storage: any = await Utility.GetData(BUid);
+    const itemsNames: string[] = await Utility.GetItemsData(BUid);
 
-    let data: any[] = [];
-    if(Array.isArray(storage.data)) {
-      if(!BUid) data = storage.data;
-      else if(storage.i > -1) data = [storage.data[storage.i]];
-    }
-
-    const fields: string[] = [...Utility.storageFields];
     const frag: DocumentFragment = document.createDocumentFragment();
-
-    for(const entry of data) {
-      for(const field in entry) {
-        if(fields.includes(field)) continue;
-        fields.push(field);
-
-        const option: HTMLOptionElement = document.createElement("option");
-        option.value = field;
-        option.text = field;
-        frag.appendChild(option);
-      }
+    for(const itemsName of itemsNames) {
+      const option: HTMLOptionElement = document.createElement("option");
+      option.value = itemsName;
+      option.text = itemsName;
+      frag.appendChild(option);
     }
 
     items.appendChild(frag);
@@ -83,7 +70,7 @@ export abstract class InputComponent {
     fields.innerHTML = "";
 
     const itemsName: string = this.items.nativeElement.value;
-    const item: any = Controller.items.find((entry: any) => entry.itemsName === itemsName);
+    const item: any = Controller.items.find((entry: any) => entry.class.itemsName === itemsName);
     if(!item) return;
 
     const frag: DocumentFragment = document.createDocumentFragment();
