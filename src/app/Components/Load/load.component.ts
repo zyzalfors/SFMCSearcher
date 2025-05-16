@@ -30,8 +30,8 @@ export class LoadComponent {
 
     for(const item of Controller.items) {
       const option: HTMLOptionElement = document.createElement("option");
-      option.text = item.itemsName;
-      option.value = item.itemsName;
+      option.text = item.class.itemsName;
+      option.value = item.class.itemsName;
       frag.appendChild(option);
     }
     items.appendChild(frag);
