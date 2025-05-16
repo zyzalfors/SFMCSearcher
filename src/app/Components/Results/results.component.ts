@@ -24,7 +24,7 @@ export class ResultsComponent {
   private readonly paginator!: MatPaginator;
 
   private readonly sep: string = ",";
-  public headers!: string[];
+  public readonly headers: string[] = [];
   public dataSource!: MatTableDataSource<any, MatPaginator>;
   public showPaginator: boolean = false;
 
@@ -46,13 +46,17 @@ export class ResultsComponent {
 
   public Populate(results: any): void {
     if(!Array.isArray(results)) return;
+
     if(this.dataSource) this.dataSource.data = [];
     if(results.length === 0) return;
 
     const type: string = results[0].Type;
     const item: any = Controller.items.find((entry: any) => entry.class.type === type);
     if(!item) return;
-    this.headers = [type].concat(item.class.tableFields);
+
+    const fields: string[] = Object.keys(results[0]);
+    this.headers.length = 0;
+    this.headers.push(...[type].concat(item.class.tableFields.filter((entry: string) => fields.includes(entry))));
 
     let n: number = 1;
     for(const result of results) {
