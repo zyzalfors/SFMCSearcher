@@ -56,9 +56,29 @@ export class Utility {
 
   public static async GetData(BUid: string = ""): Promise<any> {
     const storage: any = await chrome.storage.local.get();
-    const data: any = storage["data"];
+    const data: any = storage.data;
     const i: number = Array.isArray(data) ? data.findIndex((entry: any) => entry.BUId == BUid) : -1;
     return {data, i};
+  }
+
+  public static async GetItemsData(BUid: string = ""): Promise<string[]> {
+    const storage: any = await Utility.GetData(BUid);
+
+    let data: any[] = [];
+    if(Array.isArray(storage.data)) {
+      if(!BUid) data = storage.data;
+      else if(storage.i > -1) data = [storage.data[storage.i]];
+    }
+
+    const itemsNames: Set<string> = new Set<string>();
+    for(const entry of data) {
+      for(const field in entry) {
+        if(Utility.storageFields.includes(field)) continue;
+        itemsNames.add(field);
+      }
+    }
+
+    return [...itemsNames];
   }
 
   public static async GetBUData(): Promise<any[]> {
@@ -99,7 +119,7 @@ export class Utility {
 
     for(const entry of data) {
       for(const field in entry) {
-        if(Utility.storageFields.includes(field) || !Controller.items.find((entry: any) => entry.itemsName === field)) continue;
+        if(Utility.storageFields.includes(field) || !Controller.items.find((entry: any) => entry.class.itemsName === field)) continue;
         await Utility.StoreData(entry.BUId, entry.BUName, field, entry[field].Items);
       }
     }

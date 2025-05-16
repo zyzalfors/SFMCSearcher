@@ -21,22 +21,22 @@ import { Script } from "../Items/script";
 export class Controller {
 
   public static readonly items: any[] = [
-    {itemsName: Asset.itemsName, class: Asset},
-    {itemsName: AttributeGroup.itemsName, class: AttributeGroup},
-    {itemsName: Automation.itemsName, class: Automation},
-    {itemsName: Cloudpage.itemsName, class: Cloudpage},
-    {itemsName: CustomerJourney.itemsName, class: CustomerJourney},
-    {itemsName: DataExtension.itemsName, class: DataExtension},
-    {itemsName: DataExtract.itemsName, class: DataExtract},
-    {itemsName: FileTransfer.itemsName, class: FileTransfer},
-    {itemsName: Filter.itemsName, class: Filter},
-    {itemsName: FilterDefinition.itemsName, class: FilterDefinition},
-    {itemsName: Import.itemsName, class: Import},
-    {itemsName: JourneyHistoryEntry.itemsName, class: JourneyHistoryEntry},
-    {itemsName: Message.itemsName, class: Message},
-    {itemsName: Package.itemsName, class: Package},
-    {itemsName: Query.itemsName, class: Query},
-    {itemsName: Script.itemsName, class: Script}
+    {class: Asset},
+    {class: AttributeGroup},
+    {class: Automation},
+    {class: Cloudpage},
+    {class: CustomerJourney},
+    {class: DataExtension},
+    {class: DataExtract},
+    {class: FileTransfer},
+    {class: Filter},
+    {class: FilterDefinition},
+    {class: Import},
+    {class: JourneyHistoryEntry},
+    {class: Message},
+    {class: Package},
+    {class: Query},
+    {class: Script}
   ];
 
   public static readonly actions: any[] = [
@@ -57,7 +57,7 @@ export class Controller {
   }
 
   private static async LoadData(itemsName: string): Promise<void> {
-    const item: any = Controller.items.find((entry: any) => entry.itemsName === itemsName);
+    const item: any = Controller.items.find((entry: any) => entry.class.itemsName === itemsName);
     if(!item) return;
 
     const stack: string = await Utility.GetSiteStack();
@@ -84,10 +84,10 @@ export class Controller {
 
   private static async SearchDataByQuery(query: string, isRegex: boolean, caseIns: boolean): Promise<any[]> {
     const parsed: any = new QueryParser(query).Parse(isRegex, caseIns);
-    const item: any = Controller.items.find((entry: any) => entry.itemsName.toLowerCase() === parsed.from.toLowerCase());
+    const item: any = Controller.items.find((entry: any) => entry.class.itemsName.toLowerCase() === parsed.from.toLowerCase());
     if(!item) return [];
 
-    const items: any[] = await Controller.ReadData("", item.itemsName);
+    const items: any[] = await Controller.ReadData("", item.class.itemsName);
     if(items.length === 0) return [];
 
     const fields: string[] = ["Type"];
