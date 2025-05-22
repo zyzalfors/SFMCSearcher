@@ -2,10 +2,10 @@ import { Utility } from "./utility";
 
 export class DEImporter {
 
-  public static methods: string[] = ["Delete", "Insert", "Overwrite", "Update"];
-  private static sep: string = ",";
+  public static readonly methods: string[] = ["Delete", "Insert", "Overwrite", "Update"];
+  private static readonly sep: string = ",";
 
-  static async Import(stack: string, DEname: string, data: string, sep: string, chunkSize: number, method: string): Promise<void> {
+  public static async Import(stack: string, DEname: string, data: string, sep: string, chunkSize: number, method: string): Promise<void> {
     if(!Utility.FindCaseIns(DEImporter.methods, method)) return;
 
     const DEdata: any = await Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/contactsmeta/fuelapi/legacy/v1/v1/object/?name=${DEname}`);

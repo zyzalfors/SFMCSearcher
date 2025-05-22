@@ -129,7 +129,7 @@ export class Controller {
     return await Controller.SearchDataByInput(BUid, itemsName, field, pattern, isRegex, caseIns);
   }
 
-  static async ImportDEData(inp: any): Promise<void> {
+  private static async ImportDEData(inp: any): Promise<void> {
     const stack: string = await Utility.GetSiteStack();
     await DEImporter.Import(stack, inp.DEname, inp.data, inp.sep, inp.chunkSize, inp.method);
   }
