@@ -3,7 +3,7 @@ import { Utility } from "../Logics/utility";
 export class CustomerJourney {
 
   public static readonly tableFields: string[] = ["BUId", "BUName", "Id", "DefinitionId", "Name", "Path", "Link", "SourceDE", "SourceDEId", "FilterCriteria", "Schedule", "ScheduleMode", "Status", "Version", "EventDefinitionId", "EventDefinitionKey", "CreatedDate", "ModifiedDate"];
-  public static readonly searchFields: string[] = ["ActivityId", "ActivityName", "AssetId", "AssetKey", "AssetName", "BUId", "BUName", "CreatedDate", "DefinitionId", "EventDefinitionId", "EventDefinitionKey", "FilterCriteria", "Id", "ModifiedDate", "Name", "Path", "Schedule", "ScheduleMode", "SourceDE", "SourceDEId", "Status", "TriggeredSendId", "TriggeredSendKey", "UsedDE"];
+  public static readonly searchFields: string[] = ["ActivityId", "ActivityName", "AssetId", "AssetKey", "AssetName", "BUId", "BUName", "CreatedDate", "DefinitionId", "EventDefinitionId", "EventDefinitionKey", "FilterCriteria", "Id", "ModifiedDate", "Name", "Path", "Schedule", "ScheduleMode", "SourceDE", "SourceDEId", "Status", "TriggeredSendId", "TriggeredSendKey", "UsedContent"];
   public static readonly itemsName: string = "CustomerJourneys";
   public static readonly type: string = "CustomerJourney";
   private static readonly pageSize: number = 500;
@@ -140,7 +140,7 @@ export class CustomerJourney {
       case "TriggeredSendKey":
         return Array.isArray(item.Activities) && item.Activities.find((entry: any) => CustomerJourney.actTypes.includes(entry.type) && regex.test(entry.configurationArguments?.triggeredSendKey));
 
-      case "UsedDE":
+      case "UsedContent":
         const exitCriteria: string = item.Exits[0]?.configurationArguments?.criteria;
         return (exitCriteria && regex.test(exitCriteria)) || (Array.isArray(item.Activities) && item.Activities.find((act: any) => {
                   const criteria: any = act.configurationArguments?.criteria;
