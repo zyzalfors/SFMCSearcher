@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from "@angular/core";
+import { Component, ElementRef, EventEmitter, Output, ViewChild } from "@angular/core";
 import { Utility } from "../../Logics/utility";
 import { Controller } from "../../Logics/controller";
 
@@ -18,6 +18,9 @@ export abstract class InputComponent {
 
   @ViewChild("fields")
   protected readonly fields!: ElementRef;
+
+  @Output()
+  protected readonly emitter = new EventEmitter<any>();
 
   public async InitBUs(): Promise<void> {
     const BUs: HTMLSelectElement = this.BUs.nativeElement;
