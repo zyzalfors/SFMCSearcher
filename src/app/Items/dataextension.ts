@@ -2,11 +2,12 @@ import { Utility } from "../Logics/utility";
 
 export class DataExtension {
 
-  public static readonly tableFields: string[] = ["BUId", "BUName", "Id", "Key", "Name", "Path", "Description", "Link", "RowCount", "Sendable", "SendableKey", "Subtype", "CreatedByName", "CreatedDate", "ModifiedByName", "ModifiedDate"];
-  public static readonly searchFields: string[] = ["BUId", "BUName", "CreatedByName", "CreatedDate", "Description", "Id", "Key",  "ModifiedByName", "ModifiedDate", "Name", "Path", "RowCount", "Sendable", "SendableKey", "Subtype"];
+  public static readonly tableFields: string[] = ["BUId", "BUName", "Id", "Key", "Name", "Path", "Description", "Link", "RowCount", "Sendable", "SendableKey", "Subtype", "RetentionPeriod", "DeleteData", "CreatedByName", "CreatedDate", "ModifiedByName", "ModifiedDate"];
+  public static readonly searchFields: string[] = ["BUId", "BUName", "CreatedByName", "CreatedDate", "DeleteData", "Description", "Id", "Key",  "ModifiedByName", "ModifiedDate", "Name", "Path", "RetentionPeriod", "RowCount", "Sendable", "SendableKey", "Subtype"];
   public static readonly itemsName: string = "DataExtensions";
   public static readonly type: string = "DataExtension";
   private static readonly pageSize: number = 500;
+  private static readonly retPeriodUnits = new Map<number, string>([[3, "Days"], [4, "Weeks"], [5, "Months"], [6, "Years"]]);
 
   private static Build(item: any, stack: string, BUid: string, BUname: string): any {
     return Utility.SanitizeObj({
@@ -15,6 +16,7 @@ export class DataExtension {
                 CategoryId: item.categoryId,
                 CreatedByName: item.createdByName,
                 CreatedDate: item.createdDate,
+                DeleteData: item._deleteData,
                 Description: item.description,
                 Id: item.id,
                 Key: item.key,
@@ -23,6 +25,7 @@ export class DataExtension {
                 ModifiedDate: item.modifiedDate,
                 Name: item.name,
                 Path: item._path,
+                RetentionPeriod: item._retentionPeriod,
                 RowCount: item.rowCount,
                 Sendable: item.isSendable,
                 SendableKey: item.sendableCustomObjectField,
@@ -45,6 +48,24 @@ export class DataExtension {
 
         for(const pageItem of pageItems) {
           pageItem._path = Utility.GetFullPath(pageItem.categoryId, folders);
+
+          const retPeriodLength: any = pageItem.dataRetentionProperties?.dataRetentionPeriodLength;
+          const retPeriodUnit: any = DataExtension.retPeriodUnits.get(pageItem.dataRetentionProperties?.dataRetentionPeriodUnitOfMeasure);
+          const resetPeriodOnImport: any = pageItem.dataRetentionProperties?.isResetRetentionPeriodOnImport;
+          const retainUntil: any = pageItem.dataRetentionProperties?.retainUntil;
+
+          if(retPeriodLength && retPeriodUnit) {
+            const resetPart: string = resetPeriodOnImport ? ", reset period on import" : "";
+            pageItem._retentionPeriod = `${retPeriodLength} ${retPeriodUnit}${resetPart}`;
+          }
+          else if(retainUntil) pageItem._retentionPeriod = `On ${retainUntil}`;
+          else pageItem._retentionPeriod = null;
+
+          if(!pageItem._retentionPeriod) pageItem._deleteData = null;
+          else if(pageItem.dataRetentionProperties?.isRowBasedRetention) pageItem._deleteData = "Individual records";
+          else if(pageItem.dataRetentionProperties?.isDeleteAtEndOfRetentionPeriod) pageItem._deleteData = "All records";
+          else pageItem._deleteData = "All records and data extension";
+
           items.push(DataExtension.Build(pageItem, stack, BUid, BUname));
         }
 
