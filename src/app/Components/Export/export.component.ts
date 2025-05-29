@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from "@angular/core";
+import { Component, ElementRef, ViewChild } from "@angular/core";
 import { InputComponent } from "../Input/input.component";
 import { Controller } from "../../Logics/controller";
 
@@ -22,9 +22,6 @@ export class ExportComponent extends InputComponent {
   @ViewChild("resexport")
   private readonly resExport!: ElementRef;
 
-  @Output()
-  private readonly emitter = new EventEmitter<any>();
-
   public async Process(ev: Event): Promise<void> {
     const button: HTMLButtonElement = ev.target as HTMLButtonElement;
     const text: string = button.innerText;
@@ -32,7 +29,7 @@ export class ExportComponent extends InputComponent {
     button.disabled = true;
 
     let init: boolean = false;
-    try{
+    try {
       switch(button) {
         case this.clear.nativeElement:
           init = true;
