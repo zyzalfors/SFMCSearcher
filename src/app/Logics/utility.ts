@@ -78,7 +78,7 @@ export class Utility {
       }
     }
 
-    return [...itemsNames];
+    return [...itemsNames].sort();
   }
 
   public static async GetBUData(): Promise<any[]> {

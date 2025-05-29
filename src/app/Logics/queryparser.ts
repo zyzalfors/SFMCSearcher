@@ -3,7 +3,7 @@ export class QueryParser {
   private tokens: string[];
   private state: string;
 
-  constructor(query: string) {
+  public constructor(query: string) {
     this.query = query.trim();
     this.tokens = [];
     this.state = "START";
