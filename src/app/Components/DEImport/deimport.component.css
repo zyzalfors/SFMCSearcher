@@ -38,7 +38,7 @@ button {
   border-radius: var(--border-radius);
 }
 
-button:hover{
+button:hover {
   cursor: pointer;
   background-color: var(--sf-darker-blue);
   transition: 0.3s;
