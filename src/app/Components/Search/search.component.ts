@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Output, ViewChild } from "@angular/core";
+import { Component, ElementRef, ViewChild } from "@angular/core";
 import { InputComponent } from "../Input/input.component";
 import { Controller } from "../../Logics/controller";
 
@@ -27,9 +27,6 @@ export class SearchComponent extends InputComponent {
 
   @ViewChild("search")
   private readonly search!: ElementRef;
-
-  @Output()
-  private readonly emitter = new EventEmitter<any>();
 
   public showQuery: boolean = false;
 
