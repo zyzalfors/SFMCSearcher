@@ -1,7 +1,7 @@
-import { Filetransfer } from "./filetransfer";
+import { FileTransfer } from "./filetransfer";
 
-describe("Filetransfer", () => {
+describe("FileTransfer", () => {
   it("should create an instance", () => {
-    expect(new Filetransfer()).toBeTruthy();
+    expect(new FileTransfer()).toBeTruthy();
   });
 });
