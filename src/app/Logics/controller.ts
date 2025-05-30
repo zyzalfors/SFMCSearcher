@@ -7,7 +7,7 @@ import { Automation } from "../Items/automation";
 import { Cloudpage } from "../Items/cloudpage";
 import { CustomerJourney } from "../Items/customerjourney";
 import { DataExtension } from "../Items/dataextension";
-import { DataExtract } from "../Items/datatextract";
+import { DataExtract } from "../Items/dataextract";
 import { FileTransfer } from "../Items/filetransfer";
 import { Filter } from "../Items/filter";
 import { FilterDefinition } from "../Items/filterdefinition";

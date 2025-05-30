@@ -1,7 +1,7 @@
-import { Queryparser } from "./queryparser";
+import { QueryParser } from "./queryparser";
 
-describe("Queryparser", () => {
+describe("QueryParser", () => {
   it("should create an instance", () => {
-    expect(new Queryparser()).toBeTruthy();
+    expect(new QueryParser("")).toBeTruthy();
   });
 });
