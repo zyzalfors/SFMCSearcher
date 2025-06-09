@@ -22,7 +22,7 @@ export class ExportComponent extends InputComponent {
   @ViewChild("resexport")
   private readonly resExport!: ElementRef;
 
-  public async Process(ev: Event): Promise<void> {
+  protected async Process(ev: Event): Promise<void> {
     const button: HTMLButtonElement = ev.target as HTMLButtonElement;
     const text: string = button.innerText;
     button.innerText += "ing...";
@@ -52,7 +52,7 @@ export class ExportComponent extends InputComponent {
     }
     catch(err: any) {
       console.log(err);
-      window.alert(err);
+      this.emitter.emit({err: err});
     }
     finally {
       button.innerText = text;
