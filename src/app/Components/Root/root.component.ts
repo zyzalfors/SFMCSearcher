@@ -1,11 +1,13 @@
 /// <reference types="chrome"/>
-import { Component, ElementRef, ViewChild } from "@angular/core";
+import { Component, ViewChild } from "@angular/core";
+import { MatDialog } from '@angular/material/dialog';
 import { HeaderComponent } from "../Header/header.component";
 import { SearchComponent } from "../Search/search.component";
 import { LoadComponent } from "../Load/load.component";
 import { ExportComponent } from "../Export/export.component";
 import { DEImportComponent } from "../DEImport/deimport.component";
 import { ResultsComponent } from "../Results/results.component";
+import { MessageBoxComponent } from "../MessageBox/messagebox.component";
 import { Utility } from "../../Logics/utility";
 
 @Component({
@@ -16,14 +18,21 @@ import { Utility } from "../../Logics/utility";
 })
 
 export class RootComponent {
-  public name!: string;
-  public version!: string;
-  public BUname: string | undefined;
-  public BUid: string | undefined;
-  public showSearch = true;
-  public showLoad = false;
-  public showExport = false;
-  public showDEImport = false;
+  protected name!: string;
+
+  protected version!: string;
+
+  protected BUname: string | undefined;
+
+  protected BUid: string | undefined;
+
+  protected showSearch = true;
+
+  protected showLoad = false;
+
+  protected showExport = false;
+
+  protected showDEImport = false;
 
   @ViewChild("results")
   private readonly results!: ResultsComponent;
@@ -34,7 +43,9 @@ export class RootComponent {
   @ViewChild("export")
   private readonly export!: SearchComponent;
 
-  private async GetBUData(): Promise<any> {
+  protected readonly dialog!: MatDialog;
+
+  private static async GetBUData(): Promise<any> {
     try {
       return await Utility.GetSiteBUData();
     }
@@ -43,9 +54,13 @@ export class RootComponent {
     }
   }
 
+  public constructor(dialog: MatDialog) {
+    this.dialog = dialog;
+  }
+
   public async ngAfterViewInit(): Promise<void> {
     const manifest: chrome.runtime.Manifest = chrome.runtime.getManifest();
-    const data: any = await this.GetBUData();
+    const data: any = await RootComponent.GetBUData();
 
     this.name = manifest.name;
     this.version = manifest.version;
@@ -53,31 +68,46 @@ export class RootComponent {
     this.BUid = data?.BUid;
   }
 
-  public OnHeaderEmitted(flags: any): void {
-    this.showSearch = flags.showSearch;
-    this.showLoad = flags.showLoad;
-    this.showExport = flags.showExport;
-    this.showDEImport = flags.showDEImport;
+  public OnHeaderEmitted(inp: any): void {
+    this.showSearch = inp.showSearch;
+    this.showLoad = inp.showLoad;
+    this.showExport = inp.showExport;
+    this.showDEImport = inp.showDEImport;
   }
 
-  public async OnExportEmitted(inp: any): Promise<void> {
-    switch(true) {
-      case inp.export:
-        await this.results.Export();
-        break;
+  protected async OnExportEmitted(inp: any): Promise<void> {
+    if(inp.err) this.ShowMessageBox(inp.err.message);
+    else {
+      switch(true) {
+        case inp.export:
+          await this.results.Export();
+          break;
 
-      case inp.clear:
-        await this.search.InitBUs();
-        break;
+        case inp.clear:
+          await this.search.InitBUs();
+          break;
+      }
     }
   }
 
-  public async OnLoadEmitted(): Promise<void> {
-    await this.search.InitBUs();
-    await this.export.InitBUs();
+  protected async OnLoadEmitted(inp: any): Promise<void> {
+    if(inp.err) this.ShowMessageBox(inp.err.message);
+    else {
+      await this.search.InitBUs();
+      await this.export.InitBUs();
+    }
   }
 
-  public OnSearchEmitted(res: any): void {
-    this.results.Populate(res);
+  protected OnSearchEmitted(inp: any): void {
+    if(inp.err) this.ShowMessageBox(inp.err.message);
+    else this.results.Populate(inp);
+  }
+
+  protected OnDEImportEmitted(inp: any): void {
+    if(inp.err) this.ShowMessageBox(inp.err.message);
+  }
+
+  protected ShowMessageBox(message: string): void {
+    this.dialog.open(MessageBoxComponent, {disableClose: true, data: {message: message}});
   }
 }
