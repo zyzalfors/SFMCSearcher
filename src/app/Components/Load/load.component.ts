@@ -37,7 +37,7 @@ export class LoadComponent {
     items.appendChild(frag);
   }
 
-  public async Process(ev: Event): Promise<void> {
+  protected async Process(ev: Event): Promise<void> {
     const button: HTMLButtonElement = ev.target as HTMLButtonElement;
     const text: string = button.innerText;
     button.innerText += "ing...";
@@ -47,7 +47,7 @@ export class LoadComponent {
       switch(button) {
         case this.load.nativeElement:
           await Controller.Process({actionName: "load", itemsName: this.items.nativeElement.value});
-          this.emitter.emit();
+          this.emitter.emit({});
           break;
 
         case this.import.nativeElement:
@@ -57,7 +57,7 @@ export class LoadComponent {
     }
     catch(err: any) {
       console.log(err);
-      window.alert(err);
+      this.emitter.emit({err: err});
     }
     finally {
       button.innerText = text;
@@ -65,7 +65,7 @@ export class LoadComponent {
     }
   }
 
-  public ProcessImport(): void {
+  protected ProcessImport(): void {
     const input: HTMLInputElement = this.imp.nativeElement;
     const files: FileList = input.files as FileList;
     if(files.length === 0) return;
@@ -81,11 +81,11 @@ export class LoadComponent {
       }
       catch(err: any) {
         console.log(err);
-        window.alert(err);
+        this.emitter.emit({err: err});
       }
       finally {
         input.value = "";
-        this.emitter.emit();
+        this.emitter.emit({});
       }
     });
 
