@@ -35,13 +35,17 @@ export class HeaderComponent {
   @ViewChild("deimport")
   private readonly deImport!: ElementRef;
 
-  public readonly logoIconUrl = "logoicon.png";
-  public readonly searchIconUrl = "searchicon.png";
-  public readonly loadIconUrl = "loadicon.png";
-  public readonly exportIconUrl = "exporticon.png";
-  public readonly deImportIconUrl = "deimporticon.png";
+  protected readonly logoIconUrl = "logoicon.png";
 
-  public OnClick(event: Event): void {
+  protected readonly searchIconUrl = "searchicon.png";
+
+  protected readonly loadIconUrl = "loadicon.png";
+
+  protected readonly exportIconUrl = "exporticon.png";
+
+  protected readonly deImportIconUrl = "deimporticon.png";
+
+  protected OnClick(event: Event): void {
     const img: HTMLImageElement = event.target as HTMLImageElement;
 
     switch(img) {
