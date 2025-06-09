@@ -8,6 +8,6 @@
     <tr class="tr" mat-row *matRowDef="let row; columns: headers;"></tr>
   </table>
   <div [hidden]="!showPaginator">
-    <mat-paginator [pageSizeOptions]="[20, 40, 80]" showFirstLastButtons></mat-paginator>
+    <mat-paginator [pageSizeOptions]="pageSizes" showFirstLastButtons></mat-paginator>
   </div>
 </div>

@@ -24,9 +24,14 @@ export class ResultsComponent {
   private readonly paginator!: MatPaginator;
 
   private readonly sep: string = ",";
-  public readonly headers: string[] = [];
-  public dataSource!: MatTableDataSource<any, MatPaginator>;
-  public showPaginator: boolean = false;
+
+  protected readonly headers: string[] = [];
+
+  protected dataSource!: MatTableDataSource<any, MatPaginator>;
+
+  protected showPaginator: boolean = false;
+
+  protected readonly pageSizes: number[] = [20, 40, 80];
 
   public async Export(): Promise<void> {
     const table: HTMLTableElement = this.results.nativeElement;
