@@ -47,7 +47,7 @@ export abstract class InputComponent {
     await this.InitItems();
   }
 
-  public async InitItems(): Promise<void> {
+  protected async InitItems(): Promise<void> {
     const items: HTMLSelectElement = this.items.nativeElement;
     items.innerHTML = "";
 
@@ -66,7 +66,7 @@ export abstract class InputComponent {
     this.InitFields();
   }
 
-  public InitFields(): void {
+  protected InitFields(): void {
     if(!this.fields) return;
 
     const fields: HTMLSelectElement = this.fields.nativeElement;
