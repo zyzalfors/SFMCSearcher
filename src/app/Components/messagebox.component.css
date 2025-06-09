@@ -1,0 +1,24 @@
+button {
+  margin: 0;
+  border: 0;
+  padding: 2px 55px;
+  background-color: var(--sf-dark-blue);
+  color: var(--text-color);
+  height: 100%;
+  border-radius: var(--border-radius);
+}
+
+button:hover {
+  cursor: pointer;
+  background-color: var(--sf-darker-blue);
+  transition: 0.3s;
+}
+
+button:active {
+  transform: translateY(2px);
+}
+
+.btn {
+  display: flex;
+  justify-content: center;
+}
