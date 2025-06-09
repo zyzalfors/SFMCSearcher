@@ -30,7 +30,7 @@ export class SearchComponent extends InputComponent {
 
   public showQuery: boolean = false;
 
-  public async OnChange(ev: Event): Promise<void> {
+  protected async OnChange(ev: Event): Promise<void> {
     const select: HTMLSelectElement = ev.target as HTMLSelectElement;
     switch(select) {
       case this.BUs.nativeElement:
@@ -49,7 +49,7 @@ export class SearchComponent extends InputComponent {
     }
   }
 
-  public UpdateQuery(select: HTMLSelectElement): void {
+  protected UpdateQuery(select: HTMLSelectElement): void {
     if(!this.useQuery.nativeElement.checked) return;
 
     const queryArea: HTMLTextAreaElement = this.query.nativeElement;
@@ -59,11 +59,11 @@ export class SearchComponent extends InputComponent {
     queryArea.value = `${query.substring(0, pos)}${select.value}${query.substring(pos)}`;
   }
 
-  public InitQuery(): void {
+  protected InitQuery(): void {
     this.showQuery = !this.showQuery;
   }
 
-  public async Search(): Promise<void> {
+  protected async Search(): Promise<void> {
     const button: HTMLButtonElement = this.search.nativeElement;
     const text: string = button.innerText;
     button.innerText += "ing...";
@@ -84,7 +84,7 @@ export class SearchComponent extends InputComponent {
     }
     catch(err: any) {
       console.log(err);
-      window.alert(err);
+      this.emitter.emit({err: err});
     }
     finally {
       button.innerText = text;
