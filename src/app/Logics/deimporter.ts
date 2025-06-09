@@ -30,7 +30,7 @@ export class DEImporter {
 
       const vals: string[] = rows[i].split(sep);
       for(const j in vals) {
-        const header: string = headers[j];
+        const header: string = headers[j].trim();
 
         if(Utility.FindCaseIns(keyFields, header)) entry.keys[header] = vals[j];
         else entry.values[header] = vals[j];
@@ -68,7 +68,11 @@ export class DEImporter {
       const subBody: any[] = body.slice(i * chunkSize, (i + 1) * chunkSize);
 
       const resp: any = await Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/contactsmeta/fuelapi/hub/v1/dataevents/${DEid}/rowset${par}`, "POST", subBody, token);
-      if(resp.message) throw new Error(resp.message);
+      if(resp.message) {
+        let msg: string = resp.message;
+        if(Array.isArray(resp.additionalErrors) && resp.additionalErrors.length > 0) msg += `: ${resp.additionalErrors[0].message}`;
+        throw new Error(msg);
+      }
     }
   }
 }
