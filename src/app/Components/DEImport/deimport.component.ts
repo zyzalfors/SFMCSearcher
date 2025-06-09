@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from "@angular/core";
+import { Component, ElementRef, EventEmitter, Output, ViewChild } from "@angular/core";
 import { Controller } from "../../Logics/controller";
 import { DEImporter } from "../../Logics/deimporter";
 
@@ -25,6 +25,9 @@ export class DEImportComponent {
   @ViewChild("methods")
   private readonly methods!: ElementRef;
 
+  @Output()
+  protected readonly emitter = new EventEmitter<any>();
+
   public ngAfterViewInit(): void {
     const frag: DocumentFragment = document.createDocumentFragment();
 
@@ -38,7 +41,7 @@ export class DEImportComponent {
     this.methods.nativeElement.appendChild(frag);
   }
 
-  public async Process(ev: Event): Promise<void> {
+  protected async Process(ev: Event): Promise<void> {
     const button: HTMLButtonElement = ev.target as HTMLButtonElement;
     const text: string = button.innerText;
     button.innerText += "ing...";
@@ -56,7 +59,7 @@ export class DEImportComponent {
     }
     catch(err: any) {
       console.log(err);
-      window.alert(err);
+      this.emitter.emit({err: err});
     }
     finally {
       button.innerText = text;
