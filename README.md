@@ -24,4 +24,4 @@ It is developed using Angular framework, and leverages the Marketing Cloud's nat
 
 Loaded object data are stored in browser storage and can be navigated even without a logged-in session.
 
-The data are organized by Business Unit and can be exported, viewed, and imported in JSON format.
+The data are organized by business unit and can be exported, viewed, and imported in JSON format.
