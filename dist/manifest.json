@@ -1,8 +1,0 @@
-{
- "manifest_version": 3,
- "name": "SFMC Searcher",
- "version": "2.2.8",
- "permissions": ["tabs", "storage", "unlimitedStorage", "downloads"],
- "action": {"default_icon": "favicon.ico", "default_popup": "popup.html"},
- "host_permissions": ["https://*.exacttarget.com/", "https://*.marketingcloudapps.com/*", "https://*.exacttargetapis.com/*", "https://*.marketingcloudapis.com/*"]
-}
