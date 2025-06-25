@@ -22,7 +22,7 @@ export class LoadComponent {
   private readonly imp!: ElementRef;
 
   @Output()
-  private readonly emitter = new EventEmitter<any>();
+  private readonly emitter: EventEmitter<any> = new EventEmitter<any>();
 
   public ngAfterViewInit(): void {
     const frag: DocumentFragment = document.createDocumentFragment();
