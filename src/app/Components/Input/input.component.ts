@@ -20,7 +20,7 @@ export abstract class InputComponent {
   protected readonly fields!: ElementRef;
 
   @Output()
-  protected readonly emitter = new EventEmitter<any>();
+  protected readonly emitter: EventEmitter<any> = new EventEmitter<any>();
 
   public async InitBUs(): Promise<void> {
     const BUs: HTMLSelectElement = this.BUs.nativeElement;
