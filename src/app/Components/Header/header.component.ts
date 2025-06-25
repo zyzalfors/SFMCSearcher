@@ -21,7 +21,7 @@ export class HeaderComponent {
   public BUid: string | undefined;
 
   @Output()
-  private readonly emitter = new EventEmitter<any>();
+  private readonly emitter: EventEmitter<any> = new EventEmitter<any>();
 
   @ViewChild("search")
   private readonly search!: ElementRef;
@@ -35,15 +35,15 @@ export class HeaderComponent {
   @ViewChild("deimport")
   private readonly deImport!: ElementRef;
 
-  protected readonly logoIconUrl = "logoicon.png";
+  protected readonly logoIconUrl: string = "logoicon.png";
 
-  protected readonly searchIconUrl = "searchicon.png";
+  protected readonly searchIconUrl: string = "searchicon.png";
 
-  protected readonly loadIconUrl = "loadicon.png";
+  protected readonly loadIconUrl: string = "loadicon.png";
 
-  protected readonly exportIconUrl = "exporticon.png";
+  protected readonly exportIconUrl: string = "exporticon.png";
 
-  protected readonly deImportIconUrl = "deimporticon.png";
+  protected readonly deImportIconUrl: string = "deimporticon.png";
 
   protected OnClick(event: Event): void {
     const img: HTMLImageElement = event.target as HTMLImageElement;
