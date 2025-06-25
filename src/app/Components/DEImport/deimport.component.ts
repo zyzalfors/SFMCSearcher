@@ -26,7 +26,7 @@ export class DEImportComponent {
   private readonly methods!: ElementRef;
 
   @Output()
-  protected readonly emitter = new EventEmitter<any>();
+  protected readonly emitter: EventEmitter<any> = new EventEmitter<any>();
 
   public ngAfterViewInit(): void {
     const frag: DocumentFragment = document.createDocumentFragment();
