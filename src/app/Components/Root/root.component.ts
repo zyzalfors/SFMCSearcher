@@ -26,13 +26,13 @@ export class RootComponent {
 
   protected BUid: string | undefined;
 
-  protected showSearch = true;
+  protected showSearch: boolean = true;
 
-  protected showLoad = false;
+  protected showLoad: boolean = false;
 
-  protected showExport = false;
+  protected showExport: boolean = false;
 
-  protected showDEImport = false;
+  protected showDEImport: boolean = false;
 
   @ViewChild("results")
   private readonly results!: ResultsComponent;
@@ -41,7 +41,7 @@ export class RootComponent {
   private readonly search!: SearchComponent;
 
   @ViewChild("export")
-  private readonly export!: SearchComponent;
+  private readonly export!: ExportComponent;
 
   protected readonly dialog!: MatDialog;
 
