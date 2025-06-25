@@ -74,7 +74,7 @@ export class Cloudpage {
     await Utility.StoreData(BUid, BUname, Cloudpage.itemsName, items);
   }
 
-  private static async GetFolders(stack: any): Promise<any[]> {
+  private static async GetFolders(stack: string): Promise<any[]> {
     let page: number = 1;
     let pageItems: any[] = [0];
     const folders: any[] = [];
