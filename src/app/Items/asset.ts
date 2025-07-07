@@ -8,7 +8,7 @@ export class Asset {
   public static readonly type: string = "Asset";
   private static readonly pageSize: number = 500;
   private static readonly assetTypeIds: number[] = [2, 3, 4, 5, 14, 15, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238];
-  private static readonly assetFields: string[] = ["assetType", "category", "content", "createdBy", "createdDate", "customerKey", "id", "modifiedBy", "modifiedDate", "name", "views"];
+  private static readonly assetFields: string[] = ["assetType", "category", "content", "createdBy", "createdDate", "customerKey", "id", "modifiedBy", "modifiedDate", "name", "slots", "views"];
   private static readonly viewNames: string[] = ["inApp", "LINE", "preheader", "push", "sms", "subjectline", "whatsappsession"];
 
   private static Build(item: any, BUid: string, BUname: string): any {
@@ -76,9 +76,21 @@ export class Asset {
     return folders;
   }
 
-  private static PopulateContents(pageItem: any): void {
-    pageItem._contents = [];
-    if(pageItem.content) pageItem._contents.push({content: pageItem.content, type: "main"});
+  private static PopulateSlotContents(obj: any, contents: any[]): void {
+    if(!obj.slots || typeof obj.slots !== "object") return;
+
+    for(const slotName of Object.keys(obj.slots)) {
+      const blocks: any = obj.slots[slotName]["blocks"];
+      if(!blocks || typeof blocks !== "object") continue;
+
+      const blockVals: any[] = Object.values(blocks);
+      for(const block of blockVals) {
+        if(block.content) contents.push({content: block.content, id: block.id, key: block.customerKey, name: block.name, type: "block"});
+      }
+    }
+  }
+
+  private static PopulateViewContents(pageItem: any): void {
     if(!pageItem.views || typeof pageItem.views !== "object") return;
 
     for(const viewName of Object.keys(pageItem.views)) {
@@ -89,17 +101,7 @@ export class Asset {
         if(view.content) pageItem._contents.push({content: view.content, id: view.template?.id, name: view.template?.name, type: viewName});
 
         pageItem._template = {id: view.template?.id, name: view.template?.name};
-        if(!view.slots || typeof view.slots !== "object") continue;
-
-        for(const slotName of Object.keys(view.slots)) {
-          const blocks: any = view.slots[slotName]["blocks"];
-          if(!blocks || typeof blocks !== "object") continue;
-
-          const blockVals: any[] = Object.values(blocks);
-          for(const block of blockVals) {
-            if(block.content) pageItem._contents.push({content: block.content, id: block.id, key: block.customerKey, name: block.name, type: "block"});
-          }
-        }
+        Asset.PopulateSlotContents(view, pageItem._contents);
       }
       else if(Utility.FindCaseIns(Asset.viewNames, viewName)) {
         if(view.content) pageItem._contents.push({content: view.content, type: viewName});
@@ -113,6 +115,14 @@ export class Asset {
         pageItem._template = {id, key, name};
       }
     }
+  }
+
+  private static PopulateContents(pageItem: any): void {
+    pageItem._contents = [];
+    if(pageItem.content) pageItem._contents.push({content: pageItem.content, type: "main"});
+
+    Asset.PopulateSlotContents(pageItem, pageItem._contents);
+    Asset.PopulateViewContents(pageItem);
   }
 
   public static Check(item: any, field: string, regex: RegExp): boolean {
