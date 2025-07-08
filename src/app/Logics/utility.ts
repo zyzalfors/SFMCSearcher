@@ -4,7 +4,7 @@ export class Utility {
 
   public static readonly storageFields: string[] = ["BUId", "BUName"];
 
-  public static async Output(type: string, data: string, down: boolean = false, BUid: string = "", itemsName: string = ""): Promise<void> {
+  public static async Output(type: string, data: string, down?: boolean, BUid?: string, itemsName?: string): Promise<void> {
     let url: any;
     let name: any;
 
@@ -25,8 +25,10 @@ export class Utility {
     else await chrome.tabs.create({url: url});
   }
 
-  public static async FetchJSON(url: string, method: string = "", body: any = null, token: string = ""): Promise<any> {
-    const resp: Response = method && body ? await fetch(url, {"method": method.toUpperCase(), "headers": {"Content-Type": "application/json", "x-csrf-token": token}, "body": JSON.stringify(body)}) : await fetch(url);
+  public static async FetchJSON(url: string, method?: string, body?: any, token?: string): Promise<any> {
+    const reqData: any = method && body ? {method: method.toUpperCase(), headers: {"Content-Type": "application/json", "x-csrf-token": token}, body: JSON.stringify(body)} : {};
+    const resp: Response = await fetch(url, reqData);
+
     return await resp.json();
   }
 
@@ -48,20 +50,20 @@ export class Utility {
     return "";
   }
 
-  public static async GetSiteBUData(stack: string = ""): Promise<any> {
+  public static async GetSiteBUData(stack?: string): Promise<any> {
     if(!stack) stack = await Utility.GetSiteStack();
     const BUdata: any = await Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/contactsmeta/fuelapi/platform-internal/v1/accounts/@current`);
     return {BUid: BUdata.accountId, BUname: BUdata.name};
   }
 
-  public static async GetData(BUid: string = ""): Promise<any> {
+  public static async GetData(BUid?: string): Promise<any> {
     const storage: any = await chrome.storage.local.get();
     const data: any = storage.data;
     const i: number = Array.isArray(data) ? data.findIndex((entry: any) => entry.BUId == BUid) : -1;
     return {data, i};
   }
 
-  public static async GetItemsData(BUid: string = ""): Promise<string[]> {
+  public static async GetItemsData(BUid?: string): Promise<string[]> {
     const storage: any = await Utility.GetData(BUid);
 
     let data: any[] = [];
@@ -185,7 +187,7 @@ export class Utility {
     else if(actionName === "view") await Utility.Output("json", data);
   }
 
-  public static GetFullPath(categoryId: number, folders: any[], item: any = null): string {
+  public static GetFullPath(categoryId: number, folders: any[], item?: any): string {
     const parts: string[] = [];
     let id: number = categoryId;
 
