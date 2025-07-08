@@ -9,7 +9,7 @@ export class Asset {
   private static readonly pageSize: number = 500;
   private static readonly assetTypeIds: number[] = [2, 3, 4, 5, 14, 15, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238];
   private static readonly assetFields: string[] = ["assetType", "category", "content", "createdBy", "createdDate", "customerKey", "id", "modifiedBy", "modifiedDate", "name", "slots", "views"];
-  private static readonly viewNames: string[] = ["inApp", "LINE", "preheader", "push", "sms", "subjectline", "whatsappsession"];
+  private static readonly viewNames: string[] = ["html", "inApp", "LINE", "preheader", "push", "sms", "subjectline", "whatsappsession", "whatsapptemplate"];
 
   private static Build(item: any, BUid: string, BUname: string): any {
     return Utility.SanitizeObj({
@@ -92,21 +92,22 @@ export class Asset {
 
   private static PopulateViewContents(pageItem: any): void {
     if(!pageItem.views || typeof pageItem.views !== "object") return;
+    const slicedViewNames: string[] = Asset.viewNames.slice(1, Asset.viewNames.length - 1);
 
     for(const viewName of Object.keys(pageItem.views)) {
       const view: any = pageItem.views[viewName];
       if(!view || typeof view !== "object") continue;
 
-      if(viewName.toLowerCase() === "html") {
+      if(viewName.toLowerCase() === Asset.viewNames[0]) {
         if(view.content) pageItem._contents.push({content: view.content, id: view.template?.id, name: view.template?.name, type: viewName});
 
         pageItem._template = {id: view.template?.id, name: view.template?.name};
         Asset.PopulateSlotContents(view, pageItem._contents);
       }
-      else if(Utility.FindCaseIns(Asset.viewNames, viewName)) {
+      else if(Utility.FindCaseIns(slicedViewNames, viewName)) {
         if(view.content) pageItem._contents.push({content: view.content, type: viewName});
       }
-      else if(viewName.toLowerCase() === "whatsapptemplate") {
+      else if(viewName.toLowerCase() === Asset.viewNames[Asset.viewNames.length - 1]) {
         const id: string = view.meta?.options?.customBlockData?.template?.id;
         const key: string = view.meta?.options?.customBlockData?.template?.customerKey;
         const name: string = view.meta?.options?.customBlockData?.template?.name;
