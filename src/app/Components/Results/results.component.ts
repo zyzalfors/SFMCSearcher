@@ -49,31 +49,36 @@ export class ResultsComponent {
     await Utility.Output("sv", data, true, "", itemsName);
   }
 
-  public Populate(results: any): void {
-    if(!Array.isArray(results)) return;
+  private Fill(results: any[], headers: string[]): void {
+    this.headers.length = 0;
+    headers.forEach((entry: string) => this.headers.push(entry));
 
+    this.dataSource = new MatTableDataSource(results);
+    this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
+
+    this.showPaginator = true;
+  }
+
+  public Populate(results: any): void {
     if(this.dataSource) this.dataSource.data = [];
-    if(results.length === 0) return;
+    if(!Array.isArray(results) || results.length === 0) return;
 
     const type: string = results[0].Type;
     const item: any = Controller.items.find((entry: any) => entry.class.type === type);
     if(!item) return;
 
     const fields: string[] = Object.keys(results[0]);
-    this.headers.length = 0;
-    this.headers.push(...[type].concat(item.class.tableFields.filter((entry: string) => fields.includes(entry))));
+    const headers: string[] = [type].concat(item.class.tableFields.filter((entry: string) => fields.includes(entry)));
 
     let n: number = 1;
     for(const result of results) {
       for(const field of Object.keys(result)) {
-        if(!this.headers.includes(field)) delete result[field];
+        if(!headers.includes(field)) delete result[field];
       }
       result[type] = n++;
     }
 
-    this.dataSource = new MatTableDataSource(results);
-    this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
-    this.showPaginator = true;
+    this.Fill(results, headers);
   }
 }
