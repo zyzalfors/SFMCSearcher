@@ -26,9 +26,16 @@ export class Utility {
   }
 
   public static async FetchJSON(url: string, method?: string, body?: any, token?: string): Promise<any> {
-    const reqData: any = method && body ? {method: method.toUpperCase(), headers: {"Content-Type": "application/json", "x-csrf-token": token}, body: JSON.stringify(body)} : {};
-    const resp: Response = await fetch(url, reqData);
+    const reqData: any = {};
 
+    if(method && body) {
+      reqData.method = method.toUpperCase();
+      reqData.body = JSON.stringify(body);
+      reqData.headers = {"Content-Type": "application/json"};
+    }
+    if(token && reqData.headers) reqData.headers["x-csrf-token"] = token;
+
+    const resp: Response = await fetch(url, reqData);
     return await resp.json();
   }
 
