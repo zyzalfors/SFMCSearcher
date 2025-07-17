@@ -3,7 +3,7 @@ import { Utility } from "../Logics/utility";
 export class CustomerJourney {
 
   public static readonly tableFields: string[] = ["BUId", "BUName", "Id", "DefinitionId", "Name", "Path", "Link", "SourceDE", "SourceDEId", "FilterCriteria", "Schedule", "ScheduleMode", "Status", "Version", "EventDefinitionId", "EventDefinitionKey", "CreatedDate", "ModifiedDate"];
-  public static readonly searchFields: string[] = ["ActivityId", "ActivityName", "AssetId", "AssetKey", "AssetName", "BUId", "BUName", "CreatedDate", "DefinitionId", "EventDefinitionId", "EventDefinitionKey", "FilterCriteria", "Id", "ModifiedDate", "Name", "Path", "Schedule", "ScheduleMode", "SourceDE", "SourceDEId", "Status", "TriggeredSendId", "TriggeredSendKey", "UsedContent"];
+  public static readonly searchFields: string[] = ["ActivityId", "ActivityName", "AssetId", "AssetKey", "AssetName", "BUId", "BUName", "Content", "CreatedDate", "DefinitionId", "EventDefinitionId", "EventDefinitionKey", "FilterCriteria", "Id", "ModifiedDate", "Name", "Path", "Schedule", "ScheduleMode", "SourceDE", "SourceDEId", "Status", "TriggeredSendId", "TriggeredSendKey"];
   public static readonly itemsName: string = "CustomerJourneys";
   public static readonly type: string = "CustomerJourney";
   private static readonly pageSize: number = 500;
@@ -134,13 +134,7 @@ export class CustomerJourney {
       case "AssetId": case "AssetKey": case "AssetName":
         return Array.isArray(item.Activities) && item.Activities.find((entry: any) => CustomerJourney.actTypes.includes(entry.type) && regex.test(entry[`_${itemField}`]));
 
-      case "TriggeredSendId":
-        return Array.isArray(item.Activities) && item.Activities.find((entry: any) => CustomerJourney.actTypes.includes(entry.type) && regex.test(entry.configurationArguments?.triggeredSendId));
-
-      case "TriggeredSendKey":
-        return Array.isArray(item.Activities) && item.Activities.find((entry: any) => CustomerJourney.actTypes.includes(entry.type) && regex.test(entry.configurationArguments?.triggeredSendKey));
-
-      case "UsedContent":
+      case "Content":
         const exitCriteria: string = item.Exits[0]?.configurationArguments?.criteria;
         return (exitCriteria && regex.test(exitCriteria)) || (Array.isArray(item.Activities) && item.Activities.find((act: any) => {
                   const criteria: any = act.configurationArguments?.criteria;
@@ -148,6 +142,12 @@ export class CustomerJourney {
 
                   return (act.type === "MULTICRITERIADECISION" && criteria && Object.values(criteria).find((val: any) => regex.test(val))) || (act.type === "WAIT" && attr && regex.test(attr));
         }));
+
+      case "TriggeredSendId":
+        return Array.isArray(item.Activities) && item.Activities.find((entry: any) => CustomerJourney.actTypes.includes(entry.type) && regex.test(entry.configurationArguments?.triggeredSendId));
+
+      case "TriggeredSendKey":
+        return Array.isArray(item.Activities) && item.Activities.find((entry: any) => CustomerJourney.actTypes.includes(entry.type) && regex.test(entry.configurationArguments?.triggeredSendKey));
 
       default:
         return regex.test(item[itemField]);

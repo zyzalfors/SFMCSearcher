@@ -77,21 +77,22 @@ export class DataExtension {
     await Utility.StoreData(BUid, BUname, DataExtension.itemsName, items);
   }
 
-  private static async GetAllFolders(stack: string, categoryFilter: string, categoryId: number, folders: any[]): Promise<void> {
-    const pageItems: any[] = (await Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/contactsmeta/fuelapi/legacy/v1/beta/folder/${categoryId}/children?$where=allowedtypes%20in%20${categoryFilter}`)).entry;
-
-    for(const pageItem of pageItems) {
-      folders.push(pageItem);
-      await DataExtension.GetAllFolders(stack, categoryFilter, pageItem.id, folders);
-    }
-  }
-
   private static async GetFolders(stack: string): Promise<any[]> {
     const categoryTypes: string[] = ["dataextension", "salesforcedataextension", "synchronizeddataextension", "shared_data", "shared_dataextension", "shared_salesforcedataextension"];
     const categoryFilter: string = `(%27${categoryTypes.join("%27,%27")}%27)`;
 
     const folders: any[] = [];
-    await DataExtension.GetAllFolders(stack, categoryFilter, 0, folders);
+    const categoryIds: number[] = [0];
+
+    while(categoryIds.length > 0) {
+      const categoryId: number | undefined = categoryIds.pop();
+      const pageItems: any[] = (await Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/contactsmeta/fuelapi/legacy/v1/beta/folder/${categoryId}/children?$where=allowedtypes%20in%20${categoryFilter}`)).entry;
+
+      for(const pageItem of pageItems) {
+        folders.push(pageItem);
+        categoryIds.push(pageItem.id);
+      }
+    }
 
     return folders;
   }
