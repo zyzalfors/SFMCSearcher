@@ -23,7 +23,7 @@ select {
   border-radius: var(--border-radius);
 }
 
-select:focus {
+select:focus, input:focus, textarea:focus {
   outline: none;
 }
 
