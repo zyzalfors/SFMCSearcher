@@ -11,6 +11,7 @@ import { DataExtract } from "../Items/dataextract";
 import { FileTransfer } from "../Items/filetransfer";
 import { Filter } from "../Items/filter";
 import { FilterDefinition } from "../Items/filterdefinition";
+import { Image } from "../Items/image";
 import { Import } from "../Items/import";
 import { JourneyHistoryEntry } from "../Items/journeyhistoryentry";
 import { Message } from "../Items/message";
@@ -31,6 +32,7 @@ export class Controller {
     {class: FileTransfer},
     {class: Filter},
     {class: FilterDefinition},
+    {class: Image},
     {class: Import},
     {class: JourneyHistoryEntry},
     {class: Message},
