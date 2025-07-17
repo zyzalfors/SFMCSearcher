@@ -13,6 +13,7 @@ It allows users to quickly navigate through various Marketing Cloud items:
 - File Transfers
 - Filters
 - Filter Definitions
+- Images
 - Imports
 - Journey History Entries
 - SMS Messages
