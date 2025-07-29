@@ -9,7 +9,7 @@ export class Import {
   private static readonly pageSize: number = 500;
 
   private static Build(item: any, stack: string, BUid: string, BUname: string): any {
-    Utility.SanitizeObj({
+    return Utility.SanitizeObj({
                 AlertEmail: item.notificationEmailAddress,
                 BUId: BUid,
                 BUName: BUname,
