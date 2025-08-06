@@ -71,8 +71,8 @@ export class QueryParser {
     try {
       return this.ParseExpr({pos: pos, isRegex: isRegex, caseIns: caseIns});
     }
-    catch {
-      throw new Error("Invalid query");
+    catch(err: any) {
+      throw new Error(`Error in query parsing: ${err.message}`);
     }
   }
 
