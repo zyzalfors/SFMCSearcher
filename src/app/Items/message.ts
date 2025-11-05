@@ -2,17 +2,21 @@ import { Utility } from "../Logics/utility";
 
 export class Message {
 
-  public static readonly tableFields: string[] = ["BUId", "BUName", "Id", "Name", "Link", "Code", "Concatenate", "FromName", "Keyword", "NextKeyword", "Status", "Template", "Text", "ModifiedDate"];
-  public static readonly searchFields: string[] = ["BUId", "BUName", "Code", "Concatenate", "FromName", "Id", "Keyword", "ModifiedDate", "Name", "NextKeyword", "Status", "Template", "Text"];
+  public static readonly tableFields: string[] = ["BUId", "BUName", "Id", "Name", "Link", "Code", "Concatenate", "FromName", "Keyword", "NextKeyword", "Status", "Template", "Text", "Sent", "Delivered", "ModifiedDate"];
+  public static readonly searchFields: string[] = ["BUId", "BUName", "Code", "Concatenate", "Delivered", "FromName", "Id", "Keyword", "ModifiedDate", "Name", "NextKeyword", "Sent", "Status", "Template", "Text"];
   public static readonly itemsName: string = "Messages";
   public static readonly type: string = "Message";
 
   private static Build(item: any, stack: string, BUid: string, BUname: string): any {
+    const sent : number = item.statistics?.outbound?.sent;
+    const delivered : number = item.statistics?.outbound?.delivered;
+
     return Utility.SanitizeObj({
                 BUId: BUid,
                 BUName: BUname,
                 Code: item.code?.code,
                 Concatenate: item.concatenateMessage,
+                Delivered: !isNaN(sent) && sent > 0 && !isNaN(delivered) ? `${((delivered / sent) * 100).toFixed(2)}%` : null,
                 FromName: item.fromName,
                 Id: item.id,
                 Keyword: item.keyword?.keyword,
@@ -20,6 +24,7 @@ export class Message {
                 ModifiedDate: item.lastUpdated,
                 Name: item.name,
                 NextKeyword: item.nextKeyword?.keyword,
+                Sent: sent,
                 Status: item.status,
                 Template: item.template?.name,
                 Text: Utility.SanitizeXml(item.text),
