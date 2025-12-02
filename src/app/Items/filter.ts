@@ -8,26 +8,6 @@ export class Filter {
   public static readonly type: string = "Filter";
   private static readonly pageSize: number = 500;
 
-  private static Build(item: any, stack: string, BUid: string, BUname: string): any {
-    return Utility.SanitizeObj({
-                BUId: BUid,
-                BUName: BUname,
-                CategoryId: item.categoryId,
-                CreatedByName: item._createdByName,
-                CreatedDate: item.createdDate,
-                FilterDefinitionId: item.filterDefinitionId,
-                FilterDefinitionName: item._filterDefinitionName,
-                Id: item.filterActivityId,
-                Key: item.customerKey,
-                Link: `https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/#ActivityModal/303/${item.filterActivityId}`,
-                ModifiedByName: item._modifiedByName,
-                ModifiedDate: item.modifiedDate,
-                Name: item.name,
-                Path: item._path,
-                Type: Filter.type
-    });
-  }
-
   public static async Load(stack: string, BUid: string, BUname: string): Promise<void> {
     let page: number = 1;
     let pageItems: any[] = [0];
@@ -41,12 +21,25 @@ export class Filter {
       for(const pageItem of pageItems) {
         const filterDefinition: any = await Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/filterdefinitions/${pageItem.filterDefinitionId}`);
 
-        pageItem._filterDefinitionName = filterDefinition?.name;
-        pageItem._path = Utility.GetFullPath(pageItem.categoryId, folders);
-        pageItem._createdByName = filterDefinition?.createdByName;
-        pageItem._modifiedByName = filterDefinition?.modifiedByName;
+        const item: any = {
+          BUId: BUid,
+          BUName: BUname,
+          CategoryId: pageItem.categoryId,
+          CreatedByName: filterDefinition?.createdByName,
+          CreatedDate: pageItem.createdDate,
+          FilterDefinitionId: pageItem.filterDefinitionId,
+          FilterDefinitionName: filterDefinition?.name,
+          Id: pageItem.filterActivityId,
+          Key: pageItem.customerKey,
+          Link: `https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/#ActivityModal/303/${pageItem.filterActivityId}`,
+          ModifiedByName: filterDefinition?.modifiedByName,
+          ModifiedDate: pageItem.modifiedDate,
+          Name: pageItem.name,
+          Path: Utility.GetFullPath(pageItem.categoryId, folders),
+          Type: Filter.type
+        };
 
-        items.push(Filter.Build(pageItem, stack, BUid, BUname));
+        items.push(Utility.SanitizeObj(item));
       }
 
       if(pageItems.length < pageData.pageSize) break;
@@ -61,9 +54,9 @@ export class Filter {
   }
 
   public static Check(item: any, field: string, regex: RegExp): boolean {
-    const itemField: string | undefined = Utility.FindCaseIns(Filter.searchFields, field);
-    if(!itemField) return false;
+    const searchField: string | undefined = Utility.FindCaseIns(Filter.searchFields, field);
+    if(!searchField) return false;
 
-    return regex.test(item[itemField]);
+    return regex.test(item[searchField]);
   }
 }

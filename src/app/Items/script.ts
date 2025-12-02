@@ -8,25 +8,6 @@ export class Script {
   public static readonly type: string = "Script";
   private static readonly pageSize: number = 500;
 
-  private static Build(item: any, stack: string, BUid: string, BUname: string): any {
-    return Utility.SanitizeObj({
-                BUId: BUid,
-                BUName: BUname,
-                CategoryId: item.categoryId,
-                Code: Utility.SanitizeXml(item.script),
-                CreatedBy: item._createdBy,
-                CreatedDate: item.createdDate,
-                Id: item.ssjsActivityId,
-                Key: item.key,
-                Link: `https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/?hub=1#ActivityModal/423/${item.ssjsActivityId}`,
-                ModifiedBy: item._modifiedBy,
-                ModifiedDate: item.modifiedDate,
-                Name: item.name,
-                Path: item._path,
-                Type: Script.type
-    });
-  }
-
   public static async Load(stack: string, BUid: string, BUname: string): Promise<void> {
     let page: number = 1;
     let pageItems: any[] = [0];
@@ -38,13 +19,26 @@ export class Script {
       pageItems = pageData.items;
 
       for(const pageItem of pageItems) {
-        pageItem._path = Utility.GetFullPath(pageItem.categoryId, folders);
+        const _item: any = await Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/scripts/${pageItem.ssjsActivityId}`);
 
-        const item: any = await Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/scripts/${pageItem.ssjsActivityId}`);
-        pageItem._createdBy = item?.createdBy;
-        pageItem._modifiedBy = item?.modifiedBy;
+        const item: any = {
+          BUId: BUid,
+          BUName: BUname,
+          CategoryId: pageItem.categoryId,
+          Code: Utility.SanitizeXml(pageItem.script),
+          CreatedBy: _item?.createdBy,
+          CreatedDate: pageItem.createdDate,
+          Id: pageItem.ssjsActivityId,
+          Key: pageItem.key,
+          Link: `https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/?hub=1#ActivityModal/423/${pageItem.ssjsActivityId}`,
+          ModifiedBy: _item?.modifiedBy,
+          ModifiedDate: pageItem.modifiedDate,
+          Name: pageItem.name,
+          Path: Utility.GetFullPath(pageItem.categoryId, folders),
+          Type: Script.type
+        };
 
-        items.push(Script.Build(pageItem, stack, BUid, BUname));
+        items.push(Utility.SanitizeObj(item));
       }
 
       if(pageItems.length < pageData.pageSize) break;
@@ -59,9 +53,9 @@ export class Script {
   }
 
   public static Check(item: any, field: string, regex: RegExp): boolean {
-    const itemField: string | undefined = Utility.FindCaseIns(Script.searchFields, field);
-    if(!itemField) return false;
+    const searchField: string | undefined = Utility.FindCaseIns(Script.searchFields, field);
+    if(!searchField) return false;
 
-    return regex.test(item[itemField]);
+    return regex.test(item[searchField]);
   }
 }

@@ -7,30 +7,6 @@ export class Automation {
   public static readonly itemsName: string = "Automations";
   public static readonly type: string = "Automation";
 
-  private static Build(item: any, stack: string, BUid: string, BUname: string): any {
-    return Utility.SanitizeObj({
-                AlertEmails: item._alertEmails,
-                BUId: BUid,
-                BUName: BUname,
-                CategoryId: item.categoryId,
-                CreatedByName: item._createdByName,
-                CreatedDate: item._createdDate,
-                Id: item._id,
-                Key: item.key,
-                LastRuntime: item.lastRunTime,
-                Link: `https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/#Instance/${item._id}`,
-                ModifiedByName: item._modifiedByName,
-                ModifiedDate: item._modifiedDate,
-                Name: item.name,
-                Path: item._path,
-                Recurrence: item.schedule?.icalRecur,
-                Status: item.schedule?.scheduleStatus,
-                Steps: item.steps,
-                Subtype: item.type,
-                Type: Automation.type
-    });
-  }
-
   public static async Load(stack: string, BUid: string, BUname: string): Promise<void> {
     let page: number = 1;
     let pageItems: any[] = [0];
@@ -43,16 +19,38 @@ export class Automation {
 
       for(const pageItem of pageItems) {
         const alerts: any = (await Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/legacy/v1/beta/automations/notifications/${pageItem.id}`)).workers;
+        const _item: any = await Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/automations/${pageItem.id}`);
+        const steps: any[] = [];
 
-        const item: any = await Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/automations/${pageItem.id}`);
-        item._alertEmails = Array.isArray(alerts) ? alerts.reduce((emails: any, entry: any) => `${emails},${entry.definition}`, "").replace(",", "") : "";
-        item._createdByName = pageItem.createdBy?.name;
-        item._createdDate = pageItem.createdDate;
-        item._id = pageItem.id;
-        item._modifiedByName = pageItem.modifiedBy?.name;
-        item._modifiedDate = pageItem.modifiedDate;
-        item._path = Utility.GetFullPath(item.categoryId, folders);
-        items.push(Automation.Build(item, stack, BUid, BUname));
+        for(const _step of _item.steps) {
+          const step: any = {Name: _step.name, Description: _step.description, Activities: []};
+          for(const _act of _step.activities) step.Activities.push({Name: _act.name, ActivityObjectId: _act.activityObjectId});
+          steps.push(step);
+        }
+
+        const item: any = {
+          AlertEmails: Array.isArray(alerts) ? alerts.reduce((emails: any, entry: any) => `${emails},${entry.definition}`, "").replace(",", "") : "",
+          BUId: BUid,
+          BUName: BUname,
+          CategoryId: _item.categoryId,
+          CreatedByName: pageItem.createdBy?.name,
+          CreatedDate: pageItem.createdDate,
+          Id: pageItem.id,
+          Key: _item.key,
+          LastRuntime: _item.lastRunTime,
+          Link: `https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/#Instance/${pageItem.id}`,
+          ModifiedByName: pageItem.modifiedBy?.name,
+          ModifiedDate: pageItem.modifiedDate,
+          Name: _item.name,
+          Path: Utility.GetFullPath(_item.categoryId, folders),
+          Recurrence: _item.schedule?.icalRecur,
+          Status: _item.schedule?.scheduleStatus,
+          Steps: steps,
+          Subtype: _item.type,
+          Type: Automation.type
+        };
+
+        items.push(Utility.SanitizeObj(item));
       }
 
       if(pageItems.length < pageData.itemsPerPage) break;
@@ -67,21 +65,21 @@ export class Automation {
   }
 
   public static Check(item: any, field: string, regex: RegExp): boolean {
-    const itemField: string | undefined = Utility.FindCaseIns(Automation.searchFields, field);
-    if(!itemField) return false;
+    const searchField: string | undefined = Utility.FindCaseIns(Automation.searchFields, field);
+    if(!searchField) return false;
 
-    switch(itemField) {
+    switch(searchField) {
       case "ActivityName":
-        return Array.isArray(item.Steps) && item.Steps.find((step: any) => Array.isArray(step.activities) && step.activities.find((act: any) => regex.test(act.name)));
+        return item.Steps.find((step: any) => step.Activities.find((act: any) => regex.test(act.Name)));
 
       case "ActivityObjectId":
-        return Array.isArray(item.Steps) && item.Steps.find((step: any) => Array.isArray(step.activities) && step.activities.find((act: any) => regex.test(act.activityObjectId)));
+        return item.Steps.find((step: any) => step.Activities.find((act: any) => regex.test(act.ActivityObjectId)));
 
       case "StepAnnotation":
-        return Array.isArray(item.Steps) && item.Steps.find((step: any) => regex.test(step.name));
+        return item.Steps.find((step: any) => regex.test(step.Name));
 
       default:
-        return regex.test(item[itemField]);
+        return regex.test(item[searchField]);
     }
   }
 }

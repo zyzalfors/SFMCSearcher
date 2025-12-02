@@ -8,23 +8,6 @@ export class JourneyHistoryEntry {
   public static readonly type: string = "JourneyHistoryEntry";
   private static readonly pageSize: number = 500;
 
-  private static Build(item: any, BUid: string, BUname: string): any {
-    return Utility.SanitizeObj({
-                ActivityId: item.activityId,
-                ActivityName: item.activityName,
-                ActivityType: item.activityType,
-                BUId: BUid,
-                BUName: BUname,
-                ContactKey: item.contactKey,
-                DefinitionId: item.definitionId,
-                EventDefinitionId: item.eventId,
-                JourneyName: item.definitionName,
-                Status: item.status,
-                Time: item.transactionTime,
-                Type: JourneyHistoryEntry.type
-    });
-  }
-
   public static async Load(stack: string, BUid: string, BUname: string): Promise<void> {
     let page: number = 1;
     let pageItems: any[] = [0];
@@ -64,7 +47,24 @@ export class JourneyHistoryEntry {
         pageItems = pageData.items;
         if(!Array.isArray(pageItems)) break;
 
-        for(const pageItem of pageItems) items.push(JourneyHistoryEntry.Build(pageItem, BUid, BUname));
+        for(const pageItem of pageItems) {
+          const item: any = {
+            ActivityId: pageItem.activityId,
+            ActivityName: pageItem.activityName,
+            ActivityType: pageItem.activityType,
+            BUId: BUid,
+            BUName: BUname,
+            ContactKey: pageItem.contactKey,
+            DefinitionId: pageItem.definitionId,
+            EventDefinitionId: pageItem.eventId,
+            JourneyName: pageItem.definitionName,
+            Status: pageItem.status,
+            Time: pageItem.transactionTime,
+            Type: JourneyHistoryEntry.type
+          };
+
+          items.push(Utility.SanitizeObj(item));
+        }
 
         if(pageItems.length < pageData.pageSize) break;
         page++;
@@ -75,9 +75,9 @@ export class JourneyHistoryEntry {
   }
 
   public static Check(item: any, field: string, regex: RegExp): boolean {
-    const itemField: string | undefined = Utility.FindCaseIns(JourneyHistoryEntry.searchFields, field);
-    if(!itemField) return false;
+    const searchField: string | undefined = Utility.FindCaseIns(JourneyHistoryEntry.searchFields, field);
+    if(!searchField) return false;
 
-    return regex.test(item[itemField]);
+    return regex.test(item[searchField]);
   }
 }

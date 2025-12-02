@@ -7,44 +7,42 @@ export class Package {
   public static readonly itemsName: string = "Packages";
   public static readonly type: string = "Package";
 
-  private static Build(item: any, stack: string, BUid: string, BUname: string): any {
-    return Utility.SanitizeObj({
-                AuthEndpoint: item.Components[0]?.Endpoints?.AuthEndpoint,
-                BUId: BUid,
-                BUName: BUname,
-                ClientId: item.Components[0]?.ClientId,
-                ClientSecret: item.Components[0]?.ClientSecret,
-                Id: item.PackageId,
-                InstallDate: item._installDate,
-                Link: `https://members.s${stack}.exacttarget.com/Content/Administration/InstalledPackages.aspx/${item.PackageId}/details`,
-                ModifiedDate: item.ApplicationLastUpdated,
-                Name: item.Name,
-                Owner: item.OwnerName,
-                RestEndpoint: item.Components[0]?.Endpoints?.RestEndpoint,
-                Signature: item.ApplicationSignature,
-                SoapEndpoint: item.Components[0]?.Endpoints?.SoapEndpoint,
-                Status: item.PackageStatus,
-                Type: Package.type
-    });
-  }
-
   public static async Load(stack: string, BUid: string, BUname: string): Promise<void> {
     const pageData: any = await Utility.FetchJSON(`https://members.s${stack}.exacttarget.com/Content/Administration/InstalledPackagesService/LoadInstalledPackages`);
 
     const items: any[] = [];
     for(const pageItem of pageData.PackageData) {
-      const item: any = await Utility.FetchJSON(`https://members.s${stack}.exacttarget.com/Content/Administration/InstalledPackagesService/loadPackageDetails?applicationId=${pageItem.PackageId}`);
-      item._installDate = pageItem.InstallDate;
-      items.push(Package.Build(item, stack, BUid, BUname));
+      const _item: any = await Utility.FetchJSON(`https://members.s${stack}.exacttarget.com/Content/Administration/InstalledPackagesService/loadPackageDetails?applicationId=${pageItem.PackageId}`);
+
+      const item: any = {
+        AuthEndpoint: _item.Components[0]?.Endpoints?.AuthEndpoint,
+        BUId: BUid,
+        BUName: BUname,
+        ClientId: _item.Components[0]?.ClientId,
+        ClientSecret: _item.Components[0]?.ClientSecret,
+        Id: _item.PackageId,
+        InstallDate: pageItem.InstallDate,
+        Link: `https://members.s${stack}.exacttarget.com/Content/Administration/InstalledPackages.aspx/${_item.PackageId}/details`,
+        ModifiedDate: _item.ApplicationLastUpdated,
+        Name: _item.Name,
+        Owner: _item.OwnerName,
+        RestEndpoint: _item.Components[0]?.Endpoints?.RestEndpoint,
+        Signature: _item.ApplicationSignature,
+        SoapEndpoint: _item.Components[0]?.Endpoints?.SoapEndpoint,
+        Status: _item.PackageStatus,
+        Type: Package.type
+      };
+
+      items.push(Utility.SanitizeObj(item));
     }
 
     await Utility.StoreData(BUid, BUname, Package.itemsName, items);
   }
 
   public static Check(item: any, field: string, regex: RegExp): boolean {
-    const itemField: string | undefined = Utility.FindCaseIns(Package.searchFields, field);
-    if(!itemField) return false;
+    const searchField: string | undefined = Utility.FindCaseIns(Package.searchFields, field);
+    if(!searchField) return false;
 
-    return regex.test(item[itemField]);
+    return regex.test(item[searchField]);
   }
 }

@@ -8,25 +8,6 @@ export class Query {
   public static readonly type: string = "Query";
   private static readonly pageSize: number = 500;
 
-  private static Build(item: any, stack: string, BUid: string, BUname: string): any {
-    return Utility.SanitizeObj({
-                BUId: BUid,
-                BUName: BUname,
-                CategoryId: item.categoryId,
-                Code: Utility.SanitizeXml(item.queryText),
-                CreatedDate: item.createdDate,
-                Id: item.queryDefinitionId,
-                Key: item.key,
-                Link: `https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/?hub=1#ActivityDetails/300/${item.queryDefinitionId}`,
-                ModifiedDate: item.modifiedDate,
-                Name: item.name,
-                Path: item._path,
-                TargetDE: item.targetName,
-                Type: Query.type,
-                UpdateType: item.targetUpdateTypeName
-    });
-  }
-
   public static async Load(stack: string, BUid: string, BUname: string): Promise<void> {
     let page: number = 1;
     let pageItems: any[] = [0];
@@ -38,8 +19,24 @@ export class Query {
       pageItems = pageData.items;
 
       for(const pageItem of pageItems) {
-        pageItem._path = Utility.GetFullPath(pageItem.categoryId, folders);
-        items.push(Query.Build(pageItem, stack, BUid, BUname));
+        const item: any = {
+          BUId: BUid,
+          BUName: BUname,
+          CategoryId: pageItem.categoryId,
+          Code: Utility.SanitizeXml(pageItem.queryText),
+          CreatedDate: pageItem.createdDate,
+          Id: pageItem.queryDefinitionId,
+          Key: pageItem.key,
+          Link: `https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/?hub=1#ActivityDetails/300/${pageItem.queryDefinitionId}`,
+          ModifiedDate: pageItem.modifiedDate,
+          Name: pageItem.name,
+          Path: Utility.GetFullPath(pageItem.categoryId, folders),
+          TargetDE: pageItem.targetName,
+          Type: Query.type,
+          UpdateType: pageItem.targetUpdateTypeName
+        };
+
+        items.push(Utility.SanitizeObj(item));
       }
 
       if(pageItems.length < pageData.pageSize) break;
@@ -54,9 +51,9 @@ export class Query {
   }
 
   public static Check(item: any, field: string, regex: RegExp): boolean {
-    const itemField: string | undefined = Utility.FindCaseIns(Query.searchFields, field);
-    if(!itemField) return false;
+    const searchField: string | undefined = Utility.FindCaseIns(Query.searchFields, field);
+    if(!searchField) return false;
 
-    return regex.test(item[itemField]);
+    return regex.test(item[searchField]);
   }
 }

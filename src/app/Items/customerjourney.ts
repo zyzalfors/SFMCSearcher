@@ -2,42 +2,13 @@ import { Utility } from "../Logics/utility";
 
 export class CustomerJourney {
 
-  public static readonly tableFields: string[] = ["BUId", "BUName", "Id", "DefinitionId", "Name", "Path", "Link", "SourceDE", "SourceDEId", "FilterCriteria", "Schedule", "ScheduleMode", "Status", "Version", "EventDefinitionId", "EventDefinitionKey", "CreatedDate", "ModifiedDate"];
-  public static readonly searchFields: string[] = ["ActivityId", "ActivityName", "AssetId", "AssetKey", "AssetName", "BUId", "BUName", "Content", "CreatedDate", "DefinitionId", "EventDefinitionId", "EventDefinitionKey", "FilterCriteria", "Id", "ModifiedDate", "Name", "Path", "Schedule", "ScheduleMode", "SourceDE", "SourceDEId", "Status", "TriggeredSendId", "TriggeredSendKey"];
+  public static readonly tableFields: string[] = ["BUId", "BUName", "Id", "DefinitionId", "Name", "Path", "Link", "SourceDE", "SourceDEId", "RunFilterCriteria", "RunSchedule", "RunScheduleMode", "TriggerAction", "TriggerEntryData", "TriggerFilterCriteria", "TriggerObject", "TriggerWho", "Status", "Version", "EventDefinitionId", "EventDefinitionKey", "CreatedDate", "ModifiedDate"];
+  public static readonly searchFields: string[] = ["ActivityId", "ActivityKey", "ActivityName", "ActivityType", "AssetId", "AssetKey", "AssetName", "AssetType", "BUId", "BUName", "Content", "CreatedDate", "DefinitionId", "EventDefinitionId", "EventDefinitionKey", "Id", "ModifiedDate", "Name", "Path", "RunFilterCriteria", "RunSchedule", "RunScheduleMode", "SourceDE", "SourceDEId", "Status", "TriggerAction", "TriggerEntryData", "TriggerFilterCriteria", "TriggerObject", "TriggerWho", "TriggeredSendDescription", "TriggeredSendId", "TriggeredSendKey", "TriggeredSendName", "UpdateDEId", "UpdateDEValue"];
   public static readonly itemsName: string = "CustomerJourneys";
   public static readonly type: string = "CustomerJourney";
   private static readonly pageSize: number = 500;
   private static readonly assetFields: string[] = ["customerKey", "id", "name"];
   private static readonly actTypes: string[] = ["EMAILV2", "INAPPSYNCACTIVITY", "PUSHNOTIFICATIONACTIVITY", "SENDTOLINESYNC", "SMSSYNC", "WHATSAPPACTIVITY"];
-  private static readonly actFields: string[] = ["_AssetId", "_AssetKey", "_AssetName", "configurationArguments", "id", "name", "type"];
-
-  private static Build(item: any, stack: string, BUid: string, BUname: string): void {
-    return Utility.SanitizeObj({
-                Activities: item.activities,
-                BUId: BUid,
-                BUName: BUname,
-                CategoryId: item.categoryId,
-                ConfigurationArguments: item._configurationArguments,
-                CreatedDate: item.createdDate,
-                DefinitionId: item.definitionId,
-                EventDefinitionId: item._eventDefinitionId,
-                EventDefinitionKey: item._eventDefinitionKey,
-                Exits: item.exits,
-                FilterCriteria: item._metaData?.criteriaDescription,
-                Id: item.id,
-                Link: `https://mc.s${stack}.exacttarget.com/cloud/#app/Journey%20Builder/%23${item.id}/${item.version}`,
-                ModifiedDate: item.modifiedDate,
-                Name: item.name,
-                Path: item._path,
-                Schedule: item._metaData?.scheduleFlowMode,
-                ScheduleMode: item._metaData?.runOnceScheduleMode,
-                SourceDE: item._dataExtensionName,
-                SourceDEId: item._dataExtensionId,
-                Status: item.status,
-                Type: CustomerJourney.type,
-                Version: item.version
-    });
-  }
 
   public static async Load(stack: string, BUid: string, BUname: string): Promise<void> {
     let page: number = 1;
@@ -53,15 +24,55 @@ export class CustomerJourney {
         const eventDefinitionId: string = pageItem.triggers[0]?.metaData?.eventDefinitionId;
         const eventDefinition: any = eventDefinitionId ? await Utility.FetchJSON(`https://jbinteractions.s${stack}.marketingcloudapps.com/fuelapi/interaction/v1/eventDefinitions/${eventDefinitionId}`) : null;
 
-        pageItem._dataExtensionId = eventDefinition?.dataExtensionId;
-        pageItem._dataExtensionName = eventDefinition?.dataExtensionName;
-        pageItem._eventDefinitionId = eventDefinitionId;
-        pageItem._eventDefinitionKey = eventDefinition?.eventDefinitionKey;
-        pageItem._metaData = eventDefinition?.metaData;
-        pageItem._configurationArguments = eventDefinition?.configurationArguments;
-        pageItem._path = Utility.GetFullPath(pageItem.categoryId, folders);
+        const item: any = {
+          Activities: [],
+          BUId: BUid,
+          BUName: BUname,
+          CategoryId: pageItem.categoryId,
+          CreatedDate: pageItem.createdDate,
+          DefinitionId: pageItem.definitionId,
+          EventDefinitionId: eventDefinitionId,
+          EventDefinitionKey: eventDefinition?.eventDefinitionKey,
+          ExitCriteria: pageItem.exits[0]?.configurationArguments?.criteria,
+          Goal: pageItem.goals[0]?.configurationArguments?.criteria,
+          Id: pageItem.id,
+          Link: `https://mc.s${stack}.exacttarget.com/cloud/#app/Journey%20Builder/%23${pageItem.id}/${pageItem.version}`,
+          ModifiedDate: pageItem.modifiedDate,
+          Name: pageItem.name,
+          Path: Utility.GetFullPath(pageItem.categoryId, folders),
+          RunFilterCriteria: eventDefinition?.metaData?.criteriaDescription,
+          RunSchedule: eventDefinition?.metaData?.scheduleFlowMode,
+          RunScheduleMode: eventDefinition?.metaData?.runOnceScheduleMode,
+          SourceDE: eventDefinition?.dataExtensionName,
+          SourceDEId: eventDefinition?.dataExtensionId,
+          Status: pageItem.status,
+          TriggerAction: eventDefinition?.configurationArguments?.salesforceTriggerCriteria,
+          TriggerEntryData: eventDefinition?.configurationArguments?.eventDataSummary,
+          TriggerFilterCriteria: eventDefinition?.configurationArguments?.primaryObjectFilterSummary,
+          TriggerObject: eventDefinition?.configurationArguments?.objectAPIName,
+          TriggerWho: eventDefinition?.configurationArguments?.whoToInject,
+          Type: CustomerJourney.type,
+          Version: pageItem.version
+        };
 
         for(const act of pageItem.activities) {
+          const activity: any = {
+            Criteria: act.configurationArguments?.criteria,
+            Id: act.id,
+            Key: act.key,
+            Name: act.name,
+            TriggeredSendId: act.configurationArguments?.triggeredSendId,
+            TriggeredSendKey: act.configurationArguments?.triggeredSendKey,
+            Type: act.type,
+            UpdateDEId: act.arguments?.activityData?.updateContactFields[0]?.dataExtensionId,
+            UpdateDEValue: act.arguments?.activityData?.updateContactFields[0]?.value,
+            WaitEndDateAttribute: act.configurationArguments?.waitEndDateAttributeExpression
+          };
+
+          const triggered: any = activity.TriggeredSendId ? await Utility.FetchJSON(`https://jb-email-activity.s${stack}.marketingcloudapps.com/fuelapi/messaging-internal/v1/messages/triggered/${activity.TriggeredSendId}`) : null;
+          activity.TriggeredSendDescription = triggered?.description;
+          activity.TriggeredSendName = triggered?.name;
+
           let assetTypeIds: any;
           let prop: any;
           let assetId: any;
@@ -81,19 +92,18 @@ export class CustomerJourney {
             const left: any = {property: "assetType.id", simpleOperator: "IN", values: assetTypeIds};
             const right: any = {property: prop, simpleOperator: "equals", value: assetId};
             const body: any = {page: {page: 1, pageSize: 1}, query: {leftOperand: left, logicalOperator: "AND", rightOperand: right}, fields: CustomerJourney.assetFields};
-
             const asset: any = (await Utility.FetchJSON(`https://mc.s${stack}.exacttarget.com/cloud/fuelapi/asset/v1/content/assets/query?scope=ours%2Cshared`, "POST", body)).items[0];
-            act._AssetId = asset?.id;
-            act._AssetName = asset?.name;
-            act._AssetKey = asset?.customerKey;
+
+            activity.AssetId = asset?.id;
+            activity.AssetKey = asset?.customerKey;
+            activity.AssetName = asset?.name;
+            activity.AssetType = asset?.assetType?.displayName;
           }
 
-          for(const field in act) {
-            if(!CustomerJourney.actFields.includes(field)) delete act[field];
-          }
+          item.Activities.push(activity);
         }
 
-        items.push(CustomerJourney.Build(pageItem, stack, BUid, BUname));
+        items.push(Utility.SanitizeObj(item));
       }
 
       if(pageItems.length < pageData.pageSize) break;
@@ -121,36 +131,36 @@ export class CustomerJourney {
   }
 
   public static Check(item: any, field: string, regex: RegExp): boolean {
-    const itemField: string | undefined = Utility.FindCaseIns(CustomerJourney.searchFields, field);
-    if(!itemField) return false;
+    const searchField: string | undefined = Utility.FindCaseIns(CustomerJourney.searchFields, field);
+    if(!searchField) return false;
 
-    switch(itemField) {
+    switch(searchField) {
       case "ActivityId":
-        return Array.isArray(item.Activities) && item.Activities.find((entry: any) => regex.test(entry.id));
+        return item.Activities.find((entry: any) => regex.test(entry.Id));
+
+      case "ActivityKey":
+        return item.Activities.find((entry: any) => regex.test(entry.Key));
 
       case "ActivityName":
-        return Array.isArray(item.Activities) && item.Activities.find((entry: any) => regex.test(entry.name));
+        return item.Activities.find((entry: any) => regex.test(entry.Name));
 
-      case "AssetId": case "AssetKey": case "AssetName":
-        return Array.isArray(item.Activities) && item.Activities.find((entry: any) => CustomerJourney.actTypes.includes(entry.type) && regex.test(entry[`_${itemField}`]));
+      case "ActivityType":
+        return item.Activities.find((entry: any) => regex.test(entry.Type));
+
+      case "AssetId": case "AssetKey": case "AssetName": case "AssetType":
+      case "TriggeredSendDescription": case "TriggeredSendId": case "TriggeredSendKey": case "TriggeredSendName":
+      case "UpdateDEId": case "UpdateDEValue":
+        return item.Activities.find((entry: any) => regex.test(entry[searchField]));
 
       case "Content":
-        const exitCriteria: string = item.Exits[0]?.configurationArguments?.criteria;
-        return (exitCriteria && regex.test(exitCriteria)) || (Array.isArray(item.Activities) && item.Activities.find((act: any) => {
-                  const criteria: any = act.configurationArguments?.criteria;
-                  const attr: string = act.configurationArguments?.waitEndDateAttributeExpression;
-
-                  return (act.type === "MULTICRITERIADECISION" && criteria && Object.values(criteria).find((val: any) => regex.test(val))) || (act.type === "WAIT" && attr && regex.test(attr));
-        }));
-
-      case "TriggeredSendId":
-        return Array.isArray(item.Activities) && item.Activities.find((entry: any) => CustomerJourney.actTypes.includes(entry.type) && regex.test(entry.configurationArguments?.triggeredSendId));
-
-      case "TriggeredSendKey":
-        return Array.isArray(item.Activities) && item.Activities.find((entry: any) => CustomerJourney.actTypes.includes(entry.type) && regex.test(entry.configurationArguments?.triggeredSendKey));
+        return regex.test(item.ExitCriteria) || regex.test(item.Goal) || item.Activities.find((entry: any) => {
+          return (entry.Type === "MULTICRITERIADECISION" && entry.Criteria && Object.values(entry.Criteria).find((val: any) => regex.test(val))) ||
+                 (entry.Type === "WAIT" && regex.test(entry.WaitEndDateAttribute)
+                );
+        });
 
       default:
-        return regex.test(item[itemField]);
+        return regex.test(item[searchField]);
     }
   }
 }

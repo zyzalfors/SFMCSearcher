@@ -11,28 +11,6 @@ export class Asset {
   private static readonly assetFields: string[] = ["assetType", "category", "content", "createdBy", "createdDate", "customerKey", "id", "modifiedBy", "modifiedDate", "name", "slots", "views"];
   private static readonly viewNames: string[] = ["html", "inApp", "LINE", "preheader", "push", "sms", "subjectline", "whatsappsession", "whatsapptemplate"];
 
-  private static Build(item: any, BUid: string, BUname: string): any {
-    return Utility.SanitizeObj({
-                BUId: BUid,
-                BUName: BUname,
-                CategoryId: item.category?.id,
-                Contents: item._contents,
-                CreatedByName: item.createdBy?.name,
-                CreatedDate: item.createdDate,
-                Id: item.id,
-                Key: item.customerKey,
-                ModifiedByName: item.modifiedBy?.name,
-                ModifiedDate: item.modifiedDate,
-                Name: item.name,
-                Path: item._path,
-                Subtype: item.assetType?.displayName,
-                TemplateId: item._template?.id,
-                TemplateKey: item._template?.key,
-                TemplateName: item._template?.name,
-                Type: Asset.type
-    });
-  }
-
   public static async Load(stack: string, BUid: string, BUname: string): Promise<void> {
     let page: number = 1;
     let pageItems: any[] = [0];
@@ -46,9 +24,29 @@ export class Asset {
       pageItems = pageData.items;
 
       for(const pageItem of pageItems) {
-        pageItem._path = Utility.GetFullPath(pageItem.category.id, folders, pageItem);
         Asset.PopulateContents(pageItem);
-        items.push(Asset.Build(pageItem, BUid, BUname));
+
+        const item: any = {
+          BUId: BUid,
+          BUName: BUname,
+          CategoryId: pageItem.category?.id,
+          Contents: pageItem._contents,
+          CreatedByName: pageItem.createdBy?.name,
+          CreatedDate: pageItem.createdDate,
+          Id: pageItem.id,
+          Key: pageItem.customerKey,
+          ModifiedByName: pageItem.modifiedBy?.name,
+          ModifiedDate: pageItem.modifiedDate,
+          Name: pageItem.name,
+          Path: Utility.GetFullPath(pageItem.category.id, folders, pageItem),
+          Subtype: pageItem.assetType?.displayName,
+          TemplateId: pageItem._template?.id,
+          TemplateKey: pageItem._template?.key,
+          TemplateName: pageItem._template?.name,
+          Type: Asset.type
+        };
+
+        items.push(Utility.SanitizeObj(item));
       }
 
       if(pageItems.length < pageData.pageSize) break;
@@ -85,7 +83,7 @@ export class Asset {
 
       const blockVals: any[] = Object.values(blocks);
       for(const block of blockVals) {
-        if(block.content) contents.push({content: block.content, id: block.id, key: block.customerKey, name: block.name, type: "block"});
+        if(block.content) contents.push({Content: block.content, Id: block.id, Key: block.customerKey, Name: block.name, Type: "block"});
       }
     }
   }
@@ -99,9 +97,11 @@ export class Asset {
       if(!view || typeof view !== "object") continue;
 
       if(viewName.toLowerCase() === Asset.viewNames[0]) {
-        if(view.content) pageItem._contents.push({content: view.content, id: view.template?.id, name: view.template?.name, type: viewName});
+        const id: string = view.template?.id;
+        const name: string = view.template?.name;
 
-        pageItem._template = {id: view.template?.id, name: view.template?.name};
+        if(view.content) pageItem._contents.push({Content: view.content, TemplateId: id, TemplateName: name, Type: viewName});
+        pageItem._template = {id, name};
         Asset.PopulateSlotContents(view, pageItem._contents);
       }
       else if(Utility.FindCaseIns(slicedViewNames, viewName)) {
@@ -112,7 +112,7 @@ export class Asset {
         const key: string = view.meta?.options?.customBlockData?.template?.customerKey;
         const name: string = view.meta?.options?.customBlockData?.template?.name;
 
-        if(view.content) pageItem._contents.push({content: view.content, id, key, name, type: viewName});
+        if(view.content) pageItem._contents.push({Content: view.content, TemplateId: id, TemplateKey: key, TemplateName: name, Type: viewName});
         pageItem._template = {id, key, name};
       }
     }
@@ -127,15 +127,15 @@ export class Asset {
   }
 
   public static Check(item: any, field: string, regex: RegExp): boolean {
-    const itemField: string | undefined = Utility.FindCaseIns(Asset.searchFields, field);
-    if(!itemField) return false;
+    const searchField: string | undefined = Utility.FindCaseIns(Asset.searchFields, field);
+    if(!searchField) return false;
 
-    switch(itemField) {
+    switch(searchField) {
       case "Content":
-        return item.Contents.find((entry: any) => regex.test(entry.content));
+        return item.Contents.find((entry: any) => regex.test(entry.Content));
 
       default:
-        return regex.test(item[itemField]);
+        return regex.test(item[searchField]);
     }
   }
 }

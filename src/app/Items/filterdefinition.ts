@@ -8,25 +8,6 @@ export class FilterDefinition {
   public static readonly type: string = "FilterDefinition";
   private static readonly pageSize: number = 500;
 
-  private static Build(item: any, BUid: string, BUname: string): any {
-    return Utility.SanitizeObj({
-                BUId: BUid,
-                BUName: BUname,
-                CategoryId: item.categoryId,
-                CreatedByName: item.createdByName,
-                CreatedDate: item.createdDate,
-                Id: item.id,
-                Key: item.key,
-                ModifiedByName: item.lastUpdatedByName,
-                ModifiedDate: item.lastUpdated,
-                Name: item.name,
-                Path: item._path,
-                SourceDE: item.derivedFromObjectName,
-                Type: FilterDefinition.type,
-                Xml: Utility.SanitizeXml(item.filterDefinitionXml)
-    });
-  }
-
   public static async Load(stack: string, BUid: string, BUname: string): Promise<void> {
     const folders: any[] = await FilterDefinition.GetFolders(stack);
 
@@ -40,8 +21,24 @@ export class FilterDefinition {
         pageItems = pageData.items;
 
         for(const pageItem of pageItems) {
-          pageItem._path = Utility.GetFullPath(pageItem.categoryId, folders);
-          items.push(FilterDefinition.Build(pageItem, BUid, BUname));
+          const item: any = {
+            BUId: BUid,
+            BUName: BUname,
+            CategoryId: pageItem.categoryId,
+            CreatedByName: pageItem.createdByName,
+            CreatedDate: pageItem.createdDate,
+            Id: pageItem.id,
+            Key: pageItem.key,
+            ModifiedByName: pageItem.lastUpdatedByName,
+            ModifiedDate: pageItem.lastUpdated,
+            Name: pageItem.name,
+            Path: Utility.GetFullPath(pageItem.categoryId, folders),
+            SourceDE: pageItem.derivedFromObjectName,
+            Type: FilterDefinition.type,
+            Xml: Utility.SanitizeXml(pageItem.filterDefinitionXml)
+          };
+
+          items.push(Utility.SanitizeObj(item));
         }
 
         if(pageItems.length < pageData.pageSize) break;
@@ -57,9 +54,9 @@ export class FilterDefinition {
   }
 
   public static Check(item: any, field: string, regex: RegExp): boolean {
-    const itemField: string | undefined = Utility.FindCaseIns(FilterDefinition.searchFields, field);
-    if(!itemField) return false;
+    const searchField: string | undefined = Utility.FindCaseIns(FilterDefinition.searchFields, field);
+    if(!searchField) return false;
 
-    return regex.test(item[itemField]);
+    return regex.test(item[searchField]);
   }
 }

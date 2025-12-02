@@ -8,22 +8,6 @@ export class FileTransfer {
   public static readonly type: string = "FileTransfer";
   private static readonly pageSize: number = 500;
 
-  private static Build(item: any, stack: string, BUid: string, BUname: string): any {
-    return Utility.SanitizeObj({
-                BUId: BUid,
-                BUName: BUname,
-                CreatedDate: item.createdDate,
-                Destination: item._destination,
-                Id: item.id,
-                Key: item.customerKey,
-                Link: `https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/?hub=1#ActivityDetails/53/${item.id}`,
-                ModifiedDate: item.modifiedDate,
-                Name: item.name,
-                Pattern: item.fileSpec,
-                Type: FileTransfer.type
-    });
-  }
-
   public static async Load(stack: string, BUid: string, BUname: string): Promise<void> {
     let page: number = 1;
     let pageItems: any[] = [0];
@@ -35,10 +19,24 @@ export class FileTransfer {
       pageItems = pageData.items;
 
       for(const pageItem of pageItems) {
-        const item: any = await Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/filetransfers/${pageItem.id}`);
-        const ftpLocation: any = ftpLocations.find((entry: any) => entry.id === item.fileTransferLocationId);
-        item._destination = ftpLocation?.relPath || ftpLocation?.name;
-        items.push(FileTransfer.Build(item, stack, BUid, BUname));
+        const _item: any = await Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/filetransfers/${pageItem.id}`);
+        const ftpLocation: any = ftpLocations.find((entry: any) => entry.id === _item.fileTransferLocationId);
+
+        const item: any = {
+          BUId: BUid,
+          BUName: BUname,
+          CreatedDate: _item.createdDate,
+          Destination: ftpLocation?.relPath || ftpLocation?.name,
+          Id: _item.id,
+          Key: _item.customerKey,
+          Link: `https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/?hub=1#ActivityDetails/53/${_item.id}`,
+          ModifiedDate: _item.modifiedDate,
+          Name: _item.name,
+          Pattern: _item.fileSpec,
+          Type: FileTransfer.type
+        };
+
+        items.push(Utility.SanitizeObj(item));
       }
 
       if(pageItems.length < pageData.pageSize) break;
@@ -49,9 +47,9 @@ export class FileTransfer {
   }
 
   public static Check(item: any, field: string, regex: RegExp): boolean {
-    const itemField: string | undefined = Utility.FindCaseIns(FileTransfer.searchFields, field);
-    if(!itemField) return false;
+    const searchField: string | undefined = Utility.FindCaseIns(FileTransfer.searchFields, field);
+    if(!searchField) return false;
 
-    return regex.test(item[itemField]);
+    return regex.test(item[searchField]);
   }
 }

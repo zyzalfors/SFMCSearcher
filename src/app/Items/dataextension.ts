@@ -9,31 +9,6 @@ export class DataExtension {
   private static readonly pageSize: number = 500;
   private static readonly retPeriodUnits = new Map<number, string>([[3, "Days"], [4, "Weeks"], [5, "Months"], [6, "Years"]]);
 
-  private static Build(item: any, stack: string, BUid: string, BUname: string): any {
-    return Utility.SanitizeObj({
-                BUId: BUid,
-                BUName: BUname,
-                CategoryId: item.categoryId,
-                CreatedByName: item.createdByName,
-                CreatedDate: item.createdDate,
-                DeleteData: item._deleteData,
-                Description: item.description,
-                Id: item.id,
-                Key: item.key,
-                Link: `https://mc.s${stack}.marketingcloudapps.com/contactsmeta/admin.html#admin/data-extension/${item.id}/properties/`,
-                ModifiedByName: item.modifiedByName,
-                ModifiedDate: item.modifiedDate,
-                Name: item.name,
-                Path: item._path,
-                RetentionPeriod: item._retentionPeriod,
-                RowCount: item.rowCount,
-                Sendable: item.isSendable,
-                SendableKey: item.sendableCustomObjectField,
-                Subtype: item.partnerApiObjectTypeName,
-                Type: DataExtension.type
-    });
-  }
-
   public static async Load(stack: string, BUid: string, BUname: string): Promise<void> {
     const folders: any[] = await DataExtension.GetFolders(stack);
 
@@ -47,7 +22,26 @@ export class DataExtension {
         pageItems = pageData.items;
 
         for(const pageItem of pageItems) {
-          pageItem._path = Utility.GetFullPath(pageItem.categoryId, folders);
+          const item: any = {
+            BUId: BUid,
+            BUName: BUname,
+            CategoryId: pageItem.categoryId,
+            CreatedByName: pageItem.createdByName,
+            CreatedDate: pageItem.createdDate,
+            Description: pageItem.description,
+            Id: pageItem.id,
+            Key: pageItem.key,
+            Link: `https://mc.s${stack}.marketingcloudapps.com/contactsmeta/admin.html#admin/data-extension/${pageItem.id}/properties/`,
+            ModifiedByName: pageItem.modifiedByName,
+            ModifiedDate: pageItem.modifiedDate,
+            Name: pageItem.name,
+            Path: Utility.GetFullPath(pageItem.categoryId, folders),
+            RowCount: pageItem.rowCount,
+            Sendable: pageItem.isSendable,
+            SendableKey: pageItem.sendableCustomObjectField,
+            Subtype: pageItem.partnerApiObjectTypeName,
+            Type: DataExtension.type
+          };
 
           const retPeriodLength: any = pageItem.dataRetentionProperties?.dataRetentionPeriodLength;
           const retPeriodUnit: any = DataExtension.retPeriodUnits.get(pageItem.dataRetentionProperties?.dataRetentionPeriodUnitOfMeasure);
@@ -56,17 +50,17 @@ export class DataExtension {
 
           if(retPeriodLength && retPeriodUnit) {
             const resetPart: string = resetPeriodOnImport ? ", reset period on import" : "";
-            pageItem._retentionPeriod = `${retPeriodLength} ${retPeriodUnit}${resetPart}`;
+            item.RetentionPeriod = `${retPeriodLength} ${retPeriodUnit}${resetPart}`;
           }
-          else if(retainUntil) pageItem._retentionPeriod = `On ${retainUntil}`;
-          else pageItem._retentionPeriod = null;
+          else if(retainUntil) item.RetentionPeriod = `On ${retainUntil}`;
+          else item.RetentionPeriod = null;
 
-          if(!pageItem._retentionPeriod) pageItem._deleteData = null;
-          else if(pageItem.dataRetentionProperties?.isRowBasedRetention) pageItem._deleteData = "Individual records";
-          else if(pageItem.dataRetentionProperties?.isDeleteAtEndOfRetentionPeriod) pageItem._deleteData = "All records";
-          else pageItem._deleteData = "All records and data extension";
+          if(!item.RetentionPeriod) item.DeleteData = null;
+          else if(pageItem.dataRetentionProperties?.isRowBasedRetention) item.DeleteData = "Individual records";
+          else if(pageItem.dataRetentionProperties?.isDeleteAtEndOfRetentionPeriod) item.DeleteData = "All records";
+          else item.DeleteData = "All records and data extension";
 
-          items.push(DataExtension.Build(pageItem, stack, BUid, BUname));
+          items.push(Utility.SanitizeObj(item));
         }
 
         if(pageItems.length < pageData.pageSize) break;
@@ -98,9 +92,9 @@ export class DataExtension {
   }
 
   public static Check(item: any, field: string, regex: RegExp): boolean {
-    const itemField: string | undefined = Utility.FindCaseIns(DataExtension.searchFields, field);
-    if(!itemField) return false;
+    const searchField: string | undefined = Utility.FindCaseIns(DataExtension.searchFields, field);
+    if(!searchField) return false;
 
-    return regex.test(item[itemField]);
+    return regex.test(item[searchField]);
   }
 }

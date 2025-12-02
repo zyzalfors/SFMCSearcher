@@ -9,26 +9,6 @@ export class Cloudpage {
   private static readonly pageSize: number = 500;
   private static readonly subTypes: string[] = ["landing-pages", "code-resources", "microsites", "smartcapture-forms"];
 
-  private static Build(item: any, BUid: string, BUname: string): any {
-    return Utility.SanitizeObj({
-                AssetId: item.siteAssetId,
-                BUId: BUid,
-                BUName: BUname,
-                CategoryId: item.categoryId,
-                Code: Utility.SanitizeXml(item._code),
-                ContentId: item.contentId,
-                CreatedDate: item.createdDate,
-                ModifiedDate: item.modifiedDate,
-                Name: item.name,
-                PageId: item.pageId,
-                Path: item._path,
-                Status: item.status,
-                Subtype: item._subtype,
-                Type: Cloudpage.type,
-                Url: item.url
-    });
-  }
-
   public static async Load(stack: string, BUid: string, BUname: string): Promise<void> {
     let page: number = 1;
     let pageItems: any[] = [0];
@@ -65,10 +45,28 @@ export class Cloudpage {
     }
 
     const items: any[] = [];
-    for(const item of items2) {
-      const res: any = items1.find((entry: any) => entry.pageId === item.pageId || entry.contentId === item.contentId);
-      item._code = res?.html;
-      items.push(Cloudpage.Build(item, BUid, BUname));
+    for(const item2 of items2) {
+      const item1: any = items1.find((entry: any) => entry.pageId === item2.pageId || entry.contentId === item2.contentId);
+
+      const item: any = {
+        AssetId: item2.siteAssetId,
+        BUId: BUid,
+        BUName: BUname,
+        CategoryId: item2.categoryId,
+        Code: Utility.SanitizeXml(item1?.html),
+        ContentId: item2.contentId,
+        CreatedDate: item2.createdDate,
+        ModifiedDate: item2.modifiedDate,
+        Name: item2.name,
+        PageId: item2.pageId,
+        Path: item2._path,
+        Status: item2.status,
+        Subtype: item2._subtype,
+        Type: Cloudpage.type,
+        Url: item2.url
+      };
+
+      items.push(Utility.SanitizeObj(item));
     }
 
     await Utility.StoreData(BUid, BUname, Cloudpage.itemsName, items);
@@ -92,9 +90,9 @@ export class Cloudpage {
   }
 
   public static Check(item: any, field: string, regex: RegExp): boolean {
-    const itemField: string | undefined = Utility.FindCaseIns(Cloudpage.searchFields, field);
-    if(!itemField) return false;
+    const searchField: string | undefined = Utility.FindCaseIns(Cloudpage.searchFields, field);
+    if(!searchField) return false;
 
-    return regex.test(item[itemField]);
+    return regex.test(item[searchField]);
   }
 }
