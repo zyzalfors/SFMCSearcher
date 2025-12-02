@@ -105,7 +105,7 @@ export class Asset {
         Asset.PopulateSlotContents(view, pageItem._contents);
       }
       else if(Utility.FindCaseIns(slicedViewNames, viewName)) {
-        if(view.content) pageItem._contents.push({content: view.content, type: viewName});
+        if(view.content) pageItem._contents.push({Content: view.content, Type: viewName});
       }
       else if(viewName.toLowerCase() === Asset.viewNames[Asset.viewNames.length - 1]) {
         const id: string = view.meta?.options?.customBlockData?.template?.id;
@@ -120,7 +120,7 @@ export class Asset {
 
   private static PopulateContents(pageItem: any): void {
     pageItem._contents = [];
-    if(pageItem.content) pageItem._contents.push({content: pageItem.content, type: "main"});
+    if(pageItem.content) pageItem._contents.push({Content: pageItem.content, Type: "main"});
 
     Asset.PopulateSlotContents(pageItem, pageItem._contents);
     Asset.PopulateViewContents(pageItem);
