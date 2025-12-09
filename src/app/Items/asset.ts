@@ -38,7 +38,7 @@ export class Asset {
           ModifiedByName: pageItem.modifiedBy?.name,
           ModifiedDate: pageItem.modifiedDate,
           Name: pageItem.name,
-          Path: Utility.GetFullPath(pageItem.category.id, folders, pageItem),
+          Path: Utility.GetFullPath(pageItem.category?.id, folders, pageItem),
           Subtype: pageItem.assetType?.displayName,
           TemplateId: pageItem._template?.id,
           TemplateKey: pageItem._template?.key,

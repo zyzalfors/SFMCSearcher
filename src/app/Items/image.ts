@@ -36,7 +36,7 @@ export class Image {
           ModifiedByName: pageItem.modifiedBy?.name,
           ModifiedDate: pageItem.modifiedDate,
           Name: pageItem.name,
-          Path: Utility.GetFullPath(pageItem.category.id, folders, pageItem),
+          Path: Utility.GetFullPath(pageItem.category?.id, folders, pageItem),
           Size: pageItem.fileProperties?.fileSize,
           Subtype: pageItem.assetType?.displayName,
           Type: Image.type,

@@ -2,8 +2,8 @@ import { Utility } from "../Logics/utility";
 
 export class Script {
 
-  public static readonly tableFields: string[] = ["BUId", "BUName", "Id", "Key", "Name", "Path", "Link", "Code", "CreatedBy", "CreatedDate", "ModifiedBy", "ModifiedDate"];
-  public static readonly searchFields: string[] = ["BUId", "BUName", "Code", "CreatedBy", "CreatedDate", "Id", "Key", "ModifiedBy", "ModifiedDate", "Name", "Path"];
+  public static readonly tableFields: string[] = ["BUId", "BUName", "Id", "Key", "Name", "Description", "Path", "Link", "Code", "CreatedBy", "CreatedDate", "ModifiedBy", "ModifiedDate"];
+  public static readonly searchFields: string[] = ["BUId", "BUName", "Code", "CreatedBy", "CreatedDate", "Description", "Id", "Key", "ModifiedBy", "ModifiedDate", "Name", "Path"];
   public static readonly itemsName: string = "Scripts";
   public static readonly type: string = "Script";
   private static readonly pageSize: number = 500;
@@ -28,6 +28,7 @@ export class Script {
           Code: Utility.SanitizeXml(pageItem.script),
           CreatedBy: _item?.createdBy,
           CreatedDate: pageItem.createdDate,
+          Description: pageItem.description,
           Id: pageItem.ssjsActivityId,
           Key: pageItem.key,
           Link: `https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/?hub=1#ActivityModal/423/${pageItem.ssjsActivityId}`,
