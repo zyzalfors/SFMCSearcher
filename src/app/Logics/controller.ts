@@ -8,6 +8,7 @@ import { Cloudpage } from "../Items/cloudpage";
 import { CustomerJourney } from "../Items/customerjourney";
 import { DataExtension } from "../Items/dataextension";
 import { DataExtract } from "../Items/dataextract";
+import { DeliveryProfile } from "../Items/deliveryprofile";
 import { FileTransfer } from "../Items/filetransfer";
 import { Filter } from "../Items/filter";
 import { FilterDefinition } from "../Items/filterdefinition";
@@ -18,6 +19,8 @@ import { Message } from "../Items/message";
 import { Package } from "../Items/package";
 import { Query } from "../Items/query";
 import { Script } from "../Items/script";
+import { SendClassification } from "../Items/sendclassification";
+import { SenderProfile } from "../Items/senderprofile";
 
 export class Controller {
 
@@ -29,6 +32,7 @@ export class Controller {
     {class: CustomerJourney},
     {class: DataExtension},
     {class: DataExtract},
+    {class: DeliveryProfile},
     {class: FileTransfer},
     {class: Filter},
     {class: FilterDefinition},
@@ -38,7 +42,9 @@ export class Controller {
     {class: Message},
     {class: Package},
     {class: Query},
-    {class: Script}
+    {class: Script},
+    {class: SendClassification},
+    {class: SenderProfile}
   ];
 
   public static readonly actions: any[] = [
@@ -95,8 +101,8 @@ export class Controller {
     const fields: string[] = ["Type"];
     if(!parsed.fields.includes("*")) {
       for(const parsedField of parsed.fields) {
-        const itemField: string | undefined = Utility.FindCaseIns(item.class.tableFields, parsedField);
-        if(itemField) fields.push(itemField);
+        const tableField: string | undefined = Utility.FindCaseIns(item.class.tableFields, parsedField);
+        if(tableField) fields.push(tableField);
       }
       if(fields.length === 1) return [];
     }
