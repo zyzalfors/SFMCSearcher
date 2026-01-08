@@ -107,7 +107,7 @@ export class Asset {
       else if(Utility.FindCaseIns(slicedViewNames, viewName)) {
         if(view.content) pageItem._contents.push({Content: view.content, Type: viewName});
       }
-      else if(viewName.toLowerCase() === Asset.viewNames[Asset.viewNames.length - 1]) {
+      else if(viewName.toLowerCase() === Asset.viewNames.at(-1)) {
         const id: string = view.meta?.options?.customBlockData?.template?.id;
         const key: string = view.meta?.options?.customBlockData?.template?.customerKey;
         const name: string = view.meta?.options?.customBlockData?.template?.name;
