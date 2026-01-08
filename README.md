@@ -4,6 +4,7 @@ This Chrome/Edge extension is designed to enhance searching of Salesforce Market
 - Assets
 - Attribute Groups
 - Automations
+- Contacts
 - Cloudpages
 - Customer Journeys
 - Data Extensions
