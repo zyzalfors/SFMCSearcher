@@ -31,7 +31,7 @@ export class ResultsComponent {
 
   protected showPaginator: boolean = false;
 
-  protected readonly pageSizes: number[] = [20, 40, 80];
+  protected readonly pageSizes: number[] = [20, 40, 80, 160, 320, 640];
 
   public async Export(): Promise<void> {
     const table: HTMLTableElement = this.results.nativeElement;
