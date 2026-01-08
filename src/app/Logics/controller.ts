@@ -5,6 +5,7 @@ import { Asset } from "../Items/asset";
 import { AttributeGroup } from "../Items/attributegroup";
 import { Automation } from "../Items/automation";
 import { Cloudpage } from "../Items/cloudpage";
+import { Contact } from "../Items/contact";
 import { CustomerJourney } from "../Items/customerjourney";
 import { DataExtension } from "../Items/dataextension";
 import { DataExtract } from "../Items/dataextract";
@@ -29,6 +30,7 @@ export class Controller {
     {class: AttributeGroup},
     {class: Automation},
     {class: Cloudpage},
+    {class: Contact},
     {class: CustomerJourney},
     {class: DataExtension},
     {class: DataExtract},
