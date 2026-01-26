@@ -20,21 +20,21 @@ export class DataExtract {
 
       for(const pageItem of pageItems) {
         const _item: any = await Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/dataextracts/${pageItem.dataExtractDefinitionId}`);
-        const extType: any = extTypes.find((entry: any) => entry.extractId === _item.dataExtractTypeId);
+        const extType: any = extTypes.find((entry: any) => entry.extractId === _item?.dataExtractTypeId);
 
         const item: any = {
           BUId: BUid,
           BUName: BUname,
-          CreatedBy: _item.createdBy,
+          CreatedBy: _item?.createdBy,
           CreatedDate: pageItem.createdDate,
-          Fields: _item.dataFields,
-          Id: _item.dataExtractDefinitionId,
-          Key: _item.key,
-          Link: `https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/?hub=1#ActivityModal/73/${_item.dataExtractDefinitionId}`,
-          ModifiedBy: _item.modifiedBy,
+          Fields: _item?.dataFields,
+          Id: _item?.dataExtractDefinitionId,
+          Key: _item?.key,
+          Link: `https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/?hub=1#ActivityModal/73/${_item?.dataExtractDefinitionId}`,
+          ModifiedBy: _item?.modifiedBy,
           ModifiedDate: pageItem.modifiedDate,
-          Name: _item.name,
-          Pattern: _item.fileSpec,
+          Name: _item?.name,
+          Pattern: _item?.fileSpec,
           Subtype: extType?.name,
           Type: DataExtract.type
         };

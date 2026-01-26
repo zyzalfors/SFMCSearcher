@@ -2,8 +2,8 @@ import { Utility } from "../Logics/utility";
 
 export class Filter {
 
-  public static readonly tableFields: string[] = ["BUId", "BUName", "Id", "Key", "Name", "Path", "Link", "FilterDefinitionId", "FilterDefinitionName", "CreatedByName", "CreatedDate", "ModifiedByName", "ModifiedDate"];
-  public static readonly searchFields: string[] = ["BUId", "BUName", "CreatedByName", "CreatedDate", "FilterDefinitionId", "FilterDefinitionName", "Id", "Key", "ModifiedByName", "ModifiedDate", "Name", "Path"];
+  public static readonly tableFields: string[] = ["BUId", "BUName", "Id", "Key", "Name", "Path", "Link", "FilterDefinitionId", "FilterDefinitionKey", "FilterDefinitionName", "TargetDEKey", "TargetDEName", "CreatedDate", "ModifiedDate"];
+  public static readonly searchFields: string[] = ["BUId", "BUName", "CreatedDate", "FilterDefinitionId", "FilterDefinitionKey", "FilterDefinitionName", "Id", "Key", "ModifiedDate", "Name", "Path", "TargetDEKey", "TargetDEName"];
   public static readonly itemsName: string = "Filters";
   public static readonly type: string = "Filter";
   private static readonly pageSize: number = 500;
@@ -20,22 +20,24 @@ export class Filter {
 
       for(const pageItem of pageItems) {
         const filterDefinition: any = await Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/filterdefinitions/${pageItem.filterDefinitionId}`);
+        const _item: any = await Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/filters/${pageItem.filterActivityId}`);
 
         const item: any = {
           BUId: BUid,
           BUName: BUname,
           CategoryId: pageItem.categoryId,
-          CreatedByName: filterDefinition?.createdByName,
           CreatedDate: pageItem.createdDate,
           FilterDefinitionId: pageItem.filterDefinitionId,
+          FilterDefinitionKey: filterDefinition?.key,
           FilterDefinitionName: filterDefinition?.name,
           Id: pageItem.filterActivityId,
           Key: pageItem.customerKey,
           Link: `https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/#ActivityModal/303/${pageItem.filterActivityId}`,
-          ModifiedByName: filterDefinition?.modifiedByName,
           ModifiedDate: pageItem.modifiedDate,
           Name: pageItem.name,
           Path: Utility.GetFullPath(pageItem.categoryId, folders),
+          TargetDEKey: _item?.resultDEKey,
+          TargetDEName: _item?.resultDEName,
           Type: Filter.type
         };
 

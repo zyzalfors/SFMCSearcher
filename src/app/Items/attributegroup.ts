@@ -29,7 +29,7 @@ export class AttributeGroup {
         };
 
         const _item: any = await Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/contactsmeta/fuelapi/contacts-internal/v1/attributeGroups/${pageItem.definitionID}/setDefinitions/views/defaultView?nestedPageSize=1000&$pageSize=1000&$page=1`);
-        if(!Array.isArray(_item.data)) {
+        if(!Array.isArray(_item?.data)) {
           items.push(Utility.SanitizeObj(item));
           continue;
         }

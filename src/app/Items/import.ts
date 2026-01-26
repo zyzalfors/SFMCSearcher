@@ -21,19 +21,19 @@ export class Import {
         const _item: any = await Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/imports/${pageItem.importDefinitionId}`);
 
         const item: any = {
-          AlertEmail: _item.notificationEmailAddress,
+          AlertEmail: _item?.notificationEmailAddress,
           BUId: BUid,
           BUName: BUname,
-          CreatedDate: _item.createdDate,
-          Id: _item.importDefinitionId,
-          Key: _item.customerKey,
-          Link1: `https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/?hub=1#ActivityDetails/43/${_item.importDefinitionId}`,
-          Link2: `https://mc.s${stack}.marketingcloudapps.com/contactsmeta/admin.html#admin/import-definition/${_item.importDefinitionId}/properties`,
-          ModifiedDate: _item.modifiedDate,
-          Name: _item.name,
-          Pattern: _item.fileNamingPattern,
-          SourceDE: _item.sourceDataExtensionName,
-          TargetDE: _item.destinationName,
+          CreatedDate: _item?.createdDate,
+          Id: _item?.importDefinitionId,
+          Key: _item?.customerKey,
+          Link1: `https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/?hub=1#ActivityDetails/43/${_item?.importDefinitionId}`,
+          Link2: `https://mc.s${stack}.marketingcloudapps.com/contactsmeta/admin.html#admin/import-definition/${_item?.importDefinitionId}/properties`,
+          ModifiedDate: _item?.modifiedDate,
+          Name: _item?.name,
+          Pattern: _item?.fileNamingPattern,
+          SourceDE: _item?.sourceDataExtensionName,
+          TargetDE: _item?.destinationName,
           Type: Import.type
         };
 

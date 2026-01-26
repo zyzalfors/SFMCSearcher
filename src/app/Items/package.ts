@@ -15,21 +15,21 @@ export class Package {
       const _item: any = await Utility.FetchJSON(`https://members.s${stack}.exacttarget.com/Content/Administration/InstalledPackagesService/loadPackageDetails?applicationId=${pageItem.PackageId}`);
 
       const item: any = {
-        AuthEndpoint: _item.Components[0]?.Endpoints?.AuthEndpoint,
+        AuthEndpoint: _item?.Components[0]?.Endpoints?.AuthEndpoint,
         BUId: BUid,
         BUName: BUname,
-        ClientId: _item.Components[0]?.ClientId,
-        ClientSecret: _item.Components[0]?.ClientSecret,
-        Id: _item.PackageId,
+        ClientId: _item?.Components[0]?.ClientId,
+        ClientSecret: _item?.Components[0]?.ClientSecret,
+        Id: _item?.PackageId,
         InstallDate: pageItem.InstallDate,
-        Link: `https://members.s${stack}.exacttarget.com/Content/Administration/InstalledPackages.aspx/${_item.PackageId}/details`,
-        ModifiedDate: _item.ApplicationLastUpdated,
-        Name: _item.Name,
-        Owner: _item.OwnerName,
-        RestEndpoint: _item.Components[0]?.Endpoints?.RestEndpoint,
-        Signature: _item.ApplicationSignature,
-        SoapEndpoint: _item.Components[0]?.Endpoints?.SoapEndpoint,
-        Status: _item.PackageStatus,
+        Link: `https://members.s${stack}.exacttarget.com/Content/Administration/InstalledPackages.aspx/${_item?.PackageId}/details`,
+        ModifiedDate: _item?.ApplicationLastUpdated,
+        Name: _item?.Name,
+        Owner: _item?.OwnerName,
+        RestEndpoint: _item?.Components[0]?.Endpoints?.RestEndpoint,
+        Signature: _item?.ApplicationSignature,
+        SoapEndpoint: _item?.Components[0]?.Endpoints?.SoapEndpoint,
+        Status: _item?.PackageStatus,
         Type: Package.type
       };
 

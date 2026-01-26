@@ -20,19 +20,19 @@ export class FileTransfer {
 
       for(const pageItem of pageItems) {
         const _item: any = await Utility.FetchJSON(`https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/fuelapi/automation/v1/filetransfers/${pageItem.id}`);
-        const ftpLocation: any = ftpLocations.find((entry: any) => entry.id === _item.fileTransferLocationId);
+        const ftpLocation: any = ftpLocations.find((entry: any) => entry.id === _item?.fileTransferLocationId);
 
         const item: any = {
           BUId: BUid,
           BUName: BUname,
-          CreatedDate: _item.createdDate,
+          CreatedDate: _item?.createdDate,
           Destination: ftpLocation?.relPath || ftpLocation?.name,
-          Id: _item.id,
-          Key: _item.customerKey,
-          Link: `https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/?hub=1#ActivityDetails/53/${_item.id}`,
-          ModifiedDate: _item.modifiedDate,
-          Name: _item.name,
-          Pattern: _item.fileSpec,
+          Id: _item?.id,
+          Key: _item?.customerKey,
+          Link: `https://mc.s${stack}.marketingcloudapps.com/AutomationStudioFuel3/?hub=1#ActivityDetails/53/${_item?.id}`,
+          ModifiedDate: _item?.modifiedDate,
+          Name: _item?.name,
+          Pattern: _item?.fileSpec,
           Type: FileTransfer.type
         };
 

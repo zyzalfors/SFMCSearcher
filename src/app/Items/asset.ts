@@ -102,6 +102,7 @@ export class Asset {
 
         if(view.content) pageItem._contents.push({Content: view.content, TemplateId: id, TemplateName: name, Type: viewName});
         pageItem._template = {id, name};
+
         Asset.PopulateSlotContents(view, pageItem._contents);
       }
       else if(Utility.FindCaseIns(slicedViewNames, viewName)) {
