@@ -2,20 +2,24 @@ import { Utility } from "../Logics/utility";
 
 export class Asset {
 
-  public static readonly tableFields: string[] = ["BUId", "BUName", "Id", "Key", "Name", "Path", "Subtype", "TemplateId", "TemplateKey", "TemplateName", "CreatedByName", "CreatedDate", "ModifiedByName", "ModifiedDate"];
-  public static readonly searchFields: string[] = ["BUId", "BUName", "Content", "CreatedByName", "CreatedDate", "Id", "Key", "ModifiedByName", "ModifiedDate", "Name", "Path", "Subtype", "TemplateId", "TemplateKey", "TemplateName"];
+  public static readonly tableFields: string[] = ["BUId", "BUName", "Id", "Key", "Name", "Path", "Subtype", "Status", "TemplateId", "TemplateKey", "TemplateName", "CreatedByName", "CreatedDate", "ModifiedByName", "ModifiedDate"];
+  public static readonly searchFields: string[] = ["BUId", "BUName", "Content", "CreatedByName", "CreatedDate", "Id", "Key", "ModifiedByName", "ModifiedDate", "Name", "Path", "Status", "Subtype", "TemplateId", "TemplateKey", "TemplateName"];
   public static readonly itemsName: string = "Assets";
   public static readonly type: string = "Asset";
   private static readonly pageSize: number = 500;
-  private static readonly assetTypeIds: number[] = [2, 3, 4, 5, 14, 15, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238];
-  private static readonly assetFields: string[] = ["assetType", "category", "content", "createdBy", "createdDate", "customerKey", "id", "modifiedBy", "modifiedDate", "name", "slots", "views"];
+  private static readonly assetTypeIds: number[] = [2, 3, 4, 5, 14, 15, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238];
+  private static readonly assetFields: string[] = ["assetType", "category", "content", "createdBy", "createdDate", "customerKey", "id", "modifiedBy", "modifiedDate", "name", "slots", "status", "views"];
   private static readonly viewNames: string[] = ["html", "inApp", "LINE", "preheader", "push", "sms", "subjectline", "whatsappsession", "whatsapptemplate"];
 
   public static async Load(stack: string, BUid: string, BUname: string): Promise<void> {
     let page: number = 1;
     let pageItems: any[] = [0];
 
-    const body: any = {page: {page: page, pageSize: Asset.pageSize}, query: {property: "assetType.id", simpleOperator: "IN", values: Asset.assetTypeIds}, fields: Asset.assetFields};
+    const bodyPage: any = {page: page, pageSize: Asset.pageSize};
+    const bodyType: any = {property: "assetType.id", simpleOperator: "IN", values: Asset.assetTypeIds};
+    const bodyStatus: any = {property: "status.id", simpleOperator: "equals", value: 6};
+
+    const body: any = {page: bodyPage, query: {leftOperand: bodyType, logicalOperator: "OR", rightOperand: {leftOperand: bodyType, logicalOperator: "AND", rightOperand: bodyStatus}}, fields: Asset.assetFields};
     const folders: any[] = await Asset.GetFolders(stack);
 
     const items: any[] = [];
@@ -39,6 +43,7 @@ export class Asset {
           ModifiedDate: pageItem.modifiedDate,
           Name: pageItem.name,
           Path: Utility.GetFullPath(pageItem.category?.id, folders, pageItem),
+          Status: pageItem.status?.name,
           Subtype: pageItem.assetType?.displayName,
           TemplateId: pageItem._template?.id,
           TemplateKey: pageItem._template?.key,

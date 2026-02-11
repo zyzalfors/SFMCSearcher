@@ -7,6 +7,7 @@ export class DataExtension {
   public static readonly itemsName: string = "DataExtensions";
   public static readonly type: string = "DataExtension";
   private static readonly pageSize: number = 500;
+  private static readonly categoryTypes: string[] = ["dataextension", "recyclebin", "salesforcedataextension", "synchronizeddataextension", "shared_data", "shared_dataextension", "shared_salesforcedataextension"];
   private static readonly retPeriodUnits = new Map<number, string>([[3, "Days"], [4, "Weeks"], [5, "Months"], [6, "Years"]]);
 
   public static async Load(stack: string, BUid: string, BUname: string): Promise<void> {
@@ -72,8 +73,7 @@ export class DataExtension {
   }
 
   private static async GetFolders(stack: string): Promise<any[]> {
-    const categoryTypes: string[] = ["dataextension", "salesforcedataextension", "synchronizeddataextension", "shared_data", "shared_dataextension", "shared_salesforcedataextension"];
-    const categoryFilter: string = `(%27${categoryTypes.join("%27,%27")}%27)`;
+    const categoryFilter: string = `(%27${DataExtension.categoryTypes.join("%27,%27")}%27)`;
 
     const folders: any[] = [];
     const categoryIds: number[] = [0];

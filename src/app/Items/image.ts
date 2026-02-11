@@ -2,19 +2,23 @@ import { Utility } from "../Logics/utility";
 
 export class Image {
 
-  public static readonly tableFields: string[] = ["BUId", "BUName", "Id", "Key", "Name", "Path", "Url", "Extension", "Size", "Height", "Width", "Subtype", "CreatedByName", "CreatedDate", "ModifiedByName", "ModifiedDate"];
-  public static readonly searchFields: string[] = ["BUId", "BUName", "CreatedByName", "CreatedDate", "Extension", "Height", "Id", "Key", "ModifiedByName", "ModifiedDate", "Name", "Path", "Size", "Subtype", "Url", "Width"];
+  public static readonly tableFields: string[] = ["BUId", "BUName", "Id", "Key", "Name", "Path", "Url", "Extension", "Size", "Height", "Width", "Subtype", "Status", "CreatedByName", "CreatedDate", "ModifiedByName", "ModifiedDate"];
+  public static readonly searchFields: string[] = ["BUId", "BUName", "CreatedByName", "CreatedDate", "Extension", "Height", "Id", "Key", "ModifiedByName", "ModifiedDate", "Name", "Path", "Size", "Status", "Subtype", "Url", "Width"];
   public static readonly itemsName: string = "Images";
   public static readonly type: string = "Image";
   private static readonly pageSize: number = 500;
   private static readonly imageTypeIds: number[] = [16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39];
-  private static readonly imageFields: string[] = ["assetType", "category", "createdBy", "createdDate", "customerKey", "fileProperties", "id", "modifiedBy", "modifiedDate", "name"];
+  private static readonly imageFields: string[] = ["assetType", "category", "createdBy", "createdDate", "customerKey", "fileProperties", "id", "modifiedBy", "modifiedDate", "name", "status"];
 
   public static async Load(stack: string, BUid: string, BUname: string): Promise<void> {
     let page: number = 1;
     let pageItems: any[] = [0];
 
-    const body: any = {page: {page: page, pageSize: Image.pageSize}, query: {property: "assetType.id", simpleOperator: "IN", values: Image.imageTypeIds}, fields: Image.imageFields};
+    const bodyPage: any = {page: page, pageSize: Image.pageSize};
+    const bodyType: any = {property: "assetType.id", simpleOperator: "IN", values: Image.imageTypeIds};
+    const bodyStatus: any = {property: "status.id", simpleOperator: "equals", value: 6};
+
+    const body: any = {page: bodyPage, query: {leftOperand: bodyType, logicalOperator: "OR", rightOperand: {leftOperand: bodyType, logicalOperator: "AND", rightOperand: bodyStatus}}, fields: Image.imageFields};
     const folders: any[] = await Image.GetFolders(stack);
 
     const items: any[] = [];
@@ -38,6 +42,7 @@ export class Image {
           Name: pageItem.name,
           Path: Utility.GetFullPath(pageItem.category?.id, folders, pageItem),
           Size: pageItem.fileProperties?.fileSize,
+          Status: pageItem.status?.name,
           Subtype: pageItem.assetType?.displayName,
           Type: Image.type,
           Url: pageItem.fileProperties?.publishedURL,
