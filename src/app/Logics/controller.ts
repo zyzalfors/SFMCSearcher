@@ -81,13 +81,13 @@ export class Controller {
     const storage: any = await Utility.GetData(BUid);
     if(!Array.isArray(storage.data)) return [];
 
-    const items: any[] = [];
+    let items: any[] = [];
     if(!BUid) {
       for(const i in storage.data) {
         if(storage.data[i][itemsName]) storage.data[i][itemsName].Items.forEach((entry: any) => items.push(entry));
       }
     }
-    else if(storage.i > -1 && storage.data[storage.i][itemsName]) storage.data[storage.i][itemsName].Items.forEach((entry: any) => items.push(entry));
+    else if(storage.i > -1 && storage.data[storage.i][itemsName]) items = storage.data[storage.i][itemsName].Items;
 
     return items;
   }
