@@ -25,7 +25,7 @@ export class ResultsComponent {
 
   private readonly sep: string = ",";
 
-  protected readonly headers: string[] = [];
+  protected headers: string[] = [];
 
   protected dataSource!: MatTableDataSource<any, MatPaginator>;
 
@@ -50,8 +50,7 @@ export class ResultsComponent {
   }
 
   private Fill(results: any[], headers: string[]): void {
-    this.headers.length = 0;
-    headers.forEach((entry: string) => this.headers.push(entry));
+    this.headers = headers;
 
     this.dataSource = new MatTableDataSource(results);
     this.dataSource.sort = this.sort;
