@@ -24,12 +24,12 @@ export class Automation {
 
         if(Array.isArray(_item?.steps)) {
           for(const _step of _item.steps) {
-            const step: any = {Name: _step?.name, Description: _step?.description, Activities: []};
+            const step: any = {Name: _step.name, Description: _step.description, Activities: []};
             steps.push(step);
 
-            if(!Array.isArray(_step?.activities)) continue;
+            if(!Array.isArray(_step.activities)) continue;
 
-            for(const _act of _step.activities) step.Activities.push({Name: _act?.name, ActivityObjectId: _act?.activityObjectId});
+            _step.activities.forEach((entry : any) => step.Activities.push({Name: entry.name, ActivityObjectId: entry.activityObjectId}));
           }
         }
 

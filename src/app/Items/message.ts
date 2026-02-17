@@ -17,8 +17,8 @@ export class Message {
       pageItems = pageData.entry;
 
       for(const pageItem of pageItems) {
-        const sent : number = pageItem.statistics?.outbound?.sent;
-        const delivered : number = pageItem.statistics?.outbound?.delivered;
+        const sent: number = pageItem.statistics?.outbound?.sent;
+        const delivered: number = pageItem.statistics?.outbound?.delivered;
 
         const item: any = {
           BUId: BUid,

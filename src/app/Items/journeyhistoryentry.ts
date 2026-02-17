@@ -16,7 +16,7 @@ export class JourneyHistoryEntry {
     while(pageItems.length > 0) {
       const pageData: any = await Utility.FetchJSON(`https://jbinteractions.s${stack}.marketingcloudapps.com/fuelapi/interaction/v1/interactions/?mostRecentVersionOnly=false&mostRecentVersionOrRunningOnly=true&$page=${page}&$pagesize=${JourneyHistoryEntry.pageSize}`);
       pageItems = pageData.items;
-      for(const pageItem of pageItems) ids.push(pageItem.definitionId);
+      pageItems.forEach((entry: any) => ids.push(entry.definitionId));
 
       if(pageItems.length < pageData.pageSize) break;
       page++;
