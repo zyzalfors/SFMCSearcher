@@ -3,7 +3,7 @@ import { Utility } from "../Logics/utility";
 export class CustomerJourney {
 
   public static readonly tableFields: string[] = ["BUId", "BUName", "Id", "DefinitionId", "Name", "Path", "Link", "SourceDE", "SourceDEId", "RunFilterCriteria", "RunSchedule", "RunScheduleMode", "TriggerAction", "TriggerEntryData", "TriggerFilterCriteria", "TriggerObject", "TriggerWho", "Status", "Version", "EventDefinitionId", "EventDefinitionKey", "CreatedDate", "ModifiedDate"];
-  public static readonly searchFields: string[] = ["ActivityId", "ActivityKey", "ActivityName", "ActivityType", "AssetId", "AssetKey", "AssetName", "AssetType", "BUId", "BUName", "Content", "CreatedDate", "DefinitionId", "EventDefinitionId", "EventDefinitionKey", "Id", "ModifiedDate", "Name", "Path", "RunFilterCriteria", "RunSchedule", "RunScheduleMode", "SourceDE", "SourceDEId", "Status", "TriggerAction", "TriggerEntryData", "TriggerFilterCriteria", "TriggerObject", "TriggerWho", "TriggeredSendDescription", "TriggeredSendId", "TriggeredSendKey", "TriggeredSendName", "UpdateDEId", "UpdateDEValue"];
+  public static readonly searchFields: string[] = ["ActivityId", "ActivityKey", "ActivityName", "ActivityType", "AssetId", "AssetKey", "AssetName", "AssetType", "BUId", "BUName", "Content", "CreatedDate", "DefinitionId", "EventDefinitionId", "EventDefinitionKey", "Id", "ModifiedDate", "Name", "Path", "RunFilterCriteria", "RunSchedule", "RunScheduleMode", "SourceDE", "SourceDEId", "Status", "TriggerAction", "TriggerEntryData", "TriggerFilterCriteria", "TriggerObject", "TriggerWho", "TriggeredSendDescription", "TriggeredSendId", "TriggeredSendKey", "TriggeredSendName", "UpdateDEIds", "UpdateDEValues", "UpdateSFObjFields", "UpdateSFObjType", "UpdateSFObjValues"];
   public static readonly itemsName: string = "CustomerJourneys";
   public static readonly type: string = "CustomerJourney";
   private static readonly pageSize: number = 500;
@@ -55,54 +55,7 @@ export class CustomerJourney {
           Version: pageItem.version
         };
 
-        for(const act of pageItem.activities) {
-          const activity: any = {
-            Criteria: act.configurationArguments?.criteria,
-            Id: act.id,
-            Key: act.key,
-            Name: act.name,
-            TriggeredSendId: act.configurationArguments?.triggeredSendId,
-            TriggeredSendKey: act.configurationArguments?.triggeredSendKey,
-            Type: act.type,
-            UpdateDEId: act.arguments?.activityData?.updateContactFields[0]?.dataExtensionId,
-            UpdateDEValue: act.arguments?.activityData?.updateContactFields[0]?.value,
-            WaitEndDateAttribute: act.configurationArguments?.waitEndDateAttributeExpression
-          };
-
-          const triggered: any = activity.TriggeredSendId ? await Utility.FetchJSON(`https://jb-email-activity.s${stack}.marketingcloudapps.com/fuelapi/messaging-internal/v1/messages/triggered/${activity.TriggeredSendId}`) : null;
-          activity.TriggeredSendDescription = triggered?.description;
-          activity.TriggeredSendName = triggered?.name;
-
-          let assetTypeIds: any;
-          let prop: any;
-          let assetId: any;
-
-          if(act.type === CustomerJourney.actTypes[0]) {
-            assetTypeIds = [5, 207, 208, 209];
-            prop = "data.email.legacy.legacyId";
-            assetId = act.configurationArguments?.triggeredSend?.emailId;
-          }
-          else if(CustomerJourney.actTypes.includes(act.type, 1)) {
-            assetTypeIds = [230];
-            prop = "id";
-            assetId = act.configurationArguments?.assetId;
-          }
-
-          if(assetTypeIds && prop && assetId) {
-            const left: any = {property: "assetType.id", simpleOperator: "IN", values: assetTypeIds};
-            const right: any = {property: prop, simpleOperator: "equals", value: assetId};
-            const body: any = {page: {page: 1, pageSize: 1}, query: {leftOperand: left, logicalOperator: "AND", rightOperand: right}, fields: CustomerJourney.assetFields};
-            const asset: any = (await Utility.FetchJSON(`https://mc.s${stack}.exacttarget.com/cloud/fuelapi/asset/v1/content/assets/query?scope=ours%2Cshared`, "POST", body)).items[0];
-
-            activity.AssetId = asset?.id;
-            activity.AssetKey = asset?.customerKey;
-            activity.AssetName = asset?.name;
-            activity.AssetType = asset?.assetType?.displayName;
-          }
-
-          item.Activities.push(activity);
-        }
-
+        await CustomerJourney.PopulateActivities(stack, item, pageItem);
         items.push(Utility.SanitizeObj(item));
       }
 
@@ -111,6 +64,68 @@ export class CustomerJourney {
     }
 
     await Utility.StoreData(BUid, BUname, CustomerJourney.itemsName, items);
+  }
+
+  private static async PopulateActivities(stack: string, item: any, pageItem: any): Promise<void> {
+    for(const act of pageItem.activities) {
+      const DEdata: any = act.arguments?.activityData?.updateContactFields;
+      const DEids: string = Array.isArray(DEdata) ? DEdata.reduce((id: any, entry: any) => `${id},${entry.dataExtensionId}`, "").replace(",", "") : undefined;
+      const DEvals: string = Array.isArray(DEdata) ? DEdata.reduce((val: any, entry: any) => `${val},${entry.value}`, "").replace(",", "") : undefined;
+
+      const SFObjData: any = act.arguments?.objectMap?.objects[0]?.fields;
+      const SFObjFields: string = Array.isArray(SFObjData) ? SFObjData.reduce((name: any, entry: any) => `${name},${entry.FieldName}`, "").replace(",", "") : undefined;
+      const SFObjValues: string = Array.isArray(SFObjData) ? SFObjData.reduce((val: any, entry: any) => `${val},${entry.FieldValue}`, "").replace(",", "") : undefined;
+
+      const activity: any = {
+        Criteria: act.configurationArguments?.criteria,
+        Id: act.id,
+        Key: act.key,
+        Name: act.name,
+        TriggeredSendId: act.configurationArguments?.triggeredSendId,
+        TriggeredSendKey: act.configurationArguments?.triggeredSendKey,
+        Type: act.type,
+        UpdateDEIds: DEids,
+        UpdateDEValues: DEvals,
+        UpdateSFObjAction: act.arguments?.objectMap?.objects[0]?.action,
+        UpdateSFObjFields: SFObjFields,
+        UpdateSFObjType: act.arguments?.objectMap?.objects[0]?.type,
+        UpdateSFObjValues: SFObjValues,
+        WaitEndDateAttribute: act.configurationArguments?.waitEndDateAttributeExpression
+      };
+
+      const triggered: any = activity.TriggeredSendId ? await Utility.FetchJSON(`https://jb-email-activity.s${stack}.marketingcloudapps.com/fuelapi/messaging-internal/v1/messages/triggered/${activity.TriggeredSendId}`) : null;
+      activity.TriggeredSendDescription = triggered?.description;
+      activity.TriggeredSendName = triggered?.name;
+
+      let assetTypeIds: any;
+      let prop: any;
+      let assetId: any;
+
+      if(act.type === CustomerJourney.actTypes[0]) {
+        assetTypeIds = [5, 207, 208, 209];
+        prop = "data.email.legacy.legacyId";
+        assetId = act.configurationArguments?.triggeredSend?.emailId;
+      }
+      else if(CustomerJourney.actTypes.includes(act.type, 1)) {
+        assetTypeIds = [230];
+        prop = "id";
+        assetId = act.configurationArguments?.assetId;
+      }
+
+      if(assetTypeIds && prop && assetId) {
+        const left: any = {property: "assetType.id", simpleOperator: "IN", values: assetTypeIds};
+        const right: any = {property: prop, simpleOperator: "equals", value: assetId};
+        const body: any = {page: {page: 1, pageSize: 1}, query: {leftOperand: left, logicalOperator: "AND", rightOperand: right}, fields: CustomerJourney.assetFields};
+        const asset: any = (await Utility.FetchJSON(`https://mc.s${stack}.exacttarget.com/cloud/fuelapi/asset/v1/content/assets/query?scope=ours%2Cshared`, "POST", body)).items[0];
+
+        activity.AssetId = asset?.id;
+        activity.AssetKey = asset?.customerKey;
+        activity.AssetName = asset?.name;
+        activity.AssetType = asset?.assetType?.displayName;
+      }
+
+      item.Activities.push(activity);
+    }
   }
 
   private static async GetFolders(stack: string): Promise<any[]> {
@@ -149,7 +164,8 @@ export class CustomerJourney {
 
       case "AssetId": case "AssetKey": case "AssetName": case "AssetType":
       case "TriggeredSendDescription": case "TriggeredSendId": case "TriggeredSendKey": case "TriggeredSendName":
-      case "UpdateDEId": case "UpdateDEValue":
+      case "UpdateDEIds": case "UpdateDEValues":
+      case "UpdateSFObjFields": case "UpdateSFObjType": case "UpdateSFObjValues":
         return item.Activities.find((entry: any) => regex.test(entry[searchField]));
 
       case "Content":
